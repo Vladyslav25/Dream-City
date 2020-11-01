@@ -41,6 +41,9 @@ namespace Splines
         [SerializeField]
         private GameObject[] pointsObj;
 
+        [SerializeField]
+        private bool drawMesh = true;
+
         private MeshFilter meshFilterRef;
 
         [HideInInspector]
@@ -208,6 +211,16 @@ namespace Splines
             return Quaternion.LookRotation(GetTangentAt(_t), GetNormalUpAt(_t));
         }
 
+        public float GetLength()
+        {
+            float output = 0;
+            for (int i = 0; i < OPs.Length - 1; i++)
+            {
+                output += Vector3.Distance(OPs[i].Position, OPs[i + 1].Position);
+            }
+            return output;
+        }
+
         private void Update()
         {
             if (OPs.Length != segments + 1)
@@ -215,9 +228,12 @@ namespace Splines
             for (int i = 0; i <= segments; i++)
             {
                 float t = 1.0f / segments * i;
-                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientation(t), t);
+                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
-            MeshGenerator.Extrude(meshFilterRef.mesh, new ExtrudeShape(), this, transform.position);
+            if (drawMesh)
+                MeshGenerator.Extrude(meshFilterRef.mesh, new ExtrudeShape(), this, transform.position);
+            else
+                meshFilterRef.mesh.Clear();
         }
 
         private void OnDrawGizmos()
@@ -227,12 +243,12 @@ namespace Splines
                 float t = 1.0f / segments * i;
                 float tnext = 1.0f / segments * (i + 1);
 
-                if (!(i+1 >= OPs.Length))
+                if (!(i + 1 >= OPs.Length))
                 {
                     if (drawLine)
                     {
                         Gizmos.color = Color.white;
-                        Gizmos.DrawLine(OPs[i].Position, OPs[i+1].Position);
+                        Gizmos.DrawLine(OPs[i].Position, OPs[i + 1].Position);
                     }
                 }
                 if (drawTangent)

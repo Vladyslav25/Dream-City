@@ -43,6 +43,10 @@ namespace MeshGeneration
             Vector3[] normals = new Vector3[vertCount];
             Vector2[] uvs = new Vector2[vertCount];
 
+            float[] arr = new float[segments];
+            CalcLengthTableInto(arr, _spline);
+            float shapeLength = _shape.GetLineLength();
+
             for (int i = 0; i < _spline.OPs.Length; i++)
             {
                 int offset = i * vertsInShape;
@@ -50,8 +54,7 @@ namespace MeshGeneration
                 {
                     int id = offset + j;
                     verticies[id] = _spline.OPs[i].LocalToWorld(_shape.verts[j]) - _meshOffset;
-                    //normals[id] = _spline.OPs[i].LocalToWorldDirection(_shape.normals[j]);
-                    //uvs[id] = new Vector2(_shape.us[j], i / ((float)edgeLoops));
+                    uvs[id] = new Vector2(arr.Sample(i / ((float)edgeLoops)) / shapeLength, _shape.us[j]);
                 }
             }
 
@@ -83,10 +86,25 @@ namespace MeshGeneration
             _mesh.Clear();
             _mesh.vertices = verticies;
             _mesh.triangles = triangelIndices;
-            //_mesh.normals = normals;
             _mesh.RecalculateNormals();
             _mesh.uv = uvs;
             return _mesh;
+        }
+
+        private static void CalcLengthTableInto(float[] arr, Spline _spline)
+        {
+            arr[0] = 0f;
+            float totalLength = 0f;
+            Vector3 prev = _spline.StartPos;
+            for (int i = 1; i < arr.Length; i++)
+            {
+                float t = ((float)i) / (arr.Length - 1);
+                Vector3 pt = _spline.GetPositionAt(t);
+                float diff = (prev - pt).magnitude;
+                totalLength += diff;
+                arr[i] = totalLength;
+                prev = pt;
+            }
         }
     }
 
@@ -94,28 +112,61 @@ namespace MeshGeneration
     {
         public Vector2[] verts = new Vector2[]
         {
-            new Vector2(0,0),
-            new Vector2(.3f,0),
-            new Vector2(.3f,0),
-            new Vector2(.3f,0.5f)
+            new Vector2(1,0), //0
+            new Vector2(1,0.1f),
+            new Vector2(1,0.1f),
+            new Vector2(0.75f,0.1f),
+            new Vector2(0.75f,0.1f),
+            new Vector2(0.75f,0.05f),
+            new Vector2(0.75f,0.05f),
+
+            new Vector2(-0.75f,0.05f), //7
+            new Vector2(-0.75f,0.05f),
+            new Vector2(-0.75f,0.1f),
+            new Vector2(-0.75f,0.1f),
+            new Vector2(-1,0.1f),
+            new Vector2(-1,0.1f),
+            new Vector2(-1,0)
         };
 
-        public Vector2[] normals = new Vector2[]
-        {
-            new Vector2(0,1),
-            new Vector2(.7f, .7f),
-            new Vector2(0,2)
-        };
         public float[] us = new float[]
         {
             0,
-            .5f,
-            1f
+            0,
+            0,
+            0.25f,
+            0.25f,
+            0.25f,
+            0.25f,
+
+            0.75f,
+            0.75f,
+            0.75f,
+            0.75f,
+            1,
+            1,
+            1
         };
+
         public int[] lines = new int[]
         {
             0, 1,
-            2, 3
+            2, 3,
+            4, 5,
+            6, 7,
+            8, 9,
+            10, 11,
+            12, 13,
         };
+
+        public float GetLineLength()
+        {
+            float output = 0;
+            for (int i = 0; i < verts.Length - 1; i++)
+            {
+                output += Vector3.Distance(verts[i], verts[i + 1]);
+            }
+            return output;
+        }
     }
 }

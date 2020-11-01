@@ -72,7 +72,7 @@ namespace Splines
             end.transform.SetParent(obj.transform);
 
             s.Init(start, tangent, end, mf);
-            MeshGenerator.Extrude(mf.mesh, new ExtrudeShape(), s, obj.transform.position);
+            //MeshGenerator.Extrude(mf.mesh, new ExtrudeShape(), s, obj.transform.position);
 
             splineID_Dic.Add(s.ID, s);
             return s;
