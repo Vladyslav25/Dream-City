@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MeshGeneration;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -9,27 +10,53 @@ namespace Splines
     public class Spline : MonoBehaviour
     {
         [Header("Gizmo Settings")]
-        [SerializeField] [Tooltip("The Amount of Segments to Draw")] private int segments = 15;
-        [SerializeField] [Tooltip("Draw the Curve?")] private bool drawLine = true;
-        [SerializeField] [Tooltip("Draw the Tangent?")] private bool drawTangent;
-        [SerializeField] [Tooltip("Draw the Normal Up?")] private bool drawNormalUp;
-        [SerializeField] [Tooltip("Draw the Normal?")] private bool drawNormal;
-        [SerializeField] [Tooltip("Tangent Lenght")] private float tangentLenght = 1;
-        [SerializeField] [Tooltip("Normal Up Lenght")] private float normalLenghtUp = 1;
-        [SerializeField] [Tooltip("Normal Lenght")] private float normalLenght = 1;
+        [SerializeField]
+        [Tooltip("The Amount of Segments to Draw")]
+        [Range(1, 256)]
+        private int segments = 15;
+        [SerializeField]
+        [Tooltip("Draw the Curve?")]
+        private bool drawLine = false;
+        [SerializeField]
+        [Tooltip("Draw the Tangent?")]
+        private bool drawTangent = false;
+        [SerializeField]
+        [Tooltip("Draw the Normal Up?")]
+        private bool drawNormalUp = false;
+        [SerializeField]
+        [Tooltip("Draw the Normal?")]
+        private bool drawNormal = false;
+        [SerializeField]
+        [Tooltip("Tangent Lenght")]
+        private float tangentLenght = 1;
+        [SerializeField]
+        [Tooltip("Normal Up Lenght")]
+        private float normalLenghtUp = 1;
+        [SerializeField]
+        [Tooltip("Normal Lenght")]
+        private float normalLenght = 1;
+
         [Header("Spline Settings")]
-        [SerializeField] private Vector3[] points;
+        [MyReadOnly]
+        [SerializeField]
+        private GameObject[] pointsObj;
+
+        private MeshFilter meshFilterRef;
 
         [HideInInspector]
-        public Vector3 StartPos { get { return points[0]; } }
+        public Vector3 StartPos { get { return pointsObj[0].transform.position; } }
 
         [HideInInspector]
-        public Vector3 TangentPos { get { return points[1]; } }
+        public Vector3 TangentPos { get { return pointsObj[1].transform.position; } }
 
         [HideInInspector]
-        public Vector3 EndPos { get { return points[2]; } }
+        public Vector3 EndPos { get { return pointsObj[2].transform.position; } }
 
-        [MyReadOnly] [SerializeField] private int id = -1;
+        public OrientedPoint[] OPs;
+
+        [MyReadOnly]
+        [SerializeField]
+        private int id = -1;
 
         public int ID
         {
@@ -40,15 +67,34 @@ namespace Splines
             }
         }
 
-        public void Init(Vector3 _startPos, Vector3 _tangent, Vector3 _endPos)
+        /// <summary>
+        /// Init the spline with 3 GameObjects
+        /// </summary>
+        /// <param name="_startPos">The GameObject showing the startPos</param>
+        /// <param name="_tangent">The GameObject showing the tangent</param>
+        /// <param name="_endPos">The GameObject showing the endPos</param>
+        /// <param name="_meshFilterRef">A reference to the MeshFilter</param>
+        public void Init(GameObject _startPos, GameObject _tangent, GameObject _endPos, MeshFilter _meshFilterRef)
         {
-            points = new Vector3[3];
-            points[0] = _startPos;
-            points[1] = _tangent;
-            points[2] = _endPos;
+            pointsObj = new GameObject[3];
+            pointsObj[0] = _startPos;
+            pointsObj[1] = _tangent;
+            pointsObj[2] = _endPos;
             id = SplineManager.GetNewSplineID();
+            OPs = new OrientedPoint[segments + 1];
+            for (int i = 0; i <= segments; i++)
+            {
+                float t = 1.0f / segments * i;
+                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientation(t), t);
+            }
+            meshFilterRef = _meshFilterRef;
         }
 
+        /// <summary>
+        /// Get the world position of the point on the spline depending of t
+        /// </summary>
+        /// <param name="_t">The t amount of the Lerp. (0 <= t <= 1)</param>
+        /// <returns>The world position of the Point on the spline</returns>
         public Vector3 GetPositionAt(float _t)
         {
             if (_t < 0 || _t > 1)
@@ -62,6 +108,11 @@ namespace Splines
                 EndPos * (float)Math.Pow(_t, 2);
         }
 
+        /// <summary>
+        /// Get the tangent of the point on the spline depending of t
+        /// </summary>
+        /// <param name="_t">The t amount of the Lerp. (0 <= t <= 1)</param>
+        /// <returns>The tangent of the point on the spline</returns>
         public Vector3 GetTangentAt(float _t)
         {
             if (_t < 0 || _t > 1)
@@ -75,9 +126,14 @@ namespace Splines
                 EndPos * _t;
 
             return tagent.normalized;
-
         }
 
+        /// <summary>
+        /// Get the normal of the point on the spline depending of t
+        /// </summary>
+        /// <param name="_t">The t amount of the Lerp. (0 <= t <= 1)</param>
+        /// <param name="_up">The world up Vector</param>
+        /// <returns>The normal of the point on the spline (showing in y)</returns>
         public Vector3 GetNormalUpAt(float _t, Vector3 _up)
         {
             if (_t < 0 || _t > 1)
@@ -97,6 +153,29 @@ namespace Splines
             return Vector3.Cross(tng, binormal);
         }
 
+        /// <summary>
+        /// Get the normal of the point on the spline depending of t
+        /// </summary>
+        /// <param name="_t">The t amount of the Lerp. (0 <= t <= 1)</param>
+        /// <returns>The normal of the point on the spline (showing in y)</returns>
+        public Vector3 GetNormalUpAt(float _t)
+        {
+            if (_t < 0 || _t > 1)
+            {
+                Debug.LogError($"Wrong t in GetNormalUp in Spline ID: {ID}");
+                return Vector3.zero;
+            }
+
+            Vector3 tng = GetTangentAt(_t);
+            Vector3 binormal = Vector3.Cross(Vector3.up, tng).normalized;
+            return Vector3.Cross(tng, binormal);
+        }
+
+        /// <summary>
+        /// Get the normal of the point on the spline depending of t
+        /// </summary>
+        /// <param name="_t">The t amount of the Lerp. (0 <= t <= 1)</param>
+        /// <returns>The normal of the point on the Spline (showing in x,z)</returns>
         public Vector3 GetNormalAt(float _t)
         {
             if (_t < 0 || _t > 1)
@@ -109,37 +188,98 @@ namespace Splines
             return new Vector3(-tng.z, 0f, tng.x);
         }
 
+        /// <summary>
+        /// Get the Orientationof the point in the spline depending of t
+        /// </summary>
+        /// <param name="_t">The t amount of the Lerp. (0 <= t <= 1)</param>
+        /// <returns>The Quarternion of the point on the spline</returns>
+        public Quaternion GetOrientation(float _t)
+        {
+            return Quaternion.LookRotation(GetTangentAt(_t), GetNormalAt(_t));
+        }
+
+        /// <summary>
+        /// Get the Orientationof the point in the spline depending of t
+        /// </summary>
+        /// <param name="_t">The t amount of the Lerp. (0 <= t <= 1)</param>
+        /// <returns>The Quarternion of the point on the spline</returns>
+        public Quaternion GetOrientationUp(float _t)
+        {
+            return Quaternion.LookRotation(GetTangentAt(_t), GetNormalUpAt(_t));
+        }
+
+        private void Update()
+        {
+            if (OPs.Length != segments + 1)
+                OPs = new OrientedPoint[segments + 1];
+            for (int i = 0; i <= segments; i++)
+            {
+                float t = 1.0f / segments * i;
+                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientation(t), t);
+            }
+            MeshGenerator.Extrude(meshFilterRef.mesh, new ExtrudeShape(), this, transform.position);
+        }
+
         private void OnDrawGizmos()
         {
-            for (int i = 0; i <= segments; i++)
+            for (int i = 0; i < OPs.Length; i++)
             {
                 float t = 1.0f / segments * i;
                 float tnext = 1.0f / segments * (i + 1);
 
-                if (!(tnext > 1))
+                if (!(i+1 >= OPs.Length))
                 {
                     if (drawLine)
                     {
                         Gizmos.color = Color.white;
-                        Gizmos.DrawLine(GetPositionAt(t), GetPositionAt(tnext));
+                        Gizmos.DrawLine(OPs[i].Position, OPs[i+1].Position);
                     }
                 }
                 if (drawTangent)
                 {
                     Gizmos.color = Color.red;
-                    Gizmos.DrawLine(GetPositionAt(t), GetPositionAt(t) + GetTangentAt(t) * tangentLenght);
+                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetTangentAt(t) * tangentLenght);
                 }
                 if (drawNormalUp)
                 {
                     Gizmos.color = Color.green;
-                    Gizmos.DrawLine(GetPositionAt(t), GetPositionAt(t) + GetNormalUpAt(t, Vector3.up) * normalLenghtUp);
+                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetNormalUpAt(t) * normalLenghtUp);
                 }
                 if (drawNormal)
                 {
                     Gizmos.color = Color.blue;
-                    Gizmos.DrawLine(GetPositionAt(t), GetPositionAt(t) + GetNormalAt(t) * normalLenght);
+                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetNormalAt(t) * normalLenght);
                 }
             }
+        }
+    }
+
+    public class OrientedPoint
+    {
+        public Vector3 Position;
+        public Quaternion Rotation;
+        public float t;
+
+        public OrientedPoint(Vector3 _position, Quaternion _rotation, float _t)
+        {
+            Position = _position;
+            Rotation = _rotation;
+            t = _t;
+        }
+
+        public Vector3 LocalToWorld(Vector3 _point)
+        {
+            return Position + Rotation * _point;
+        }
+
+        public Vector3 WorldToLocal(Vector3 _point)
+        {
+            return Quaternion.Inverse(Rotation) * (_point - Position);
+        }
+
+        public Vector3 LocalToWorldDirection(Vector3 _dir)
+        {
+            return Rotation * _dir;
         }
     }
 }
