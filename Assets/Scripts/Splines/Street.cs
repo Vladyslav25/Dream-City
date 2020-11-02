@@ -78,10 +78,10 @@ public class Street : MonoBehaviour
             float t = 1.0f / segments * i;
             m_Spline.OPs[i] = new OrientedPoint(m_Spline.GetPositionAt(t), m_Spline.GetOrientationUp(t), t);
         }
-        //if (drawMesh)
-        //    MeshGenerator.Extrude(this);
-        //else
-        //    m_MeshFilterRef.mesh.Clear();
+        if (drawMesh)
+            MeshGenerator.Extrude(this);
+        else
+            m_MeshFilterRef.mesh.Clear();
     }
 
     private void OnDrawGizmos()

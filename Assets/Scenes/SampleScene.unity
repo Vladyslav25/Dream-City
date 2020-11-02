@@ -336,6 +336,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a23b3a9fe81571438c7845af50637ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StreetMat: {fileID: 2100000, guid: df64f9bfd656dbb438116aef7dfacbb2, type: 2}
+  SidewalkMat: {fileID: 2100000, guid: b0ab958012d4ec74fb5e2b40c026d701, type: 2}
 --- !u!4 &899825173
 Transform:
   m_ObjectHideFlags: 0

@@ -61,8 +61,9 @@ namespace Splines
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
             mr.materials = new Material[]
             {
-                Instance.SidewalkMat,
-                Instance.StreetMat
+                Instance.StreetMat,
+                //Instance.StreetMat,
+                //Instance.SidewalkMat
             };
 
             Street s = obj.gameObject.AddComponent<Street>();
@@ -79,12 +80,13 @@ namespace Splines
             end.transform.SetParent(obj.transform);
 
             s.Init(
-               start, tangent, end, 8,
+               start, tangent, end, 3,
                 mf,
                 new ExtrudeShapeBase[]
                 {
-                    new Sidewalk(),
-                    new StreetShape()
+                    new StreetShapeComplete(),
+                    //new StreetShape(),
+                    //new Sidewalk()
                 });
 
             splineID_Dic.Add(s.ID, s);

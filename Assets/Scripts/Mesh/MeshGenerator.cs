@@ -31,30 +31,40 @@ namespace MeshGeneration
 
         public static void Extrude(Street _street)
         {
-            _street.m_MeshFilterRef.mesh.subMeshCount = _street.m_Shape.Length;
+            int shapeAmount = _street.m_Shape.Length;
+            _street.m_MeshFilterRef.mesh.subMeshCount = shapeAmount;
             Mesh mesh = _street.m_MeshFilterRef.mesh;
             Spline spline = _street.m_Spline;
-            for (int k = 0; k < _street.m_Shape.Length; k++)
+            int segments = spline.OPs.Length - 1;
+
+            int vertexAmount = 0; //Die Anzahl an Verts
+            int indicesAmount = 0;  //Die Anzahl an Indices
+
+            for (int k = 0; k < shapeAmount; k++)
             {
-                int vertsInShape = 0;
-                int triCount = 0;
-                int triIndexCount = 0;
-                int segments = spline.OPs.Length - 1;
+                vertexAmount += _street.m_Shape[k].verts.Length;
+                indicesAmount += _street.m_Shape[k].lines.Length * segments * 3;
+            }
+
+            int[] vertCountMesh = new int[shapeAmount]; //Die Anzahl an Verts pro Mesh
+
+            List<Vector3> verticies = new List<Vector3>(); //Alle Verts
+            List<Vector2> uvs = new List<Vector2>(); //Alle UVs
+            List<int>[] triangelIndices = new List<int>[shapeAmount]; //Alle Indices | Array -> MeshCount | List -> Triangel Data
+
+            for (int k = 0; k < shapeAmount; k++)
+            {
                 ExtrudeShapeBase shape = _street.m_Shape[k];
 
-                vertsInShape = shape.verts.Length;
-                triCount = shape.lines.Length * segments;
-                triIndexCount = triCount * 3;
-
+                int vertsInShape = shape.verts.Length; //Anzahl der Verts im Shape
                 int edgeLoops = spline.OPs.Length;
-                int vertCount = vertsInShape * edgeLoops;
+                int vertCountInShape = vertsInShape * edgeLoops; //Anzahl der Verts, welche im fertigen Mesh sein werden
 
-                Vector3[] verticies = new Vector3[vertCount];
-                Vector3[] normals = new Vector3[vertCount];
-                Vector2[] uvs = new Vector2[vertCount];
+                vertCountMesh[k] = vertCountInShape;    // Speichere die Anzahl im Array
 
+                Vector3[] verticiesInShape = new Vector3[vertCountInShape]; //Die Verts im Shape
+                Vector2[] uvsInShape = new Vector2[vertCountInShape];  //Die UVs im Shape
 
-                int[] triangelIndices = new int[triIndexCount];
                 float[] arr = new float[segments];
                 CalcLengthTableInto(arr, spline);
                 float shapeLength = shape.GetLineLength();
@@ -65,10 +75,27 @@ namespace MeshGeneration
                     for (int j = 0; j < shape.verts.Length; j++)
                     {
                         int id = offset + j;
-                        verticies[id] = spline.OPs[i].LocalToWorld(shape.verts[j]) - _street.m_MeshOffset;
-                        uvs[id] = new Vector2(arr.Sample(i / ((float)edgeLoops)) / shapeLength, shape.us[j]);
+                        verticiesInShape[id] = spline.OPs[i].LocalToWorld(shape.verts[j]) - _street.m_MeshOffset;
+                        uvsInShape[id] = new Vector2(arr.Sample(i / ((float)edgeLoops)) / shapeLength, shape.us[j]);
                     }
                 }
+                verticies.AddRange(verticiesInShape);
+                uvs.AddRange(uvsInShape);
+            }
+
+            mesh.vertices = verticies.ToArray();
+            mesh.uv = uvs.ToArray();
+            //mesh.SetVertices(verticies);
+            //mesh.SetUVs(0, uvs);
+
+            for (int k = 0; k < shapeAmount; k++)
+            {
+                ExtrudeShapeBase shape = _street.m_Shape[k];
+
+                int triCount = shape.lines.Length * segments * 3; // Amount of Indices in Mesh
+                int[] triangelIndicesInShape = new int[triCount]; // Indices in Mesh
+
+                int vertsInShape = shape.verts.Length; // Amount of Verts in Shape
 
                 int ti = 0;
                 for (int i = 0; i < segments; i++)
@@ -80,26 +107,27 @@ namespace MeshGeneration
                         int b = offset + shape.lines[j];
                         int c = offset + shape.lines[j + 1];
                         int d = offset + shape.lines[j + 1] + vertsInShape;
-                        triangelIndices[ti] = a;
+                        triangelIndicesInShape[ti] = a;
                         ti++;
-                        triangelIndices[ti] = b;
+                        triangelIndicesInShape[ti] = b;
                         ti++;
-                        triangelIndices[ti] = c;
+                        triangelIndicesInShape[ti] = c;
                         ti++;
-                        triangelIndices[ti] = c;
+                        triangelIndicesInShape[ti] = c;
                         ti++;
-                        triangelIndices[ti] = d;
+                        triangelIndicesInShape[ti] = d;
                         ti++;
-                        triangelIndices[ti] = a;
+                        triangelIndicesInShape[ti] = a;
                         ti++;
                     }
                 }
-
-                mesh.SetVertices(verticies);
-                mesh.SetTriangles(triangelIndices, k);
-                mesh.RecalculateNormals();
-                mesh.uv = uvs;
+                triangelIndices[k] = new List<int>(triangelIndicesInShape);
             }
+            for (int k = 0; k < shapeAmount; k++)
+            {
+                mesh.SetTriangles(triangelIndices[k], k);
+            }
+            mesh.RecalculateNormals();
         }
 
         private static void CalcLengthTableInto(float[] arr, Spline _spline)
@@ -230,6 +258,82 @@ namespace MeshGeneration
         {
             new Vector2(0.75f,0.05f),
             new Vector2(-0.75f,0.05f)
+        };
+
+        public float[] usDefault = new float[]
+        {
+            0.25f,
+            0.75f,
+        };
+
+        public int[] linesDefault = new int[]
+        {
+            0, 1,
+        };
+    }
+
+    public class TestShapeOne : ExtrudeShapeBase
+    {
+        public TestShapeOne(Vector2[] _verts = null, float[] _us = null, int[] _lines = null)
+        {
+            if (_verts != null)
+                verts = _verts;
+            else
+                verts = vertsDefault;
+
+            if (_us != null)
+                us = _us;
+            else
+                us = usDefault;
+
+            if (_lines != null)
+                lines = _lines;
+            else
+                lines = linesDefault;
+        }
+
+        public Vector2[] vertsDefault = new Vector2[]
+        {
+            new Vector2(1,1),
+            new Vector2(-1,1)
+        };
+
+        public float[] usDefault = new float[]
+        {
+            0.25f,
+            0.75f,
+        };
+
+        public int[] linesDefault = new int[]
+        {
+            0, 1,
+        };
+    }
+
+    public class TestShapeTwo : ExtrudeShapeBase
+    {
+        public TestShapeTwo(Vector2[] _verts = null, float[] _us = null, int[] _lines = null)
+        {
+            if (_verts != null)
+                verts = _verts;
+            else
+                verts = vertsDefault;
+
+            if (_us != null)
+                us = _us;
+            else
+                us = usDefault;
+
+            if (_lines != null)
+                lines = _lines;
+            else
+                lines = linesDefault;
+        }
+
+        public Vector2[] vertsDefault = new Vector2[]
+        {
+            new Vector2(1,5),
+            new Vector2(-1,5)
         };
 
         public float[] usDefault = new float[]
