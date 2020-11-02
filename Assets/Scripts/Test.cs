@@ -34,7 +34,7 @@ public class Test : MonoBehaviour
                 {
                     pos3 = hit.point;
                     Debug.Log(pos3);
-                    SplineManager.CreateSpline(pos1, pos2, pos3);
+                    StreetManager.CreateStreet(pos1, pos2, pos3);
                     pos1 = Vector3.zero;
                     pos2 = Vector3.zero;
                     pos3 = Vector3.zero;

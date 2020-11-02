@@ -5,21 +5,21 @@ using UnityEngine;
 
 namespace Splines
 {
-    public class SplineManager : MonoBehaviour
+    public class StreetManager : MonoBehaviour
     {
         #region -SingeltonPattern-
-        private static SplineManager _instance;
-        public static SplineManager Instance
+        private static StreetManager _instance;
+        public static StreetManager Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = GameObject.FindObjectOfType<SplineManager>();
+                    _instance = GameObject.FindObjectOfType<StreetManager>();
                     if (_instance == null)
                     {
                         GameObject container = new GameObject("SplineManager");
-                        _instance = container.AddComponent<SplineManager>();
+                        _instance = container.AddComponent<StreetManager>();
                     }
                 }
                 return _instance;
@@ -28,12 +28,14 @@ namespace Splines
         #endregion
 
         [SerializeField]
-        private Material myDefault;
+        private Material StreetMat;
+        [SerializeField]
+        private Material SidewalkMat;
 
-        private static Dictionary<int, Spline> splineID_Dic = new Dictionary<int, Spline>();
+        private static Dictionary<int, Street> splineID_Dic = new Dictionary<int, Street>();
         private static int setSplineId;
 
-        public static Spline GetSplineByID(int _id)
+        public static Street GetStreetByID(int _id)
         {
             if (splineID_Dic.ContainsKey(_id))
             {
@@ -49,16 +51,21 @@ namespace Splines
             return setSplineId;
         }
 
-        public static Spline CreateSpline(Vector3 _startPos, Vector3 _tangent, Vector3 _endPos)
+        public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent, Vector3 _endPos)
         {
-            GameObject obj = new GameObject("Spline");
+            GameObject obj = new GameObject("Street");
             obj.transform.position = _startPos;
             obj.transform.SetParent(Instance.transform);
+
             MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
-            mr.material = Instance.myDefault;
+            mr.materials = new Material[]
+            {
+                Instance.SidewalkMat,
+                Instance.StreetMat
+            };
 
-            Spline s = obj.gameObject.AddComponent<Spline>();
+            Street s = obj.gameObject.AddComponent<Street>();
             GameObject start = new GameObject("Start");
             GameObject tangent = new GameObject("Tangent");
             GameObject end = new GameObject("End");
@@ -71,8 +78,14 @@ namespace Splines
             tangent.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent, end, mf);
-            //MeshGenerator.Extrude(mf.mesh, new ExtrudeShape(), s, obj.transform.position);
+            s.Init(
+               start, tangent, end, 8,
+                mf,
+                new ExtrudeShapeBase[]
+                {
+                    new Sidewalk(),
+                    new StreetShape()
+                });
 
             splineID_Dic.Add(s.ID, s);
             return s;

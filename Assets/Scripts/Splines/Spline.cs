@@ -7,44 +7,12 @@ using UnityEngine;
 
 namespace Splines
 {
-    public class Spline : MonoBehaviour
+    public class Spline
     {
-        [Header("Gizmo Settings")]
-        [SerializeField]
-        [Tooltip("The Amount of Segments to Draw")]
-        [Range(1, 256)]
-        private int segments = 15;
-        [SerializeField]
-        [Tooltip("Draw the Curve?")]
-        private bool drawLine = false;
-        [SerializeField]
-        [Tooltip("Draw the Tangent?")]
-        private bool drawTangent = false;
-        [SerializeField]
-        [Tooltip("Draw the Normal Up?")]
-        private bool drawNormalUp = false;
-        [SerializeField]
-        [Tooltip("Draw the Normal?")]
-        private bool drawNormal = false;
-        [SerializeField]
-        [Tooltip("Tangent Lenght")]
-        private float tangentLenght = 1;
-        [SerializeField]
-        [Tooltip("Normal Up Lenght")]
-        private float normalLenghtUp = 1;
-        [SerializeField]
-        [Tooltip("Normal Lenght")]
-        private float normalLenght = 1;
-
         [Header("Spline Settings")]
         [MyReadOnly]
         [SerializeField]
         private GameObject[] pointsObj;
-
-        [SerializeField]
-        private bool drawMesh = true;
-
-        private MeshFilter meshFilterRef;
 
         [HideInInspector]
         public Vector3 StartPos { get { return pointsObj[0].transform.position; } }
@@ -57,40 +25,18 @@ namespace Splines
 
         public OrientedPoint[] OPs;
 
-        [MyReadOnly]
-        [SerializeField]
-        private int id = -1;
-
-        public int ID
-        {
-            get
-            {
-                if (id > 0) return id;
-                else return -1;
-            }
-        }
-
-        /// <summary>
-        /// Init the spline with 3 GameObjects
-        /// </summary>
-        /// <param name="_startPos">The GameObject showing the startPos</param>
-        /// <param name="_tangent">The GameObject showing the tangent</param>
-        /// <param name="_endPos">The GameObject showing the endPos</param>
-        /// <param name="_meshFilterRef">A reference to the MeshFilter</param>
-        public void Init(GameObject _startPos, GameObject _tangent, GameObject _endPos, MeshFilter _meshFilterRef)
+        public Spline(GameObject _startPos, GameObject _tangent, GameObject _endPos, int segments)
         {
             pointsObj = new GameObject[3];
             pointsObj[0] = _startPos;
             pointsObj[1] = _tangent;
             pointsObj[2] = _endPos;
-            id = SplineManager.GetNewSplineID();
             OPs = new OrientedPoint[segments + 1];
             for (int i = 0; i <= segments; i++)
             {
                 float t = 1.0f / segments * i;
-                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientation(t), t);
+                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
-            meshFilterRef = _meshFilterRef;
         }
 
         /// <summary>
@@ -102,7 +48,7 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetPosition in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetPosition in Spline");
                 return Vector3.zero;
             }
             return
@@ -120,7 +66,7 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetTanget in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetTanget in Spline ID");
                 return Vector3.zero;
             }
             Vector3 tagent =
@@ -141,13 +87,13 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetNormalUp in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetNormalUp in Spline ID");
                 return Vector3.zero;
             }
 
             if (_up == Vector3.zero)
             {
-                Debug.LogError($"Wrong UpVector in GetNormalUp in Spline ID: {ID}");
+                Debug.LogError($"Wrong UpVector in GetNormalUp in Spline ID");
                 return Vector3.zero;
             }
 
@@ -165,7 +111,7 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetNormalUp in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetNormalUp in Spline ID");
                 return Vector3.zero;
             }
 
@@ -183,7 +129,7 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetNormal in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetNormal in Spline ID");
                 return Vector3.zero;
             }
 
@@ -219,54 +165,6 @@ namespace Splines
                 output += Vector3.Distance(OPs[i].Position, OPs[i + 1].Position);
             }
             return output;
-        }
-
-        private void Update()
-        {
-            if (OPs.Length != segments + 1)
-                OPs = new OrientedPoint[segments + 1];
-            for (int i = 0; i <= segments; i++)
-            {
-                float t = 1.0f / segments * i;
-                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
-            }
-            if (drawMesh)
-                MeshGenerator.Extrude(meshFilterRef.mesh, new ExtrudeShape(), this, transform.position);
-            else
-                meshFilterRef.mesh.Clear();
-        }
-
-        private void OnDrawGizmos()
-        {
-            for (int i = 0; i < OPs.Length; i++)
-            {
-                float t = 1.0f / segments * i;
-                float tnext = 1.0f / segments * (i + 1);
-
-                if (!(i + 1 >= OPs.Length))
-                {
-                    if (drawLine)
-                    {
-                        Gizmos.color = Color.white;
-                        Gizmos.DrawLine(OPs[i].Position, OPs[i + 1].Position);
-                    }
-                }
-                if (drawTangent)
-                {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetTangentAt(t) * tangentLenght);
-                }
-                if (drawNormalUp)
-                {
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetNormalUpAt(t) * normalLenghtUp);
-                }
-                if (drawNormal)
-                {
-                    Gizmos.color = Color.blue;
-                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetNormalAt(t) * normalLenght);
-                }
-            }
         }
     }
 
