@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace MeshGeneration
 {
-
     public class MeshGenerator : MonoBehaviour
     {
         #region -SingeltonPattern-

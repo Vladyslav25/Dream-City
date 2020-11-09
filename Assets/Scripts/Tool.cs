@@ -4,7 +4,7 @@ using UnityEngine;
 using Splines;
 using UnityEditor;
 
-public class Test : MonoBehaviour
+public class Tool : MonoBehaviour
 {
     [SerializeField]
     GameObject spherePrefab;
