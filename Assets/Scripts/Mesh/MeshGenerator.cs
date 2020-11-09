@@ -43,7 +43,6 @@ namespace MeshGeneration
 
             int[] triangelIndices = new int[triIndexCount];
             Vector3[] verticies = new Vector3[vertCount];
-            Vector3[] normals = new Vector3[vertCount];
             Vector2[] uvs = new Vector2[vertCount];
 
             float[] arr = new float[segments];
@@ -57,7 +56,7 @@ namespace MeshGeneration
                 {
                     int id = offset + j;
                     verticies[id] = Spline.OPs[i].LocalToWorld(Shape.verts[j]) - _street.m_MeshOffset;
-                    uvs[id] = new Vector2(arr.Sample(i / ((float)edgeLoops)) / shapeLength, Shape.us[j]);
+                    uvs[id] = new Vector2(Shape.us[j], arr.Sample(i / ((float)edgeLoops)) / shapeLength);
                 }
             }
 
@@ -85,12 +84,14 @@ namespace MeshGeneration
                     ti++;
                 }
             }
+
             Mesh mesh = _street.m_MeshFilterRef.mesh;
             mesh.Clear();
             mesh.vertices = verticies;
             mesh.triangles = triangelIndices;
             mesh.RecalculateNormals();
             mesh.uv = uvs;
+            mesh.RecalculateBounds();
         }
 
         private static void CalcLengthTableInto(float[] arr, Spline _spline)
@@ -112,10 +113,6 @@ namespace MeshGeneration
 
     public class ExtrudeShapeBase
     {
-        public Vector2[] verts;
-        public float[] us;
-        public int[] lines;
-
         public float GetLineLength()
         {
             float output = 0;
@@ -126,7 +123,7 @@ namespace MeshGeneration
             return output;
         }
 
-        public Vector2[] vertsDefault = new Vector2[]
+        public Vector2[] verts = new Vector2[]
         {
             new Vector2(1,0), //0
             new Vector2(1,0.1f),
@@ -145,26 +142,26 @@ namespace MeshGeneration
             new Vector2(-1,0)
         };
 
-        public float[] usDefault = new float[]
+        public float[] us = new float[]
         {
-            0,
-            0,
-            0,
-            0.25f,
-            0.25f,
-            0.25f,
-            0.25f,
+            0f,
+            0.0001f,
+            0.0001f,
+            162f/1024f,
+            162f/1024f,
+            175f/1024f,
+            175f/1024f,
 
-            0.75f,
-            0.75f,
-            0.75f,
-            0.75f,
-            1,
-            1,
+            849f/1024f,
+            849f/1024f,
+            862f/1024f,
+            862f/1024f,
+            0.9999f,
+            0.9999f,
             1
         };
 
-        public int[] linesDefault = new int[]
+        public int[] lines = new int[]
         {
             0, 1,
             2, 3,

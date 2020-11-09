@@ -29,8 +29,6 @@ namespace Splines
 
         [SerializeField]
         private Material StreetMat;
-        [SerializeField]
-        private Material SidewalkMat;
 
         private static Dictionary<int, Street> splineID_Dic = new Dictionary<int, Street>();
         private static int setSplineId;
@@ -59,10 +57,7 @@ namespace Splines
 
             MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
-            mr.materials = new Material[]
-            {
-                Instance.StreetMat
-            };
+            mr.material = Instance.StreetMat;
 
             Street s = obj.gameObject.AddComponent<Street>();
             GameObject start = new GameObject("Start");
@@ -80,7 +75,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, new ExtrudeShapeBase(), true);
+            s.Init(start, tangent1, tangent2, end, 20, mf, new ExtrudeShapeBase(), true, false);
 
             return s;
         }
@@ -114,7 +109,6 @@ namespace Splines
             MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
             mr.material = Instance.StreetMat;
-
 
             Street s = obj.gameObject.AddComponent<Street>();
             GameObject start = new GameObject("Start");

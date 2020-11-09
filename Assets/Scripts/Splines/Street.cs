@@ -64,9 +64,10 @@ public class Street : MonoBehaviour
     private bool lastDrawMeshSetting;
     private int lastSegmentCount;
 
-    public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, ExtrudeShapeBase _shape, bool _updateMesh = false)
+    public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true)
     {
-        id = StreetManager.GetNewSplineID();
+        if (_needID)
+            id = StreetManager.GetNewSplineID();
         m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments);
         m_MeshFilterRef = _meshFilter;
         m_Shape = _shape;

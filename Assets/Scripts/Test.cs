@@ -84,8 +84,6 @@ public class Test : MonoBehaviour
                 if (pos3Set == false)
                 {
                     pos3 = hitPoint;
-                    Vector3 tangent1 = (pos1 + pos2) * 0.5f;
-                    Vector3 tangent2 = (pos3 + pos2) * 0.5f;
                     CheckForCombine(hitPoint, false);
                     StreetManager.CreateStreet(currendStreet);
                     pos1 = Vector3.zero;
