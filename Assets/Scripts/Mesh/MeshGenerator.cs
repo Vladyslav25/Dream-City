@@ -31,103 +31,66 @@ namespace MeshGeneration
 
         public static void Extrude(Street _street)
         {
-            int shapeAmount = _street.m_Shape.Length;
-            _street.m_MeshFilterRef.mesh.subMeshCount = shapeAmount;
+            ExtrudeShapeBase Shape = _street.m_Shape;
+            Spline Spline = _street.m_Spline;
+
+            int vertsInShape = Shape.verts.Length;
+            int segments = Spline.OPs.Length - 1;
+            int edgeLoops = Spline.OPs.Length;
+            int vertCount = vertsInShape * edgeLoops;
+            int triCount = Shape.lines.Length * segments;
+            int triIndexCount = triCount * 3;
+
+            int[] triangelIndices = new int[triIndexCount];
+            Vector3[] verticies = new Vector3[vertCount];
+            Vector3[] normals = new Vector3[vertCount];
+            Vector2[] uvs = new Vector2[vertCount];
+
+            float[] arr = new float[segments];
+            CalcLengthTableInto(arr, Spline);
+            float shapeLength = Shape.GetLineLength();
+
+            for (int i = 0; i < Spline.OPs.Length; i++)
+            {
+                int offset = i * vertsInShape;
+                for (int j = 0; j < vertsInShape; j++)
+                {
+                    int id = offset + j;
+                    verticies[id] = Spline.OPs[i].LocalToWorld(Shape.verts[j]) - _street.m_MeshOffset;
+                    uvs[id] = new Vector2(arr.Sample(i / ((float)edgeLoops)) / shapeLength, Shape.us[j]);
+                }
+            }
+
+            int ti = 0;
+            for (int i = 0; i < segments; i++)
+            {
+                int offset = i * vertsInShape;
+                for (int j = 0; j < Shape.lines.Length; j += 2)
+                {
+                    int a = offset + Shape.lines[j] + vertsInShape;
+                    int b = offset + Shape.lines[j];
+                    int c = offset + Shape.lines[j + 1];
+                    int d = offset + Shape.lines[j + 1] + vertsInShape;
+                    triangelIndices[ti] = a;
+                    ti++;
+                    triangelIndices[ti] = b;
+                    ti++;
+                    triangelIndices[ti] = c;
+                    ti++;
+                    triangelIndices[ti] = c;
+                    ti++;
+                    triangelIndices[ti] = d;
+                    ti++;
+                    triangelIndices[ti] = a;
+                    ti++;
+                }
+            }
             Mesh mesh = _street.m_MeshFilterRef.mesh;
-            Spline spline = _street.m_Spline;
-            int segments = spline.OPs.Length - 1;
-
-            int vertexAmount = 0; //Die Anzahl an Verts
-            int indicesAmount = 0;  //Die Anzahl an Indices
-
-            for (int k = 0; k < shapeAmount; k++)
-            {
-                vertexAmount += _street.m_Shape[k].verts.Length;
-                indicesAmount += _street.m_Shape[k].lines.Length * segments * 3;
-            }
-
-            int[] vertCountMesh = new int[shapeAmount]; //Die Anzahl an Verts pro Mesh
-
-            List<Vector3> verticies = new List<Vector3>(); //Alle Verts
-            List<Vector2> uvs = new List<Vector2>(); //Alle UVs
-            List<int>[] triangelIndices = new List<int>[shapeAmount]; //Alle Indices | Array -> MeshCount | List -> Triangel Data
-
-            for (int k = 0; k < shapeAmount; k++)
-            {
-                ExtrudeShapeBase shape = _street.m_Shape[k];
-
-                int vertsInShape = shape.verts.Length; //Anzahl der Verts im Shape
-                int edgeLoops = spline.OPs.Length;
-                int vertCountInShape = vertsInShape * edgeLoops; //Anzahl der Verts, welche im fertigen Mesh sein werden
-
-                vertCountMesh[k] = vertCountInShape;    // Speichere die Anzahl im Array
-
-                Vector3[] verticiesInShape = new Vector3[vertCountInShape]; //Die Verts im Shape
-                Vector2[] uvsInShape = new Vector2[vertCountInShape];  //Die UVs im Shape
-
-                float[] arr = new float[segments];
-                CalcLengthTableInto(arr, spline);
-                float shapeLength = shape.GetLineLength();
-
-                for (int i = 0; i < spline.OPs.Length; i++)
-                {
-                    int offset = i * shape.verts.Length;
-                    for (int j = 0; j < shape.verts.Length; j++)
-                    {
-                        int id = offset + j;
-                        verticiesInShape[id] = spline.OPs[i].LocalToWorld(shape.verts[j]) - _street.m_MeshOffset;
-                        uvsInShape[id] = new Vector2(arr.Sample(i / ((float)edgeLoops)) / shapeLength, shape.us[j]);
-                    }
-                }
-                verticies.AddRange(verticiesInShape);
-                uvs.AddRange(uvsInShape);
-            }
-
-            mesh.vertices = verticies.ToArray();
-            mesh.uv = uvs.ToArray();
-            //mesh.SetVertices(verticies);
-            //mesh.SetUVs(0, uvs);
-
-            for (int k = 0; k < shapeAmount; k++)
-            {
-                ExtrudeShapeBase shape = _street.m_Shape[k];
-
-                int triCount = shape.lines.Length * segments * 3; // Amount of Indices in Mesh
-                int[] triangelIndicesInShape = new int[triCount]; // Indices in Mesh
-
-                int vertsInShape = shape.verts.Length; // Amount of Verts in Shape
-
-                int ti = 0;
-                for (int i = 0; i < segments; i++)
-                {
-                    int offset = i * vertsInShape;
-                    for (int j = 0; j < shape.lines.Length; j += 2)
-                    {
-                        int a = offset + shape.lines[j] + vertsInShape;
-                        int b = offset + shape.lines[j];
-                        int c = offset + shape.lines[j + 1];
-                        int d = offset + shape.lines[j + 1] + vertsInShape;
-                        triangelIndicesInShape[ti] = a;
-                        ti++;
-                        triangelIndicesInShape[ti] = b;
-                        ti++;
-                        triangelIndicesInShape[ti] = c;
-                        ti++;
-                        triangelIndicesInShape[ti] = c;
-                        ti++;
-                        triangelIndicesInShape[ti] = d;
-                        ti++;
-                        triangelIndicesInShape[ti] = a;
-                        ti++;
-                    }
-                }
-                triangelIndices[k] = new List<int>(triangelIndicesInShape);
-            }
-            for (int k = 0; k < shapeAmount; k++)
-            {
-                mesh.SetTriangles(triangelIndices[k], k);
-            }
+            mesh.Clear();
+            mesh.vertices = verticies;
+            mesh.triangles = triangelIndices;
             mesh.RecalculateNormals();
+            mesh.uv = uvs;
         }
 
         private static void CalcLengthTableInto(float[] arr, Spline _spline)

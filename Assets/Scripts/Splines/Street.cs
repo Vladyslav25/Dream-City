@@ -14,6 +14,8 @@ public class Street : MonoBehaviour
     [SerializeField]
     private bool drawMesh = true;
     [SerializeField]
+    private bool updateMesh = false;
+    [SerializeField]
     [Tooltip("Draw the Curve?")]
     private bool drawLine = false;
     [SerializeField]
@@ -37,7 +39,7 @@ public class Street : MonoBehaviour
 
     public Spline m_Spline;
     public MeshFilter m_MeshFilterRef;
-    public ExtrudeShapeBase[] m_Shape;
+    public ExtrudeShapeBase m_Shape;
     public Vector3 m_MeshOffset
     {
         get
@@ -59,31 +61,43 @@ public class Street : MonoBehaviour
         }
     }
 
-    public Street Init(GameObject _startPos, GameObject _tangent, GameObject _endPos, int _segments, MeshFilter _meshFilter, params ExtrudeShapeBase[] _shape)
+    private bool lastDrawMeshSetting;
+    private int lastSegmentCount;
+
+    public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, ExtrudeShapeBase _shape, bool _updateMesh = false)
     {
         id = StreetManager.GetNewSplineID();
-        m_Spline = new Spline(_startPos, _tangent, _endPos, _segments);
+        m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments);
         m_MeshFilterRef = _meshFilter;
         m_Shape = _shape;
         MeshGenerator.Extrude(this);
+        updateMesh = _updateMesh;
         return this;
     }
 
     private void Update()
     {
-        if (m_Spline.OPs.Length != segments + 1)
-            m_Spline.OPs = new OrientedPoint[segments + 1];
-        for (int i = 0; i <= segments; i++)
+        if (lastDrawMeshSetting != drawMesh || updateMesh)
         {
-            float t = 1.0f / segments * i;
-            m_Spline.OPs[i] = new OrientedPoint(m_Spline.GetPositionAt(t), m_Spline.GetOrientationUp(t), t);
+            if (drawMesh)
+            {
+                m_Spline.UpdateOPs();
+                MeshGenerator.Extrude(this);
+            }
+            else
+                m_MeshFilterRef.mesh.Clear();
         }
-        if (drawMesh)
-            MeshGenerator.Extrude(this);
-        else
-            m_MeshFilterRef.mesh.Clear();
 
-        Debug.Log("TangentPos: " + m_Spline.TangentPos);
+        lastDrawMeshSetting = drawMesh;
+
+        if (lastSegmentCount != segments)
+        {
+            m_Spline.segments = segments;
+            m_Spline.UpdateOPs();
+            MeshGenerator.Extrude(this);
+        }
+
+        lastSegmentCount = segments;
     }
 
     private void OnDrawGizmos()

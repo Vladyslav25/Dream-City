@@ -18,21 +18,25 @@ namespace Splines
         public Vector3 StartPos { get { return pointsObj[0].transform.position; } private set { pointsObj[0].transform.position = value; } }
 
         [HideInInspector]
-        public Vector3 TangentPos { get { return pointsObj[1].transform.position; } private set { pointsObj[1].transform.position = value; } }
+        public Vector3 Tangent1Pos { get { return pointsObj[1].transform.position; } private set { pointsObj[1].transform.position = value; } }
 
         [HideInInspector]
-        public Vector3 EndPos { get { return pointsObj[2].transform.position; } private set { pointsObj[2].transform.position = value; } }
+        public Vector3 Tangent2Pos { get { return pointsObj[2].transform.position; } private set { pointsObj[2].transform.position = value; } }
+
+        [HideInInspector]
+        public Vector3 EndPos { get { return pointsObj[3].transform.position; } private set { pointsObj[3].transform.position = value; } }
 
         public OrientedPoint[] OPs;
 
         public int segments;
 
-        public Spline(GameObject _startPos, GameObject _tangent, GameObject _endPos, int _segments)
+        public Spline(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments)
         {
-            pointsObj = new GameObject[3];
+            pointsObj = new GameObject[4];
             pointsObj[0] = _startPos;
-            pointsObj[1] = _tangent;
-            pointsObj[2] = _endPos;
+            pointsObj[1] = _tangent1;
+            pointsObj[2] = _tangent2;
+            pointsObj[3] = _endPos;
             segments = _segments;
             UpdateOPs();
         }
@@ -45,11 +49,19 @@ namespace Splines
             UpdateOPs();
         }
 
-        public void SetTangentPos(Vector3 _newPos)
+        public void SetTangent1Pos(Vector3 _newPos)
         {
             if (_newPos == Vector3.zero) return;
 
-            TangentPos = _newPos;
+            Tangent1Pos = _newPos;
+            UpdateOPs();
+        }
+
+        public void SetTangent2Pos(Vector3 _newPos)
+        {
+            if (_newPos == Vector3.zero) return;
+
+            Tangent2Pos = _newPos;
             UpdateOPs();
         }
 
@@ -73,10 +85,14 @@ namespace Splines
                 Debug.LogError($"Wrong t in GetPosition in Spline");
                 return Vector3.zero;
             }
+            float omt = 1f - _t;
+            float omt2 = omt * omt;
+            float t2 = _t * _t;
             return
-                StartPos * (1 - 2 * _t + (float)Math.Pow(_t, 2)) +
-                TangentPos * (2 * _t - 2 * (float)Math.Pow(_t, 2)) +
-                EndPos * (float)Math.Pow(_t, 2);
+                StartPos * (omt2 * omt) +
+                Tangent1Pos * (3f * omt2 * _t) +
+                Tangent2Pos * (3f * omt * t2) +
+                EndPos * (t2 * _t);
         }
 
         /// <summary>
@@ -91,10 +107,14 @@ namespace Splines
                 Debug.LogError($"Wrong t in GetTanget in Spline ID");
                 return Vector3.zero;
             }
+            float omt = 1f - _t;
+            float omt2 = omt * omt;
+            float t2 = _t * _t;
             Vector3 tagent =
-                StartPos * (_t - 1) +
-                TangentPos * (1 - (2 * _t)) +
-                EndPos * _t;
+                StartPos * (-omt2) +
+                Tangent1Pos * (3 * omt2 - 2 * omt) +
+                Tangent2Pos * (-3 * t2 + 2 * _t) +
+                EndPos * t2;
 
             return tagent.normalized;
         }
@@ -194,7 +214,17 @@ namespace Splines
             return output;
         }
 
-        private void UpdateOPs()
+        public OrientedPoint GetLastOrientedPoint()
+        {
+            return OPs[OPs.Length - 1];
+        }
+
+        public OrientedPoint GetFirstOrientedPoint()
+        {
+            return OPs[0];
+        }
+
+        public void UpdateOPs()
         {
             OPs = new OrientedPoint[segments + 1];
             for (int i = 0; i <= segments; i++)

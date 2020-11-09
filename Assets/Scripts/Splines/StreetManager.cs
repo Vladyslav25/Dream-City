@@ -66,24 +66,21 @@ namespace Splines
 
             Street s = obj.gameObject.AddComponent<Street>();
             GameObject start = new GameObject("Start");
-            GameObject tangent = new GameObject("Tangent");
+            GameObject tangent1 = new GameObject("Tangent1");
+            GameObject tangent2 = new GameObject("Tangent2");
             GameObject end = new GameObject("End");
 
             start.transform.position = _startPos;
-            tangent.transform.position = _startPos;
+            tangent1.transform.position = _startPos;
+            tangent2.transform.position = _startPos;
             end.transform.position = _startPos;
 
             start.transform.SetParent(obj.transform);
-            tangent.transform.SetParent(obj.transform);
+            tangent1.transform.SetParent(obj.transform);
+            tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(
-               start, tangent, end, 3,
-                mf,
-                new ExtrudeShapeBase[]
-                {
-                    new StreetShapeComplete()
-                });
+            s.Init(start, tangent1, tangent2, end, 20, mf, new StreetShapeComplete(), true);
 
             return s;
         }
@@ -93,12 +90,17 @@ namespace Splines
             _street.m_Spline.SetEndPos(_endPos);
         }
 
-        public static void UpdatePreviewStreetTangentPos(Street _street, Vector3 _tangentPos)
+        public static void UpdatePreviewStreetTangent1Pos(Street _street, Vector3 _tangentPos)
         {
-            _street.m_Spline.SetTangentPos(_tangentPos);
+            _street.m_Spline.SetTangent1Pos(_tangentPos);
         }
 
-        public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent, Vector3 _endPos)
+        public static void UpdatePreviewStreetTangent2Pos(Street _street, Vector3 _tangentPos)
+        {
+            _street.m_Spline.SetTangent2Pos(_tangentPos);
+        }
+
+        public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos)
         {
             GameObject obj = new GameObject("Street");
             obj.transform.position = _startPos;
@@ -106,31 +108,35 @@ namespace Splines
 
             MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
-            mr.materials = new Material[]
-            {
-                Instance.StreetMat
-            };
+            mr.material = Instance.StreetMat;
+
 
             Street s = obj.gameObject.AddComponent<Street>();
             GameObject start = new GameObject("Start");
-            GameObject tangent = new GameObject("Tangent");
+            GameObject tangent1 = new GameObject("Tangent1");
+            GameObject tangent2 = new GameObject("Tangent2");
             GameObject end = new GameObject("End");
 
             start.transform.position = _startPos;
-            tangent.transform.position = _tangent;
+            tangent1.transform.position = _tangent1;
+            tangent2.transform.position = _tangent2;
             end.transform.position = _endPos;
 
+            obj.tag = "Street";
+            start.tag = "StreetStart";
+            end.tag = "StreetEnd";
+
+            Collider c = start.AddComponent<SphereCollider>();
+            c.isTrigger = true;
+            c = end.AddComponent<SphereCollider>();
+            c.isTrigger = true;
+
             start.transform.SetParent(obj.transform);
-            tangent.transform.SetParent(obj.transform);
+            tangent1.transform.SetParent(obj.transform);
+            tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(
-               start, tangent, end, 3,
-                mf,
-                new ExtrudeShapeBase[]
-                {
-                    new StreetShapeComplete()
-                });
+            s.Init(start, tangent1, tangent2, end, 20, mf, new StreetShapeComplete());
 
             splineID_Dic.Add(s.ID, s);
             return s;
