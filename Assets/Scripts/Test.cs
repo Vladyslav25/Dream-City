@@ -94,8 +94,8 @@ public class Test : MonoBehaviour
                     pos1Set = false;
                     pos2Set = false;
                     pos3Set = false;
-                    bool isTangent1Locked = false;
-                    bool isTangent2Locked = false;
+                    isTangent1Locked = false;
+                    isTangent2Locked = false;
                     Destroy(currendStreet.gameObject);
                     currendStreet = null;
                 }
@@ -124,26 +124,44 @@ public class Test : MonoBehaviour
             {
                 //other Street End and currStreet Start -> Combine
                 currendStreet.m_Spline.SetStartPos(otherStreet.m_Spline.EndPos);
-                Vector3 tmp = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.EndPos);
-                currendStreet.m_Spline.SetTangent1Pos(tmp);
+                Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos);
+                currendStreet.m_Spline.SetTangent1Pos(dir + otherStreet.m_Spline.EndPos);
                 
                 isTangent1Locked = true;
-                Debug.Log("Combined: "+ tmp);
+                Debug.Log("Combined");
             }
             else
             {
                 //other Street End and currStreet End -> Combine
+                currendStreet.m_Spline.SetEndPos(otherStreet.m_Spline.EndPos);
+                Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos);
+                currendStreet.m_Spline.SetTangent2Pos(dir + otherStreet.m_Spline.EndPos);
+        
+                isTangent2Locked = true;
+                Debug.Log("Combine");
             }
         }
-        else if (closestStreetChildren.CompareTag("StreetStart") && isStart)
+        else if (closestStreetChildren.CompareTag("StreetStart"))
         {
             if (isStart)
             {
                 //other Street Start and currStreet Start -> Combine
+                currendStreet.m_Spline.SetStartPos(otherStreet.m_Spline.StartPos);
+                Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
+                currendStreet.m_Spline.SetTangent1Pos(dir + otherStreet.m_Spline.StartPos);
+        
+                isTangent1Locked = true;
+                Debug.Log("Combine");
             }
             else
             {
                 //other Street Start and currStreet End -> Combine
+                currendStreet.m_Spline.SetEndPos(otherStreet.m_Spline.StartPos);
+                Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
+                currendStreet.m_Spline.SetTangent2Pos(dir + otherStreet.m_Spline.StartPos);
+        
+                isTangent2Locked = true;
+                Debug.Log("Combine");
             }
         }
     }

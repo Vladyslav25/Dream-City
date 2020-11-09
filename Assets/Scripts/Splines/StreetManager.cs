@@ -80,7 +80,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, new StreetShapeComplete(), true);
+            s.Init(start, tangent1, tangent2, end, 20, mf, new ExtrudeShapeBase(), true);
 
             return s;
         }
@@ -141,7 +141,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, new StreetShapeComplete());
+            s.Init(start, tangent1, tangent2, end, 20, mf, new ExtrudeShapeBase());
 
             splineID_Dic.Add(s.ID, s);
             return s;
