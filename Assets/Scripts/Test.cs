@@ -17,6 +17,9 @@ public class Test : MonoBehaviour
     bool pos2Set = false;
     bool pos3Set = false;
 
+    bool isTangent1Locked = false;
+    bool isTangent2Locked = false;
+
     Street currendStreet;
 
     GameObject sphere;
@@ -43,8 +46,10 @@ public class Test : MonoBehaviour
                 Vector3 pos2Tmp = (pos1 + pos3) * 0.5f;
                 Vector3 tangent1 = (pos1 + pos2Tmp) * 0.5f;
                 Vector3 tangent2 = (pos2Tmp + pos3) * 0.5f;
-                StreetManager.UpdatePreviewStreetTangent1Pos(currendStreet, tangent1);
-                StreetManager.UpdatePreviewStreetTangent2Pos(currendStreet, tangent2);
+                if (!isTangent1Locked)
+                    StreetManager.UpdatePreviewStreetTangent1Pos(currendStreet, tangent1);
+                if (!isTangent2Locked)
+                    StreetManager.UpdatePreviewStreetTangent2Pos(currendStreet, tangent2);
                 StreetManager.UpdatePreviewStreetEndPos(currendStreet, pos3);
             }
 
@@ -53,8 +58,10 @@ public class Test : MonoBehaviour
                 pos3 = hitPoint;
                 Vector3 tangent1 = (pos1 + pos2) * 0.5f;
                 Vector3 tangent2 = (pos2 + pos3) * 0.5f;
-                StreetManager.UpdatePreviewStreetTangent1Pos(currendStreet, tangent1);
-                StreetManager.UpdatePreviewStreetTangent2Pos(currendStreet, tangent2);
+                if (!isTangent1Locked)
+                    StreetManager.UpdatePreviewStreetTangent1Pos(currendStreet, tangent1);
+                if (!isTangent2Locked)
+                    StreetManager.UpdatePreviewStreetTangent2Pos(currendStreet, tangent2);
                 StreetManager.UpdatePreviewStreetEndPos(currendStreet, pos3);
             }
 
@@ -65,6 +72,7 @@ public class Test : MonoBehaviour
                     pos1 = hitPoint;
                     pos1Set = true;
                     currendStreet = StreetManager.InitStreetForPreview(pos1);
+                    CheckForCombine(hitPoint, true);
                 }
                 else
                 if (pos2Set == false)
@@ -78,38 +86,64 @@ public class Test : MonoBehaviour
                     pos3 = hitPoint;
                     Vector3 tangent1 = (pos1 + pos2) * 0.5f;
                     Vector3 tangent2 = (pos3 + pos2) * 0.5f;
-                    StreetManager.CreateStreet(pos1, tangent1, tangent2, pos3);
+                    CheckForCombine(hitPoint, false);
+                    StreetManager.CreateStreet(currendStreet);
                     pos1 = Vector3.zero;
                     pos2 = Vector3.zero;
                     pos3 = Vector3.zero;
                     pos1Set = false;
                     pos2Set = false;
                     pos3Set = false;
+                    bool isTangent1Locked = false;
+                    bool isTangent2Locked = false;
                     Destroy(currendStreet.gameObject);
                     currendStreet = null;
                 }
+            }
+        }
+    }
 
-                if (currendStreet == null || pos1Set == true) return;
+    private void CheckForCombine(Vector3 _hitPoint, bool isStart)
+    {
+        Collider[] sphereHits = Physics.OverlapSphere(_hitPoint, 2);
+        List<GameObject> hittedStreetsChildern = new List<GameObject>();
 
-                Collider[] sphereHits = Physics.OverlapSphere(hitPoint, 2);
-                List<GameObject> hittedStreetsChildern = new List<GameObject>();
+        for (int i = 0; i < sphereHits.Length; i++)
+        {
+            if (sphereHits[i].CompareTag("StreetEnd") || sphereHits[i].CompareTag("StreetStart"))
+                hittedStreetsChildern.Add(sphereHits[i].transform.gameObject);
+        }
+        if (hittedStreetsChildern.Count == 0) return;
 
-                for (int i = 0; i < sphereHits.Length; i++)
-                {
-                    if (sphereHits[i].CompareTag("StreetEnd") || sphereHits[i].CompareTag("StreetStart"))
-                        hittedStreetsChildern.Add(sphereHits[i].transform.gameObject);
-                }
-                if (hittedStreetsChildern.Count == 0) return;
-                Debug.Log("Combined");
-                GameObject hittedStreetChildren = GetClosesedGameObject(hittedStreetsChildern, hitPoint);
-                if (hittedStreetChildren.CompareTag("StreetEnd"))
-                {
-                    currendStreet.m_Spline.SetStartPos(hittedStreetChildren.transform.position);
-                }
-                else if (hittedStreetChildren.CompareTag("StreetStart"))
-                {
-                    currendStreet.m_Spline.SetStartPos(hittedStreetChildren.transform.position);
-                }
+        GameObject closestStreetChildren = GetClosesedGameObject(hittedStreetsChildern, _hitPoint);
+        Street otherStreet = closestStreetChildren.GetComponentInParent<Street>();
+
+        if (closestStreetChildren.CompareTag("StreetEnd"))
+        {
+            if (isStart)
+            {
+                //other Street End and currStreet Start -> Combine
+                currendStreet.m_Spline.SetStartPos(otherStreet.m_Spline.EndPos);
+                Vector3 tmp = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.EndPos);
+                currendStreet.m_Spline.SetTangent1Pos(tmp);
+                
+                isTangent1Locked = true;
+                Debug.Log("Combined: "+ tmp);
+            }
+            else
+            {
+                //other Street End and currStreet End -> Combine
+            }
+        }
+        else if (closestStreetChildren.CompareTag("StreetStart") && isStart)
+        {
+            if (isStart)
+            {
+                //other Street Start and currStreet Start -> Combine
+            }
+            else
+            {
+                //other Street Start and currStreet End -> Combine
             }
         }
     }

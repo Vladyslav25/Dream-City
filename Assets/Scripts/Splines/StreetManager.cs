@@ -100,6 +100,11 @@ namespace Splines
             _street.m_Spline.SetTangent2Pos(_tangentPos);
         }
 
+        public static Street CreateStreet(Street _street)
+        {
+            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos);
+        }
+
         public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos)
         {
             GameObject obj = new GameObject("Street");
