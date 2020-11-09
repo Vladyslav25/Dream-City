@@ -7,90 +7,70 @@ using UnityEngine;
 
 namespace Splines
 {
-    public class Spline : MonoBehaviour
+    public class Spline
     {
-        [Header("Gizmo Settings")]
-        [SerializeField]
-        [Tooltip("The Amount of Segments to Draw")]
-        [Range(1, 256)]
-        private int segments = 15;
-        [SerializeField]
-        [Tooltip("Draw the Curve?")]
-        private bool drawLine = false;
-        [SerializeField]
-        [Tooltip("Draw the Tangent?")]
-        private bool drawTangent = false;
-        [SerializeField]
-        [Tooltip("Draw the Normal Up?")]
-        private bool drawNormalUp = false;
-        [SerializeField]
-        [Tooltip("Draw the Normal?")]
-        private bool drawNormal = false;
-        [SerializeField]
-        [Tooltip("Tangent Lenght")]
-        private float tangentLenght = 1;
-        [SerializeField]
-        [Tooltip("Normal Up Lenght")]
-        private float normalLenghtUp = 1;
-        [SerializeField]
-        [Tooltip("Normal Lenght")]
-        private float normalLenght = 1;
-
         [Header("Spline Settings")]
         [MyReadOnly]
         [SerializeField]
         private GameObject[] pointsObj;
 
-        [SerializeField]
-        private bool drawMesh = true;
-
-        private MeshFilter meshFilterRef;
+        [HideInInspector]
+        public Vector3 StartPos { get { return pointsObj[0].transform.position; } private set { pointsObj[0].transform.position = value; } }
 
         [HideInInspector]
-        public Vector3 StartPos { get { return pointsObj[0].transform.position; } }
+        public Vector3 Tangent1Pos { get { return pointsObj[1].transform.position; } private set { pointsObj[1].transform.position = value; } }
 
         [HideInInspector]
-        public Vector3 TangentPos { get { return pointsObj[1].transform.position; } }
+        public Vector3 Tangent2Pos { get { return pointsObj[2].transform.position; } private set { pointsObj[2].transform.position = value; } }
 
         [HideInInspector]
-        public Vector3 EndPos { get { return pointsObj[2].transform.position; } }
+        public Vector3 EndPos { get { return pointsObj[3].transform.position; } private set { pointsObj[3].transform.position = value; } }
 
         public OrientedPoint[] OPs;
 
-        [MyReadOnly]
-        [SerializeField]
-        private int id = -1;
+        public int segments;
 
-        public int ID
+        public Spline(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments)
         {
-            get
-            {
-                if (id > 0) return id;
-                else return -1;
-            }
+            pointsObj = new GameObject[4];
+            pointsObj[0] = _startPos;
+            pointsObj[1] = _tangent1;
+            pointsObj[2] = _tangent2;
+            pointsObj[3] = _endPos;
+            segments = _segments;
+            UpdateOPs();
         }
 
-        /// <summary>
-        /// Init the spline with 3 GameObjects
-        /// </summary>
-        /// <param name="_startPos">The GameObject showing the startPos</param>
-        /// <param name="_tangent">The GameObject showing the tangent</param>
-        /// <param name="_endPos">The GameObject showing the endPos</param>
-        /// <param name="_meshFilterRef">A reference to the MeshFilter</param>
-        public void Init(GameObject _startPos, GameObject _tangent, GameObject _endPos, MeshFilter _meshFilterRef)
+        public void SetStartPos(Vector3 _newPos)
         {
-            pointsObj = new GameObject[3];
-            pointsObj[0] = _startPos;
-            pointsObj[1] = _tangent;
-            pointsObj[2] = _endPos;
-            id = SplineManager.GetNewSplineID();
-            OPs = new OrientedPoint[segments + 1];
-            for (int i = 0; i <= segments; i++)
-            {
-                float t = 1.0f / segments * i;
-                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientation(t), t);
-            }
-            meshFilterRef = _meshFilterRef;
+            if (_newPos == Vector3.zero) return;
+
+            StartPos = _newPos;
+            UpdateOPs();
+        }
+
+        public void SetTangent1Pos(Vector3 _newPos)
+        {
+            if (_newPos == Vector3.zero) return;
+
+            Tangent1Pos = _newPos;
+            UpdateOPs();
+        }
+
+        public void SetTangent2Pos(Vector3 _newPos)
+        {
+            if (_newPos == Vector3.zero) return;
+
+            Tangent2Pos = _newPos;
+            UpdateOPs();
+        }
+
+        public void SetEndPos(Vector3 _newPos)
+        {
+            if (_newPos == Vector3.zero) return;
+
+            EndPos = _newPos;
+            UpdateOPs();
         }
 
         /// <summary>
@@ -102,13 +82,17 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetPosition in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetPosition in Spline");
                 return Vector3.zero;
             }
+            float omt = 1f - _t;
+            float omt2 = omt * omt;
+            float t2 = _t * _t;
             return
-                StartPos * (1 - 2 * _t + (float)Math.Pow(_t, 2)) +
-                TangentPos * (2 * _t - 2 * (float)Math.Pow(_t, 2)) +
-                EndPos * (float)Math.Pow(_t, 2);
+                StartPos * (omt2 * omt) +
+                Tangent1Pos * (3f * omt2 * _t) +
+                Tangent2Pos * (3f * omt * t2) +
+                EndPos * (t2 * _t);
         }
 
         /// <summary>
@@ -120,13 +104,17 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetTanget in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetTanget in Spline ID");
                 return Vector3.zero;
             }
+            float omt = 1f - _t;
+            float omt2 = omt * omt;
+            float t2 = _t * _t;
             Vector3 tagent =
-                StartPos * (_t - 1) +
-                TangentPos * (1 - (2 * _t)) +
-                EndPos * _t;
+                StartPos * (-omt2) +
+                Tangent1Pos * (3 * omt2 - 2 * omt) +
+                Tangent2Pos * (-3 * t2 + 2 * _t) +
+                EndPos * t2;
 
             return tagent.normalized;
         }
@@ -141,13 +129,13 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetNormalUp in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetNormalUp in Spline ID");
                 return Vector3.zero;
             }
 
             if (_up == Vector3.zero)
             {
-                Debug.LogError($"Wrong UpVector in GetNormalUp in Spline ID: {ID}");
+                Debug.LogError($"Wrong UpVector in GetNormalUp in Spline ID");
                 return Vector3.zero;
             }
 
@@ -165,7 +153,7 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetNormalUp in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetNormalUp in Spline ID");
                 return Vector3.zero;
             }
 
@@ -183,7 +171,7 @@ namespace Splines
         {
             if (_t < 0 || _t > 1)
             {
-                Debug.LogError($"Wrong t in GetNormal in Spline ID: {ID}");
+                Debug.LogError($"Wrong t in GetNormal in Spline ID");
                 return Vector3.zero;
             }
 
@@ -208,7 +196,12 @@ namespace Splines
         /// <returns>The Quarternion of the point on the spline</returns>
         public Quaternion GetOrientationUp(float _t)
         {
-            return Quaternion.LookRotation(GetTangentAt(_t), GetNormalUpAt(_t));
+            Vector3 tangent = GetTangentAt(_t);
+            if (tangent == Vector3.zero) return new Quaternion();
+            Vector3 normalUp = GetNormalUpAt(_t);
+            if (normalUp == Vector3.zero) return new Quaternion();
+
+            return Quaternion.LookRotation(tangent, normalUp);
         }
 
         public float GetLength()
@@ -221,51 +214,23 @@ namespace Splines
             return output;
         }
 
-        private void Update()
+        public OrientedPoint GetLastOrientedPoint()
         {
-            if (OPs.Length != segments + 1)
-                OPs = new OrientedPoint[segments + 1];
+            return OPs[OPs.Length - 1];
+        }
+
+        public OrientedPoint GetFirstOrientedPoint()
+        {
+            return OPs[0];
+        }
+
+        public void UpdateOPs()
+        {
+            OPs = new OrientedPoint[segments + 1];
             for (int i = 0; i <= segments; i++)
             {
                 float t = 1.0f / segments * i;
                 OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
-            }
-            if (drawMesh)
-                MeshGenerator.Extrude(meshFilterRef.mesh, new ExtrudeShape(), this, transform.position);
-            else
-                meshFilterRef.mesh.Clear();
-        }
-
-        private void OnDrawGizmos()
-        {
-            for (int i = 0; i < OPs.Length; i++)
-            {
-                float t = 1.0f / segments * i;
-                float tnext = 1.0f / segments * (i + 1);
-
-                if (!(i + 1 >= OPs.Length))
-                {
-                    if (drawLine)
-                    {
-                        Gizmos.color = Color.white;
-                        Gizmos.DrawLine(OPs[i].Position, OPs[i + 1].Position);
-                    }
-                }
-                if (drawTangent)
-                {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetTangentAt(t) * tangentLenght);
-                }
-                if (drawNormalUp)
-                {
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetNormalUpAt(t) * normalLenghtUp);
-                }
-                if (drawNormal)
-                {
-                    Gizmos.color = Color.blue;
-                    Gizmos.DrawLine(OPs[i].Position, OPs[i].Position + GetNormalAt(t) * normalLenght);
-                }
             }
         }
     }
