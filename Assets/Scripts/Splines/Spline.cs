@@ -15,28 +15,50 @@ namespace Splines
         private GameObject[] pointsObj;
 
         [HideInInspector]
-        public Vector3 StartPos { get { return pointsObj[0].transform.position; } }
+        public Vector3 StartPos { get { return pointsObj[0].transform.position; } private set { pointsObj[0].transform.position = value; } }
 
         [HideInInspector]
-        public Vector3 TangentPos { get { return pointsObj[1].transform.position; } }
+        public Vector3 TangentPos { get { return pointsObj[1].transform.position; } private set { pointsObj[1].transform.position = value; } }
 
         [HideInInspector]
-        public Vector3 EndPos { get { return pointsObj[2].transform.position; } }
+        public Vector3 EndPos { get { return pointsObj[2].transform.position; } private set { pointsObj[2].transform.position = value; } }
 
         public OrientedPoint[] OPs;
 
-        public Spline(GameObject _startPos, GameObject _tangent, GameObject _endPos, int segments)
+        public int segments;
+
+        public Spline(GameObject _startPos, GameObject _tangent, GameObject _endPos, int _segments)
         {
             pointsObj = new GameObject[3];
             pointsObj[0] = _startPos;
             pointsObj[1] = _tangent;
             pointsObj[2] = _endPos;
-            OPs = new OrientedPoint[segments + 1];
-            for (int i = 0; i <= segments; i++)
-            {
-                float t = 1.0f / segments * i;
-                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
-            }
+            segments = _segments;
+            UpdateOPs();
+        }
+
+        public void SetStartPos(Vector3 _newPos)
+        {
+            if (_newPos == Vector3.zero) return;
+
+            StartPos = _newPos;
+            UpdateOPs();
+        }
+
+        public void SetTangentPos(Vector3 _newPos)
+        {
+            if (_newPos == Vector3.zero) return;
+
+            TangentPos = _newPos;
+            UpdateOPs();
+        }
+
+        public void SetEndPos(Vector3 _newPos)
+        {
+            if (_newPos == Vector3.zero) return;
+
+            EndPos = _newPos;
+            UpdateOPs();
         }
 
         /// <summary>
@@ -154,7 +176,12 @@ namespace Splines
         /// <returns>The Quarternion of the point on the spline</returns>
         public Quaternion GetOrientationUp(float _t)
         {
-            return Quaternion.LookRotation(GetTangentAt(_t), GetNormalUpAt(_t));
+            Vector3 tangent = GetTangentAt(_t);
+            if (tangent == Vector3.zero) return new Quaternion();
+            Vector3 normalUp = GetNormalUpAt(_t);
+            if (normalUp == Vector3.zero) return new Quaternion();
+
+            return Quaternion.LookRotation(tangent, normalUp);
         }
 
         public float GetLength()
@@ -165,6 +192,16 @@ namespace Splines
                 output += Vector3.Distance(OPs[i].Position, OPs[i + 1].Position);
             }
             return output;
+        }
+
+        private void UpdateOPs()
+        {
+            OPs = new OrientedPoint[segments + 1];
+            for (int i = 0; i <= segments; i++)
+            {
+                float t = 1.0f / segments * i;
+                OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
+            }
         }
     }
 

@@ -82,6 +82,8 @@ public class Street : MonoBehaviour
             MeshGenerator.Extrude(this);
         else
             m_MeshFilterRef.mesh.Clear();
+
+        Debug.Log("TangentPos: " + m_Spline.TangentPos);
     }
 
     private void OnDrawGizmos()

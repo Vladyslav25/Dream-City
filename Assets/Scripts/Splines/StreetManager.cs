@@ -51,6 +51,53 @@ namespace Splines
             return setSplineId;
         }
 
+        public static Street InitStreetForPreview(Vector3 _startPos)
+        {
+            GameObject obj = new GameObject("Street");
+            obj.transform.position = _startPos;
+            obj.transform.SetParent(Instance.transform);
+
+            MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
+            MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
+            mr.materials = new Material[]
+            {
+                Instance.StreetMat
+            };
+
+            Street s = obj.gameObject.AddComponent<Street>();
+            GameObject start = new GameObject("Start");
+            GameObject tangent = new GameObject("Tangent");
+            GameObject end = new GameObject("End");
+
+            start.transform.position = _startPos;
+            tangent.transform.position = _startPos;
+            end.transform.position = _startPos;
+
+            start.transform.SetParent(obj.transform);
+            tangent.transform.SetParent(obj.transform);
+            end.transform.SetParent(obj.transform);
+
+            s.Init(
+               start, tangent, end, 3,
+                mf,
+                new ExtrudeShapeBase[]
+                {
+                    new StreetShapeComplete()
+                });
+
+            return s;
+        }
+
+        public static void UpdatePreviewStreetEndPos(Street _street, Vector3 _endPos)
+        {
+            _street.m_Spline.SetEndPos(_endPos);
+        }
+
+        public static void UpdatePreviewStreetTangentPos(Street _street, Vector3 _tangentPos)
+        {
+            _street.m_Spline.SetTangentPos(_tangentPos);
+        }
+
         public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent, Vector3 _endPos)
         {
             GameObject obj = new GameObject("Street");
@@ -61,9 +108,7 @@ namespace Splines
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
             mr.materials = new Material[]
             {
-                Instance.StreetMat,
-                //Instance.StreetMat,
-                //Instance.SidewalkMat
+                Instance.StreetMat
             };
 
             Street s = obj.gameObject.AddComponent<Street>();
@@ -84,9 +129,7 @@ namespace Splines
                 mf,
                 new ExtrudeShapeBase[]
                 {
-                    new StreetShapeComplete(),
-                    //new StreetShape(),
-                    //new Sidewalk()
+                    new StreetShapeComplete()
                 });
 
             splineID_Dic.Add(s.ID, s);
