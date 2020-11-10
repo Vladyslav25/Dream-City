@@ -41,12 +41,12 @@ namespace Splines
             UpdateOPs();
         }
 
+        #region -Set Tangents, Start and End-
         public void SetStartPos(Vector3 _newPos)
         {
             if (_newPos == Vector3.zero) return;
 
             StartPos = _newPos;
-            UpdateOPs();
         }
 
         public void SetTangent1Pos(Vector3 _newPos)
@@ -54,7 +54,6 @@ namespace Splines
             if (_newPos == Vector3.zero) return;
 
             Tangent1Pos = _newPos;
-            UpdateOPs();
         }
 
         public void SetTangent2Pos(Vector3 _newPos)
@@ -62,7 +61,6 @@ namespace Splines
             if (_newPos == Vector3.zero) return;
 
             Tangent2Pos = _newPos;
-            UpdateOPs();
         }
 
         public void SetEndPos(Vector3 _newPos)
@@ -70,8 +68,8 @@ namespace Splines
             if (_newPos == Vector3.zero) return;
 
             EndPos = _newPos;
-            UpdateOPs();
         }
+        #endregion
 
         /// <summary>
         /// Get the world position of the point on the spline depending of t
@@ -224,6 +222,14 @@ namespace Splines
             return OPs[0];
         }
 
+        public OrientedPoint GetCentredOrientedPoint()
+        {
+            return OPs[OPs.Length / 2];
+        }
+
+        /// <summary>
+        /// Update the Oriented Points
+        /// </summary>
         public void UpdateOPs()
         {
             OPs = new OrientedPoint[segments + 1];
@@ -248,16 +254,31 @@ namespace Splines
             t = _t;
         }
 
+        /// <summary>
+        /// Calculate from Local Position to World Position
+        /// </summary>
+        /// <param name="_point">Local Position</param>
+        /// <returns></returns>
         public Vector3 LocalToWorld(Vector3 _point)
         {
             return Position + Rotation * _point;
         }
 
+        /// <summary>
+        /// Calculate from World Position to Local Position
+        /// </summary>
+        /// <param name="_point">World Position</param>
+        /// <returns></returns>
         public Vector3 WorldToLocal(Vector3 _point)
         {
             return Quaternion.Inverse(Rotation) * (_point - Position);
         }
 
+        /// <summary>
+        /// Calculate from Local Direction to World Direction
+        /// </summary>
+        /// <param name="_dir">Local Direction</param>
+        /// <returns></returns>
         public Vector3 LocalToWorldDirection(Vector3 _dir)
         {
             return Rotation * _dir;
