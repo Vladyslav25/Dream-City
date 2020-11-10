@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Streets;
 
 namespace Splines
 {
@@ -80,20 +81,82 @@ namespace Splines
             return s;
         }
 
-        public static void UpdatePreviewStreetEndPos(Street _street, Vector3 _endPos)
+        #region -Update Tangents, Start and End-
+        public static void UpdateStreetStartPos(Street _street, Vector3 _startPos)
+        {
+            _street.m_Spline.SetStartPos(_startPos);
+            _street.m_Spline.UpdateOPs();
+        }
+
+        public static void UpdateStreetEndPos(Street _street, Vector3 _endPos)
         {
             _street.m_Spline.SetEndPos(_endPos);
+            _street.m_Spline.UpdateOPs();
         }
 
-        public static void UpdatePreviewStreetTangent1Pos(Street _street, Vector3 _tangentPos)
+        public static void UpdateStreetTangent1Pos(Street _street, Vector3 _tangentPos)
         {
             _street.m_Spline.SetTangent1Pos(_tangentPos);
+            _street.m_Spline.UpdateOPs();
         }
 
-        public static void UpdatePreviewStreetTangent2Pos(Street _street, Vector3 _tangentPos)
+        public static void UpdateStreetTangent2Pos(Street _street, Vector3 _tangentPos)
         {
             _street.m_Spline.SetTangent2Pos(_tangentPos);
+            _street.m_Spline.UpdateOPs();
         }
+
+        public static void UpdateStreetTangents(Street _street, Vector3 _tangent1Pos, Vector3 _tangent2Pos)
+        {
+            _street.m_Spline.SetTangent1Pos(_tangent1Pos);
+            _street.m_Spline.SetTangent2Pos(_tangent2Pos);
+            _street.m_Spline.UpdateOPs();
+        }
+
+        public static void UpdateStreetTangentsAndEndPoint(Street _street, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos)
+        {
+            _street.m_Spline.SetTangent1Pos(_tangent1Pos);
+            _street.m_Spline.SetTangent2Pos(_tangent2Pos);
+            _street.m_Spline.SetEndPos(_endPos);
+            _street.m_Spline.UpdateOPs();
+        }
+
+        public static void UpdateStreetTangentsAndStartPoint(Street _street, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _startPos)
+        {
+            _street.m_Spline.SetTangent1Pos(_tangent1Pos);
+            _street.m_Spline.SetTangent2Pos(_tangent2Pos);
+            _street.m_Spline.SetStartPos(_startPos);
+            _street.m_Spline.UpdateOPs();
+        }
+
+        public static void UpdateStreetTangent1AndEndPoint(Street _street, Vector3 _tangent1Pos, Vector3 _endPos)
+        {
+            _street.m_Spline.SetTangent1Pos(_tangent1Pos);
+            _street.m_Spline.SetEndPos(_endPos);
+            _street.m_Spline.UpdateOPs();
+        }
+
+        public static void UpdateStreetTangent2AndEndPoint(Street _street, Vector3 _tangent2Pos, Vector3 _endPos)
+        {
+            _street.m_Spline.SetTangent2Pos(_tangent2Pos);
+            _street.m_Spline.SetEndPos(_endPos);
+            _street.m_Spline.UpdateOPs();
+        }
+
+        public static void UpdateStreetTangent1AndStartPoint(Street _street, Vector3 _tangent1Pos, Vector3 _startPos)
+        {
+            _street.m_Spline.SetTangent1Pos(_tangent1Pos);
+            _street.m_Spline.SetStartPos(_startPos);
+            _street.m_Spline.UpdateOPs();
+        }
+
+        public static void UpdateStreetTangent2AndStartPoint(Street _street, Vector3 _tangent2Pos, Vector3 _startPos)
+        {
+            _street.m_Spline.SetTangent2Pos(_tangent2Pos);
+            _street.m_Spline.SetStartPos(_startPos);
+            _street.m_Spline.UpdateOPs();
+        }
+        #endregion
 
         public static Street CreateStreet(Street _street)
         {
