@@ -58,11 +58,14 @@ public class Tool : MonoBehaviour
                 pos3 = hitPoint;
                 Vector3 tangent1 = (pos1 + pos2) * 0.5f;
                 Vector3 tangent2 = (pos2 + pos3) * 0.5f;
-                if (!isTangent1Locked)
-                    StreetManager.UpdatePreviewStreetTangent1Pos(currendStreet, tangent1);
-                if (!isTangent2Locked)
-                    StreetManager.UpdatePreviewStreetTangent2Pos(currendStreet, tangent2);
-                StreetManager.UpdatePreviewStreetEndPos(currendStreet, pos3);
+                if (!CheckForCombine(hitPoint, false))
+                {
+                    if (!isTangent1Locked)
+                        StreetManager.UpdatePreviewStreetTangent1Pos(currendStreet, tangent1);
+                    if (!isTangent2Locked)
+                        StreetManager.UpdatePreviewStreetTangent2Pos(currendStreet, tangent2);
+                    StreetManager.UpdatePreviewStreetEndPos(currendStreet, pos3);
+                }
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -101,7 +104,7 @@ public class Tool : MonoBehaviour
         }
     }
 
-    private void CheckForCombine(Vector3 _hitPoint, bool isStart)
+    private bool CheckForCombine(Vector3 _hitPoint, bool isStart)
     {
         Collider[] sphereHits = Physics.OverlapSphere(_hitPoint, 2);
         List<GameObject> hittedStreetsChildern = new List<GameObject>();
@@ -111,7 +114,7 @@ public class Tool : MonoBehaviour
             if (sphereHits[i].CompareTag("StreetEnd") || sphereHits[i].CompareTag("StreetStart"))
                 hittedStreetsChildern.Add(sphereHits[i].transform.gameObject);
         }
-        if (hittedStreetsChildern.Count == 0) return;
+        if (hittedStreetsChildern.Count == 0) return false;
 
         GameObject closestStreetChildren = GetClosesedGameObject(hittedStreetsChildern, _hitPoint);
         Street otherStreet = closestStreetChildren.GetComponentInParent<Street>();
@@ -124,9 +127,10 @@ public class Tool : MonoBehaviour
                 currendStreet.m_Spline.SetStartPos(otherStreet.m_Spline.EndPos);
                 Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos);
                 currendStreet.m_Spline.SetTangent1Pos(dir + otherStreet.m_Spline.EndPos);
-                
+
                 isTangent1Locked = true;
                 Debug.Log("Combined");
+                return true;
             }
             else
             {
@@ -134,9 +138,10 @@ public class Tool : MonoBehaviour
                 currendStreet.m_Spline.SetEndPos(otherStreet.m_Spline.EndPos);
                 Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos);
                 currendStreet.m_Spline.SetTangent2Pos(dir + otherStreet.m_Spline.EndPos);
-        
+
                 isTangent2Locked = true;
                 Debug.Log("Combine");
+                return true;
             }
         }
         else if (closestStreetChildren.CompareTag("StreetStart"))
@@ -147,9 +152,10 @@ public class Tool : MonoBehaviour
                 currendStreet.m_Spline.SetStartPos(otherStreet.m_Spline.StartPos);
                 Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
                 currendStreet.m_Spline.SetTangent1Pos(dir + otherStreet.m_Spline.StartPos);
-        
+
                 isTangent1Locked = true;
                 Debug.Log("Combine");
+                return true;
             }
             else
             {
@@ -157,11 +163,13 @@ public class Tool : MonoBehaviour
                 currendStreet.m_Spline.SetEndPos(otherStreet.m_Spline.StartPos);
                 Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
                 currendStreet.m_Spline.SetTangent2Pos(dir + otherStreet.m_Spline.StartPos);
-        
+
                 isTangent2Locked = true;
                 Debug.Log("Combine");
+                return true;
             }
         }
+        return false;
     }
 
     private GameObject GetClosesedGameObject(List<GameObject> _objs, Vector3 _point)
