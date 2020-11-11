@@ -198,7 +198,7 @@ namespace Streets
                     Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos); //Get the point symmetrical Direction
                     StreetManager.UpdateStreetTangent1AndStartPoint(
                         previewStreet, 
-                        dir + otherStreet.m_Spline.EndPos, //Set the Tanget to the point symmetrical Position
+                        dir * .5f + otherStreet.m_Spline.EndPos, //Set the Tanget to the point symmetrical Position
                         otherStreet.m_Spline.EndPos);
                     isTangent1Locked = true;
                     return;
@@ -209,7 +209,7 @@ namespace Streets
                     Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos);
                     StreetManager.UpdateStreetTangent2AndEndPoint(
                         previewStreet,
-                        dir + otherStreet.m_Spline.EndPos,
+                        dir * .5f + otherStreet.m_Spline.EndPos,
                         otherStreet.m_Spline.EndPos
                         );
 
@@ -225,7 +225,7 @@ namespace Streets
                     Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
                     StreetManager.UpdateStreetTangent1AndStartPoint(
                         previewStreet,
-                        dir + otherStreet.m_Spline.StartPos,
+                        dir * .5f + otherStreet.m_Spline.StartPos,
                         otherStreet.m_Spline.StartPos
                         );
 
@@ -238,8 +238,8 @@ namespace Streets
                     Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
                     StreetManager.UpdateStreetTangent2AndEndPoint(
                         previewStreet,
-                        otherStreet.m_Spline.StartPos,
-                        dir + otherStreet.m_Spline.StartPos
+                        dir * .5f + otherStreet.m_Spline.StartPos,
+                        otherStreet.m_Spline.StartPos
                         );
 
                     isTangent2Locked = true;
