@@ -29,7 +29,9 @@ namespace Splines
         #endregion
 
         [SerializeField]
-        private Material StreetMat;
+        private Material streetMat;
+        [SerializeField]
+        private Material previewStreetMat;
 
         private static Dictionary<int, Street> splineID_Dic = new Dictionary<int, Street>();
         private static int setSplineId;
@@ -50,6 +52,12 @@ namespace Splines
             return setSplineId;
         }
 
+        public static void SetStreetColor(Street _street, Color _newColor)
+        {
+            if (_street.m_MeshRendererRef.material.color != _newColor)
+                _street.m_MeshRendererRef.material.color = _newColor;
+        }
+
         public static Street InitStreetForPreview(Vector3 _startPos)
         {
             GameObject obj = new GameObject("Street");
@@ -58,7 +66,7 @@ namespace Splines
 
             MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
-            mr.material = Instance.StreetMat;
+            mr.material = Instance.previewStreetMat;
 
             Street s = obj.gameObject.AddComponent<Street>();
             GameObject start = new GameObject("Start");
@@ -76,7 +84,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, new ExtrudeShapeBase(), true, false);
+            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new ExtrudeShapeBase(), true, false);
 
             return s;
         }
@@ -171,7 +179,7 @@ namespace Splines
 
             MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
-            mr.material = Instance.StreetMat;
+            mr.material = Instance.streetMat;
 
             Street s = obj.gameObject.AddComponent<Street>();
             GameObject start = new GameObject("Start");
@@ -198,7 +206,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, new ExtrudeShapeBase());
+            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new ExtrudeShapeBase());
 
             splineID_Dic.Add(s.ID, s);
             return s;

@@ -336,7 +336,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a23b3a9fe81571438c7845af50637ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StreetMat: {fileID: 2100000, guid: 28887894ac123dd47a2eb784281d1395, type: 2}
+  streetMat: {fileID: 2100000, guid: 28887894ac123dd47a2eb784281d1395, type: 2}
+  previewStreetMat: {fileID: 2100000, guid: 1ab8d390690c06d469abd3677c9754f6, type: 2}
 --- !u!4 &899825173
 Transform:
   m_ObjectHideFlags: 0
@@ -479,3 +480,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spherePrefab: {fileID: 2188559368387382291, guid: 57495c74642e4b04cbd5ce86eb971ff8,
     type: 3}
+  previewStreetMaterial: {fileID: 0}

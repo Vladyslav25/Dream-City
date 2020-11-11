@@ -10,6 +10,8 @@ namespace Streets
     {
         [SerializeField]
         GameObject spherePrefab;
+        [SerializeField]
+        Material previewStreetMaterial;
 
         Vector3 pos1;
         Vector3 pos2;
@@ -23,6 +25,8 @@ namespace Streets
         bool isTangent2Locked = false;
 
         bool isCurrendToolLine = false;
+
+        bool previewInValidForm = false;
 
         Street previewStreet;
 
@@ -81,6 +85,7 @@ namespace Streets
                         Vector3 tangent2 = (pos2Tmp + hitPoint) * 0.5f; //The 2. Tangent is between the End and the Mid
                         UpdatePreview(tangent1, tangent2, hitPoint); //Update the Preview (update if Tanget is not locked)
                         //The Scecond Point cant Combine to an another Spline
+
                     }
 
                     if (pos1Set == true && pos2Set == true && pos3Set == false && previewStreet != null)
@@ -89,8 +94,32 @@ namespace Streets
                         Vector3 tangent2 = (pos2 + hitPoint) * 0.5f; // The 2.Tanget is between Sec Point and EndPoint (MousePos)
                         UpdatePreview(tangent1, tangent2, hitPoint); //Update the Preview (update if Tanget is not locked)
                         CheckForCombine(hitPoint, false); //If a Combine is possible it Combine (overwrite Tanget Pos)
+
                     }
                 }
+
+                if (Input.GetKeyUp(KeyCode.Escape))
+                {
+                    //Reset
+                    pos1 = Vector3.zero;
+                    pos2 = Vector3.zero;
+                    pos3 = Vector3.zero;
+                    pos1Set = false;
+                    pos2Set = false;
+                    pos3Set = false;
+                    isTangent1Locked = false;
+                    isTangent2Locked = false;
+                    if (previewStreet != null)
+                    {
+                        Destroy(previewStreet.gameObject); //Destroy PreviewStreet
+                        previewStreet = null;
+                    }
+                    return;
+                }
+
+                if (previewStreet != null && !CheckForValidForm())
+                    return;
+
 
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -102,6 +131,7 @@ namespace Streets
                         CheckForCombine(hitPoint, true); //Check if the Start in the Preview Street can be combined
                         return;
                     }
+
                     if (!isCurrendToolLine) // In Curve Tool -> Set Sec Pos
                     {
                         if (pos2Set == false)
@@ -195,21 +225,25 @@ namespace Streets
                 if (isStart)
                 {
                     //other Street End and previewStreet Start -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos); //Get the point symmetrical Direction
+                    Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized; //Get the point symmetrical Direction
+
                     StreetManager.UpdateStreetTangent1AndStartPoint(
-                        previewStreet, 
-                        dir * .5f + otherStreet.m_Spline.EndPos, //Set the Tanget to the point symmetrical Position
-                        otherStreet.m_Spline.EndPos);
+                        previewStreet,
+                        dir * 4f + otherStreet.m_Spline.EndPos, //Set the Tanget to the half point symmetrical Position
+                        otherStreet.m_Spline.EndPos
+                        ); //Set the EndPos
+
                     isTangent1Locked = true;
                     return;
                 }
                 else
                 {
                     //other Street End and previewStreet End -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos);
+                    Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized;
+
                     StreetManager.UpdateStreetTangent2AndEndPoint(
                         previewStreet,
-                        dir * .5f + otherStreet.m_Spline.EndPos,
+                        dir * 4f + otherStreet.m_Spline.EndPos,
                         otherStreet.m_Spline.EndPos
                         );
 
@@ -222,10 +256,11 @@ namespace Streets
                 if (isStart)
                 {
                     //other Street Start and previewStreet Start -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
+                    Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
+
                     StreetManager.UpdateStreetTangent1AndStartPoint(
                         previewStreet,
-                        dir * .5f + otherStreet.m_Spline.StartPos,
+                        dir * 4f + otherStreet.m_Spline.StartPos,
                         otherStreet.m_Spline.StartPos
                         );
 
@@ -235,10 +270,11 @@ namespace Streets
                 else
                 {
                     //other Street Start and previewStreet End -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos);
+                    Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
+
                     StreetManager.UpdateStreetTangent2AndEndPoint(
                         previewStreet,
-                        dir * .5f + otherStreet.m_Spline.StartPos,
+                        dir * 4f + otherStreet.m_Spline.StartPos,
                         otherStreet.m_Spline.StartPos
                         );
 
@@ -246,6 +282,38 @@ namespace Streets
                     return;
                 }
             }
+        }
+
+        private bool CheckForValidForm()
+        {
+            if (previewStreet == null) return false;
+
+            float validDistanceStartEnd = 2f;
+            float maxDeltaAngel = 17f;
+
+            Vector3 StartPos = previewStreet.m_Spline.StartPos;
+            Vector3 EndPos = previewStreet.m_Spline.EndPos;
+            Vector3 Tangent1 = previewStreet.m_Spline.Tangent1Pos;
+            Vector3 Tangent2 = previewStreet.m_Spline.Tangent2Pos;
+
+            if (Vector3.Distance(StartPos, EndPos) < validDistanceStartEnd)
+            {
+                StreetManager.SetStreetColor(previewStreet, Color.red);
+                return false;
+            }
+
+            for (int i = 0; i < previewStreet.m_Spline.OPs.Length - 1; i++)
+            {
+                Vector3 opTangent1 = previewStreet.m_Spline.GetTangentAt(previewStreet.m_Spline.OPs[i].t);
+                Vector3 opTangent2 = previewStreet.m_Spline.GetTangentAt(previewStreet.m_Spline.OPs[i + 1].t);
+                if (Vector3.Angle(opTangent1, opTangent2) > maxDeltaAngel)
+                {
+                    StreetManager.SetStreetColor(previewStreet, Color.red);
+                    return false;
+                }
+            }
+            StreetManager.SetStreetColor(previewStreet, Color.green);
+            return true;
         }
 
         /// <summary>
