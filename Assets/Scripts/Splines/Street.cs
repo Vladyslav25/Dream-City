@@ -42,6 +42,7 @@ namespace Streets
 
         public Spline m_Spline;
         public MeshFilter m_MeshFilterRef;
+        public MeshRenderer m_MeshRendererRef;
         public ExtrudeShapeBase m_Shape;
         public Vector3 m_MeshOffset
         {
@@ -67,12 +68,13 @@ namespace Streets
         private bool lastDrawMeshSetting;
         private int lastSegmentCount;
 
-        public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true)
+        public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true)
         {
             if (_needID)
                 id = StreetManager.GetNewSplineID();
             m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments);
             m_MeshFilterRef = _meshFilter;
+            m_MeshRendererRef = _meshRenderer;
             m_Shape = _shape;
             MeshGenerator.Extrude(this);
             updateSpline = _updateMesh;
