@@ -40,6 +40,9 @@ namespace Streets
         [Tooltip("Normal Lenght")]
         private float normalLenght = 1;
 
+        [SerializeField]
+        private bool drawGridNormals = false;
+
         public Spline m_Spline;
         public MeshFilter m_MeshFilterRef;
         public MeshRenderer m_MeshRendererRef;
@@ -108,6 +111,15 @@ namespace Streets
 
         private void OnDrawGizmos()
         {
+            if (drawGridNormals)
+            {
+                //m_Spline.CreateGridOPs();
+                for (int i = 0; i < m_Spline.GridOPs.Length; i++)
+                {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(m_Spline.GridOPs[i].Position, m_Spline.GridOPs[i].Position + m_Spline.GetNormalUpAt(m_Spline.GridOPs[i].t) * normalLenghtUp);
+                }
+            }
             for (int i = 0; i < m_Spline.OPs.Length; i++)
             {
                 float t = 1.0f / segments * i;

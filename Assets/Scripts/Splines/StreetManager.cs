@@ -207,7 +207,7 @@ namespace Splines
             end.transform.SetParent(obj.transform);
 
             s.Init(start, tangent1, tangent2, end, 20, mf, mr, new ExtrudeShapeBase());
-
+            s.m_Spline.CreateGridOPs();
             splineID_Dic.Add(s.ID, s);
             return s;
         }

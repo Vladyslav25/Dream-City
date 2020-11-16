@@ -28,6 +28,8 @@ namespace Splines
 
         public OrientedPoint[] OPs;
 
+        public OrientedPoint[] GridOPs;
+
         public int segments;
 
         public Spline(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments)
@@ -239,6 +241,31 @@ namespace Splines
                 OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
         }
+
+        public void CreateGridOPs()
+        {
+            List<OrientedPoint> tmp = new List<OrientedPoint>();
+            tmp.Add(GetFirstOrientedPoint());
+
+            float distanceToEnd = Vector3.Distance(StartPos, EndPos);
+            float currT = 0;
+            int intT = 0;
+            Vector3 lastPos = StartPos;
+            while (distanceToEnd > GridManager.Instance.GridSize && intT <= 1000)
+            {
+                intT += 3;
+                currT = intT * 0.001f;
+                Debug.Log(currT);
+                Vector3 tmPos = GetPositionAt(currT);
+                distanceToEnd = Vector3.Distance(tmPos, EndPos);
+                if (Vector3.Distance(lastPos, tmPos) >= GridManager.Instance.GridSize)
+                {
+                    tmp.Add(new OrientedPoint(tmPos, GetOrientationUp(currT), currT));
+                    lastPos = tmPos;
+                }
+            }
+            GridOPs = tmp.ToArray();
+        }
     }
 
     public class OrientedPoint
@@ -284,4 +311,5 @@ namespace Splines
             return Rotation * _dir;
         }
     }
+
 }
