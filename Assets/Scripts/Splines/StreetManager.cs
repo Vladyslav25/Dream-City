@@ -28,9 +28,11 @@ namespace Splines
         }
         #endregion
 
-        public Material streetMat;
+        [SerializeField]
+        private Material streetMat;
         [SerializeField]
         private Material previewStreetMat;
+        public Material DeadEndMat;
 
         private static Dictionary<int, Street> splineID_Dic = new Dictionary<int, Street>();
         private static int setSplineId;
@@ -167,10 +169,10 @@ namespace Splines
 
         public static Street CreateStreet(Street _street)
         {
-            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos);
+            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_SplineConnect_Start, _street.m_SplineConnect_End);
         }
 
-        public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos)
+        public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Street _connectStart, Street _connectEnd)
         {
             GameObject obj = new GameObject("Street");
             obj.transform.position = _startPos;
@@ -205,7 +207,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape());
+            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape(), false, true, _connectStart, _connectEnd);
             s.m_Spline.CreateGridOPs();
             splineID_Dic.Add(s.ID, s);
             return s;

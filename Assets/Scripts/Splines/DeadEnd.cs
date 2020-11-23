@@ -30,6 +30,7 @@ public class DeadEnd : Street
             Vector3 tangent1 = start - _streetRef.m_Spline.GetTangentAt(0);
             //Move the End Point half the width of the Street | Street width is 2
             Vector3 end = _streetRef.m_Spline.StartPos - _streetRef.m_Spline.GetNormalAt(0) * 0.5f;
+            //Move the Tangent 2 up above the end Point
             Vector3 tangent2 = end - _streetRef.m_Spline.GetTangentAt(0);
             m_Spline = new Spline(
                 start, tangent1, tangent2, end, 10, gameObject
@@ -47,7 +48,7 @@ public class DeadEnd : Street
         }
         m_MeshFilterRef = gameObject.AddComponent<MeshFilter>();
         m_MeshRendererRef = gameObject.AddComponent<MeshRenderer>();
-        m_MeshRendererRef.material = StreetManager.Instance.streetMat;
+        m_MeshRendererRef.material = StreetManager.Instance.DeadEndMat;
         transform.SetParent(m_StreetNeighbour.transform);
         MeshGenerator.Extrude(this);
         return this;

@@ -30,6 +30,9 @@ namespace Streets
 
         Street previewStreet;
 
+        Street lastConnectedStreet;
+        GameObject lastConnectedStreetChildren;
+
         GameObject sphere;
 
         private void Awake()
@@ -210,6 +213,17 @@ namespace Streets
             GameObject closestStreetChildren = FindStreetGameObject(_hitPoint);
             if (closestStreetChildren == null) // if there is no valid Street GameObject around
             {
+                if (lastConnectedStreetChildren != null)
+                {
+                    if (lastConnectedStreetChildren.CompareTag("StreetStart"))
+                    {
+                        lastConnectedStreet.CreateDeadEnd(true);
+                    }
+                    if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
+                    {
+                        lastConnectedStreet.CreateDeadEnd(false);
+                    }
+                }
                 //Unlock the Tanget of the Pos wich is not Set
                 if (pos1 == Vector3.zero)
                     isTangent1Locked = false;
@@ -217,7 +231,10 @@ namespace Streets
                     isTangent2Locked = false;
                 return;
             }
+            lastConnectedStreetChildren = closestStreetChildren;
+
             Street otherStreet = closestStreetChildren.GetComponentInParent<Street>();
+            lastConnectedStreet = otherStreet;
 
             if (closestStreetChildren.CompareTag("StreetEnd"))
             {
@@ -233,6 +250,7 @@ namespace Streets
                         ); //Set the EndPos
 
                     isTangent1Locked = true;
+                    otherStreet.RemoveDeadEnd(true);
                     return;
                 }
                 else
@@ -247,6 +265,7 @@ namespace Streets
                         );
 
                     isTangent2Locked = true;
+                    otherStreet.RemoveDeadEnd(false);
                     return;
                 }
             }
@@ -264,6 +283,7 @@ namespace Streets
                         );
 
                     isTangent1Locked = true;
+                    otherStreet.RemoveDeadEnd(true);
                     return;
                 }
                 else
@@ -278,9 +298,11 @@ namespace Streets
                         );
 
                     isTangent2Locked = true;
+                    otherStreet.RemoveDeadEnd(true);
                     return;
                 }
             }
+
         }
 
         private bool CheckForValidForm()

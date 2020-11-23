@@ -155,7 +155,7 @@ namespace MeshGeneration
             162f/1024f,
             175f/1024f,
             175f/1024f,
-            424.5f/1024f
+            512f/1024f
             };
 
             lines = new int[]

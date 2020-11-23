@@ -47,8 +47,10 @@ namespace Streets
         public MeshFilter m_MeshFilterRef;
         public MeshRenderer m_MeshRendererRef;
         public ExtrudeShapeBase m_Shape;
-        public DeadEnd m_DeadEnd_Start;
-        public DeadEnd m_DeadEnd_End;
+        public Street m_SplineConnect_Start;
+        public bool m_StartIsDeadEnd;
+        public Street m_SplineConnect_End;
+        public bool m_EndIsDeadEnd;
         public Vector3 m_MeshOffset
         {
             get
@@ -73,7 +75,7 @@ namespace Streets
         private bool lastDrawMeshSetting;
         private int lastSegmentCount;
 
-        public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true)
+        public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true, Street _connectionStart = null, Street _connectionEnd = null)
         {
             m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments);
             m_MeshFilterRef = _meshFilter;
@@ -84,15 +86,75 @@ namespace Streets
             if (_needID)
             {
                 id = StreetManager.GetNewSplineID();
-                GameObject tmp = new GameObject("DeadEnd_Start");
-                m_DeadEnd_Start = tmp.AddComponent<DeadEnd>();
-                m_DeadEnd_Start.Init(new DeadEndShape(), this, true);
 
-                tmp = new GameObject("DeadEnd_End");
-                m_DeadEnd_End = tmp.AddComponent<DeadEnd>();
-                m_DeadEnd_End.Init(new DeadEndShape(), this, false);
+                if (_connectionStart == null)
+                    CreateDeadEnd(true);
+                else
+                    Combine(_connectionStart, true);
+                if (_connectionEnd == null)
+                    CreateDeadEnd(false);
+                else
+                    Combine(_connectionEnd, false);
             }
             return this;
+        }
+
+        public void RemoveDeadEnd(bool _isStart)
+        {
+            if (_isStart && m_SplineConnect_Start != null)
+            {
+                Destroy(m_SplineConnect_Start.gameObject);
+                m_SplineConnect_Start = null;
+                m_StartIsDeadEnd = false;
+            }
+            else
+            if (!_isStart && m_SplineConnect_End != null)
+            {
+                Destroy(m_SplineConnect_End.gameObject);
+                m_SplineConnect_End = null;
+                m_EndIsDeadEnd = false;
+            }
+        }
+
+        public void CreateDeadEnd(bool isStart)
+        {
+            if (isStart && !m_StartIsDeadEnd)
+            {
+                GameObject tmp = new GameObject("DeadEnd_Start");
+                m_SplineConnect_Start = tmp.AddComponent<DeadEnd>();
+                DeadEnd de = (DeadEnd)m_SplineConnect_Start;
+                de.Init(new DeadEndShape(), this, true);
+                m_StartIsDeadEnd = true;
+            }
+            else
+            if (!isStart && !m_EndIsDeadEnd)
+            {
+                GameObject tmp = new GameObject("DeadEnd_End");
+                m_SplineConnect_End = tmp.AddComponent<DeadEnd>();
+                DeadEnd de = (DeadEnd)m_SplineConnect_End;
+                de.Init(new DeadEndShape(), this, false);
+                m_EndIsDeadEnd = true;
+            }
+        }
+
+        public bool Combine(Street _otherStreet, bool isStart)
+        {
+            if (_otherStreet == null) return false;
+
+            if (isStart && m_StartIsDeadEnd)
+            {
+                RemoveDeadEnd(isStart);
+                m_SplineConnect_Start = _otherStreet;
+                return true;
+            }
+            else if (!isStart && m_EndIsDeadEnd)
+            {
+                RemoveDeadEnd(isStart);
+                m_SplineConnect_End = _otherStreet;
+                return true;
+            }
+
+            return false;
         }
 
         private void Update()
