@@ -47,6 +47,8 @@ namespace Streets
         public MeshFilter m_MeshFilterRef;
         public MeshRenderer m_MeshRendererRef;
         public ExtrudeShapeBase m_Shape;
+        public DeadEnd m_DeadEnd_Start;
+        public DeadEnd m_DeadEnd_End;
         public Vector3 m_MeshOffset
         {
             get
@@ -73,14 +75,23 @@ namespace Streets
 
         public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true)
         {
-            if (_needID)
-                id = StreetManager.GetNewSplineID();
             m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments);
             m_MeshFilterRef = _meshFilter;
             m_MeshRendererRef = _meshRenderer;
             m_Shape = _shape;
             MeshGenerator.Extrude(this);
             updateSpline = _updateMesh;
+            if (_needID)
+            {
+                id = StreetManager.GetNewSplineID();
+                GameObject tmp = new GameObject("DeadEnd_Start");
+                m_DeadEnd_Start = tmp.AddComponent<DeadEnd>();
+                m_DeadEnd_Start.Init(new DeadEndShape(), this, true);
+
+                tmp = new GameObject("DeadEnd_End");
+                m_DeadEnd_End = tmp.AddComponent<DeadEnd>();
+                m_DeadEnd_End.Init(new DeadEndShape(), this, false);
+            }
             return this;
         }
 
@@ -113,7 +124,6 @@ namespace Streets
         {
             if (drawGridNormals)
             {
-                //m_Spline.CreateGridOPs();
                 for (int i = 0; i < m_Spline.GridOPs.Length; i++)
                 {
                     Gizmos.color = Color.green;

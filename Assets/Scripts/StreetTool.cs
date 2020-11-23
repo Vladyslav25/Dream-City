@@ -94,7 +94,6 @@ namespace Streets
                         Vector3 tangent2 = (pos2 + hitPoint) * 0.5f; // The 2.Tanget is between Sec Point and EndPoint (MousePos)
                         UpdatePreview(tangent1, tangent2, hitPoint); //Update the Preview (update if Tanget is not locked)
                         CheckForCombine(hitPoint, false); //If a Combine is possible it Combine (overwrite Tanget Pos)
-
                     }
                 }
 

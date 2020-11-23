@@ -111,7 +111,7 @@ namespace MeshGeneration
         }
     }
 
-    public class ExtrudeShapeBase
+    public abstract class ExtrudeShapeBase
     {
         public float GetLineLength()
         {
@@ -123,8 +123,57 @@ namespace MeshGeneration
             return output;
         }
 
-        public Vector2[] verts = new Vector2[]
+        public Vector2[] verts;
+
+        public float[] us;
+
+        public int[] lines;
+    }
+
+    public class DeadEndShape : ExtrudeShapeBase
+    {
+        public DeadEndShape()
         {
+            verts = new Vector2[]
+            {
+            new Vector2(0.5f,0), //0
+            new Vector2(0.5f,0.1f),
+            new Vector2(0.5f,0.1f),
+            new Vector2(0.25f,0.1f),
+            new Vector2(0.25f,0.1f),
+            new Vector2(0.25f,0.05f),
+            new Vector2(0.25f,0.05f),
+            new Vector2(-0.5f, 0.05f)
+            };
+
+            us = new float[]
+            {
+            0f,
+            0.0001f,
+            0.0001f,
+            162f/1024f,
+            162f/1024f,
+            175f/1024f,
+            175f/1024f,
+            424.5f/1024f
+            };
+
+            lines = new int[]
+            {
+            0, 1,
+            2, 3,
+            4, 5,
+            6, 7
+            };
+        }
+    }
+
+    public class StreetShape : ExtrudeShapeBase
+    {
+        public StreetShape()
+        {
+            verts = new Vector2[]
+            {
             new Vector2(1,0), //0
             new Vector2(1,0.1f),
             new Vector2(1,0.1f),
@@ -140,10 +189,10 @@ namespace MeshGeneration
             new Vector2(-1,0.1f),
             new Vector2(-1,0.1f),
             new Vector2(-1,0)
-        };
+            };
 
-        public float[] us = new float[]
-        {
+            us = new float[]
+            {
             0f,
             0.0001f,
             0.0001f,
@@ -159,10 +208,10 @@ namespace MeshGeneration
             0.9999f,
             0.9999f,
             1
-        };
+            };
 
-        public int[] lines = new int[]
-        {
+            lines = new int[]
+            {
             0, 1,
             2, 3,
             4, 5,
@@ -170,6 +219,7 @@ namespace MeshGeneration
             8, 9,
             10, 11,
             12, 13,
-        };
+            };
+        }
     }
 }

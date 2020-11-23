@@ -28,8 +28,7 @@ namespace Splines
         }
         #endregion
 
-        [SerializeField]
-        private Material streetMat;
+        public Material streetMat;
         [SerializeField]
         private Material previewStreetMat;
 
@@ -84,7 +83,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new ExtrudeShapeBase(), true, false);
+            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape(), true, false);
 
             return s;
         }
@@ -206,7 +205,7 @@ namespace Splines
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new ExtrudeShapeBase());
+            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape());
             s.m_Spline.CreateGridOPs();
             splineID_Dic.Add(s.ID, s);
             return s;
