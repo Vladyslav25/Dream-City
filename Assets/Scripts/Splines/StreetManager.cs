@@ -206,8 +206,25 @@ namespace Splines
             tangent1.transform.SetParent(obj.transform);
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
+            bool connectStartIsOtherStart = true; 
+            bool connectEndIsOtherStart = true;
 
-            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape(), false, true, _connectStart, _connectEnd);
+            if (_connectStart != null)
+            {
+                if(_connectStart.m_SplineConnect_Start.ID == -1)
+                    connectStartIsOtherStart = true;
+                else if (_connectStart.m_SplineConnect_End.ID == -1)
+                    connectStartIsOtherStart = false;
+            }
+            if(_connectEnd != null)
+            {
+                if(_connectEnd.m_SplineConnect_Start.ID == -1)
+                        connectEndIsOtherStart = true;
+                else if (_connectEnd.m_SplineConnect_End.ID == -1)
+                        connectEndIsOtherStart = false;
+            }
+
+            s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape(), false, true, _connectStart, connectStartIsOtherStart, _connectEnd, connectEndIsOtherStart);
             s.m_Spline.CreateGridOPs();
             splineID_Dic.Add(s.ID, s);
             return s;

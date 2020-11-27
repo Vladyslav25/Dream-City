@@ -19,6 +19,7 @@ public class DeadEnd : Street
     /// <returns>return the DeadEnd Class</returns>
     public DeadEnd Init(ExtrudeShapeBase _shape, Street _streetRef, bool _isStart)
     {
+        id = -2;
         m_Shape = _shape;
         m_StreetNeighbour = _streetRef;
         isStart = _isStart;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Splines;
 using UnityEditor;
+using System;
 
 namespace Streets
 {
@@ -111,6 +112,17 @@ namespace Streets
                     pos3Set = false;
                     isTangent1Locked = false;
                     isTangent2Locked = false;
+                    Destroy(previewStreet.gameObject); //Destroy PreviewStreet
+                    previewStreet = null;
+
+                    if (lastConnectedStreetChildren.CompareTag("StreetStart"))
+                        lastConnectedStreet.CreateDeadEnd(true);
+                    else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
+                        lastConnectedStreet.CreateDeadEnd(false);
+
+                    lastConnectedStreet = null;
+                    lastConnectedStreetChildren = null;
+
                     if (previewStreet != null)
                     {
                         Destroy(previewStreet.gameObject); //Destroy PreviewStreet
@@ -159,6 +171,9 @@ namespace Streets
                         isTangent2Locked = false;
                         Destroy(previewStreet.gameObject); //Destroy PreviewStreet
                         previewStreet = null;
+
+                        lastConnectedStreet = null;
+                        lastConnectedStreetChildren = null;
                         return;
                     }
                 }
@@ -192,7 +207,10 @@ namespace Streets
 
             for (int i = 0; i < sphereHits.Length; i++) //Look if the Sphere overlap an valid Street GameObject
             {
-                if (sphereHits[i].CompareTag("StreetEnd") || sphereHits[i].CompareTag("StreetStart"))
+                Street tmpStreet = sphereHits[i].GetComponentInParent<Street>();
+                if (tmpStreet == null) continue;
+                if ((sphereHits[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable) 
+                    || (sphereHits[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable))
                     hittedStreetsChildern.Add(sphereHits[i].transform.gameObject); //if found a valid GameObject add it to a List
             }
             if (hittedStreetsChildern.Count == 0) return null; //return null if no valid Street GameObbject was found in the Sphere
@@ -211,29 +229,23 @@ namespace Streets
         private void CheckForCombine(Vector3 _hitPoint, bool isStart)
         {
             GameObject closestStreetChildren = FindStreetGameObject(_hitPoint);
+
             if (closestStreetChildren == null) // if there is no valid Street GameObject around
             {
-                if (lastConnectedStreetChildren != null)
-                {
-                    if (lastConnectedStreetChildren.CompareTag("StreetStart"))
-                    {
-                        lastConnectedStreet.CreateDeadEnd(true);
-                    }
-                    if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
-                    {
-                        lastConnectedStreet.CreateDeadEnd(false);
-                    }
-                }
-                //Unlock the Tanget of the Pos wich is not Set
+                if (lastConnectedStreet != null && lastConnectedStreetChildren != null)
+                    RecreateDeadEnd(lastConnectedStreet, lastConnectedStreetChildren);
+
+                //Unlock the Tangent of the Pos which is not Set
                 if (pos1 == Vector3.zero)
                     isTangent1Locked = false;
                 if (pos3 == Vector3.zero)
                     isTangent2Locked = false;
                 return;
             }
-            lastConnectedStreetChildren = closestStreetChildren;
 
             Street otherStreet = closestStreetChildren.GetComponentInParent<Street>();
+
+            lastConnectedStreetChildren = closestStreetChildren;
             lastConnectedStreet = otherStreet;
 
             if (closestStreetChildren.CompareTag("StreetEnd"))
@@ -250,7 +262,8 @@ namespace Streets
                         ); //Set the EndPos
 
                     isTangent1Locked = true;
-                    otherStreet.RemoveDeadEnd(true);
+                    otherStreet.RemoveDeadEnd(false, previewStreet);
+                    previewStreet.m_SplineConnect_Start = otherStreet;
                     return;
                 }
                 else
@@ -265,7 +278,8 @@ namespace Streets
                         );
 
                     isTangent2Locked = true;
-                    otherStreet.RemoveDeadEnd(false);
+                    otherStreet.RemoveDeadEnd(false, previewStreet);
+                    previewStreet.m_SplineConnect_End = otherStreet;
                     return;
                 }
             }
@@ -283,7 +297,8 @@ namespace Streets
                         );
 
                     isTangent1Locked = true;
-                    otherStreet.RemoveDeadEnd(true);
+                    otherStreet.RemoveDeadEnd(true, previewStreet);
+                    previewStreet.m_SplineConnect_Start = otherStreet;
                     return;
                 }
                 else
@@ -298,11 +313,26 @@ namespace Streets
                         );
 
                     isTangent2Locked = true;
-                    otherStreet.RemoveDeadEnd(true);
+                    otherStreet.RemoveDeadEnd(true, previewStreet);
+                    previewStreet.m_SplineConnect_End = otherStreet;
                     return;
                 }
             }
+        }
 
+        private void RecreateDeadEnd(Street _lastConnectedStreet, GameObject _lastConnectedStreetChildren)
+        {
+            if (_lastConnectedStreetChildren.CompareTag("StreetStart") && _lastConnectedStreet.m_SplineConnect_Start == previewStreet)
+            {
+                _lastConnectedStreet.CreateDeadEnd(true);
+                previewStreet.m_SplineConnect_End = null;
+            }
+            else
+            if (_lastConnectedStreetChildren.CompareTag("StreetEnd") && _lastConnectedStreet.m_SplineConnect_End == previewStreet)
+            {
+                _lastConnectedStreet.CreateDeadEnd(false);
+                previewStreet.m_SplineConnect_End = null;
+            }
         }
 
         private bool CheckForValidForm()
