@@ -169,7 +169,7 @@ namespace Splines
 
         public static Street CreateStreet(Street _street)
         {
-            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_SplineConnect_Start, _street.m_SplineConnect_End);
+            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_StreetConnect_Start, _street.m_StreetConnect_End);
         }
 
         public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Street _connectStart, Street _connectEnd)
@@ -211,16 +211,16 @@ namespace Splines
 
             if (_connectStart != null)
             {
-                if(_connectStart.m_SplineConnect_Start.ID == -1)
+                if(_connectStart.m_StreetConnect_Start.ID == -1)
                     connectStartIsOtherStart = true;
-                else if (_connectStart.m_SplineConnect_End.ID == -1)
+                else if (_connectStart.m_StreetConnect_End.ID == -1)
                     connectStartIsOtherStart = false;
             }
             if(_connectEnd != null)
             {
-                if(_connectEnd.m_SplineConnect_Start.ID == -1)
+                if(_connectEnd.m_StreetConnect_Start.ID == -1)
                         connectEndIsOtherStart = true;
-                else if (_connectEnd.m_SplineConnect_End.ID == -1)
+                else if (_connectEnd.m_StreetConnect_End.ID == -1)
                         connectEndIsOtherStart = false;
             }
 
