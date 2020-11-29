@@ -102,6 +102,23 @@ namespace Streets
         private bool lastDrawMeshSetting;
         private int lastSegmentCount;
 
+        /// <summary>
+        /// Init the Street. Need to call befor use.
+        /// </summary>
+        /// <param name="_startPos">Start GameObject of the Spline</param>
+        /// <param name="_tangent1">Tangent 1 GameObject of the Spline </param>
+        /// <param name="_tangent2">Tangent 2 GameObject of the Spline</param>
+        /// <param name="_endPos">End GameObject of the Spline</param>
+        /// <param name="_segments">The amount of segments</param>
+        /// <param name="_meshFilter">MeshFilter Ref</param>
+        /// <param name="_meshRenderer">MeshRenderer Ref</param>
+        /// <param name="_shape">The Shape of the Street</param>
+        /// <param name="_updateMesh">Update the form of the Street? <strong>Heavy impact on Performance. Use only for the Preview Street</strong></param>
+        /// <param name="_needID">Need the Street an id? <strong>If true: Create DeadEnds or Combines</strong></param>
+        /// <param name="_connectionStart">Ref to the Street Connection on the Start of the Street. <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
+        /// <param name="_connectionStartIsOtherStart">Is it the start of the other Street in the Street start? <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
+        /// <param name="_connectionEnd">Ref to the Street connection on the End of the Street. <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
+        /// <param name="_connectionEndIsOtherStart">Is it the start of the other Street in the Street end? <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
         public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true, Street _connectionStart = null, bool _connectionStartIsOtherStart = true, Street _connectionEnd = null, bool _connectionEndIsOtherStart = true)
         {
             m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments);
@@ -127,6 +144,11 @@ namespace Streets
             return this;
         }
 
+        /// <summary>
+        /// Remove a DeadEnd and set the new Ref on the given StreetSide
+        /// </summary>
+        /// <param name="_isStart">Is it the Start of the Street?</param>
+        /// <param name="_newStreetRef">The new Street Ref on the Street Side</param>
         public void RemoveDeadEnd(bool _isStart, Street _newStreetRef)
         {
             if (_isStart && m_StreetConnect_Start != null && m_StreetConnect_Start is DeadEnd)
@@ -142,22 +164,48 @@ namespace Streets
             }
         }
 
+        /// <summary>
+        /// Create a DeadEnd on the given Side of the Street
+        /// </summary>
+        /// <param name="isStart">Is it the Start of the Street?</param>
         public void CreateDeadEnd(bool isStart)
         {
             if (isStart && m_StartIsConnectable)
             {
-                GameObject tmp = new GameObject("DeadEnd_Start");
-                m_StreetConnect_Start = tmp.AddComponent<DeadEnd>();
-                DeadEnd de = (DeadEnd)m_StreetConnect_Start;
-                de.Init(new DeadEndShape(), this, true);
+                //Look for maybe already created DeadEnd
+                Transform t = transform.Find("DeadEnd_Start");
+                GameObject tmp;
+                if (t == null) //if there is no DeadEnd GameObject -> Create
+                {
+                    tmp = new GameObject("DeadEnd_Start");
+                    m_StreetConnect_Start = tmp.AddComponent<DeadEnd>();
+                    DeadEnd de = (DeadEnd)m_StreetConnect_Start;
+                    de.Init(new DeadEndShape(), this, true);
+                }
+                else //If a DeadEnd GameObjec exist -> Reset Ref
+                {
+                    tmp = t.gameObject;
+                    m_StreetConnect_Start = tmp.GetComponent<DeadEnd>();
+                }
             }
             else
             if (!isStart && m_EndIsConnectable)
             {
-                GameObject tmp = new GameObject("DeadEnd_End");
-                m_StreetConnect_End = tmp.AddComponent<DeadEnd>();
-                DeadEnd de = (DeadEnd)m_StreetConnect_End;
-                de.Init(new DeadEndShape(), this, false);
+                //Look for maybe already created DeadEnd
+                Transform t = transform.Find("DeadEnd_End");
+                GameObject tmp;
+                if (t == null)
+                {
+                    tmp = new GameObject("DeadEnd_End");
+                    m_StreetConnect_End = tmp.AddComponent<DeadEnd>();
+                    DeadEnd de = (DeadEnd)m_StreetConnect_End;
+                    de.Init(new DeadEndShape(), this, false);
+                }
+                else
+                {
+                    tmp = t.gameObject;
+                    m_StreetConnect_End = tmp.GetComponent<DeadEnd>();
+                }
             }
         }
 

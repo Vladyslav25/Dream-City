@@ -113,14 +113,6 @@ namespace Streets
                     isTangent1Locked = false;
                     isTangent2Locked = false;
 
-                    if (lastConnectedStreetChildren != null)
-                        if (lastConnectedStreetChildren.CompareTag("StreetStart"))
-                            lastConnectedStreet.CreateDeadEnd(true);
-                        else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
-                            lastConnectedStreet.CreateDeadEnd(false);
-
-                    lastConnectedStreet = null;
-                    lastConnectedStreetChildren = null;
 
                     if (previewStreet != null)
                     {
@@ -140,6 +132,15 @@ namespace Streets
                         }
                         Destroy(previewStreet.gameObject); //Destroy PreviewStreet
                     }
+
+                    if (lastConnectedStreetChildren != null)
+                        if (lastConnectedStreetChildren.CompareTag("StreetStart"))
+                            lastConnectedStreet.CreateDeadEnd(true);
+                        else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
+                            lastConnectedStreet.CreateDeadEnd(false);
+
+                    lastConnectedStreet = null;
+                    lastConnectedStreetChildren = null;
 
                     previewStreet = null;
                     return;
@@ -412,7 +413,6 @@ namespace Streets
                     output = _objs[i];
                 }
             }
-
             return output;
         }
     }
