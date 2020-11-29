@@ -47,6 +47,38 @@ namespace Streets
         public MeshFilter m_MeshFilterRef;
         public MeshRenderer m_MeshRendererRef;
         public ExtrudeShapeBase m_Shape;
+
+        public Street m_StreetConnect_Start;
+        public bool m_StartIsConnectable
+        {
+            get
+            {
+                if (m_StreetConnect_Start == null || m_StreetConnect_Start.ID < 0)
+                    return true;
+                return false;
+            }
+        }
+        public Street m_StreetConnect_End;
+        public bool m_EndIsConnectable
+        {
+            get
+            {
+                if (m_StreetConnect_End == null || m_StreetConnect_End.ID < 0)
+                    return true;
+                return false;
+            }
+        }
+
+        public bool m_EndIsPreview
+        {
+            get
+            {
+                if (m_StreetConnect_End != null && m_StreetConnect_End.ID == -1)
+                    return true;
+                return false;
+            }
+        }
+
         public Vector3 m_MeshOffset
         {
             get
@@ -57,31 +89,103 @@ namespace Streets
 
         [MyReadOnly]
         [SerializeField]
-        private int id = -1;
+        protected int id = -1;
 
         public int ID
         {
             get
             {
-                if (id > 0) return id;
-                else return -1;
+                return id;
             }
         }
 
         private bool lastDrawMeshSetting;
         private int lastSegmentCount;
 
-        public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true)
+        public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true, Street _connectionStart = null, bool _connectionStartIsOtherStart = true, Street _connectionEnd = null, bool _connectionEndIsOtherStart = true)
         {
-            if (_needID)
-                id = StreetManager.GetNewSplineID();
             m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments);
             m_MeshFilterRef = _meshFilter;
             m_MeshRendererRef = _meshRenderer;
             m_Shape = _shape;
             MeshGenerator.Extrude(this);
             updateSpline = _updateMesh;
+            if (_needID)
+            {
+                id = StreetManager.GetNewSplineID();
+
+                if (_connectionStart == null)
+                    CreateDeadEnd(true);
+                else
+                    Combine(_connectionStart, true, _connectionStartIsOtherStart);
+
+                if (_connectionEnd == null)
+                    CreateDeadEnd(false);
+                else
+                    Combine(_connectionEnd, false, _connectionEndIsOtherStart);
+            }
             return this;
+        }
+
+        public void RemoveDeadEnd(bool _isStart, Street _newStreetRef)
+        {
+            if (_isStart && m_StreetConnect_Start != null && m_StreetConnect_Start is DeadEnd)
+            {
+                Destroy(m_StreetConnect_Start.gameObject);
+                m_StreetConnect_Start = _newStreetRef;
+            }
+            else
+            if (!_isStart && m_StreetConnect_End != null && m_StreetConnect_End is DeadEnd)
+            {
+                Destroy(m_StreetConnect_End.gameObject);
+                m_StreetConnect_End = _newStreetRef;
+            }
+        }
+
+        public void CreateDeadEnd(bool isStart)
+        {
+            if (isStart && m_StartIsConnectable)
+            {
+                GameObject tmp = new GameObject("DeadEnd_Start");
+                m_StreetConnect_Start = tmp.AddComponent<DeadEnd>();
+                DeadEnd de = (DeadEnd)m_StreetConnect_Start;
+                de.Init(new DeadEndShape(), this, true);
+            }
+            else
+            if (!isStart && m_EndIsConnectable)
+            {
+                GameObject tmp = new GameObject("DeadEnd_End");
+                m_StreetConnect_End = tmp.AddComponent<DeadEnd>();
+                DeadEnd de = (DeadEnd)m_StreetConnect_End;
+                de.Init(new DeadEndShape(), this, false);
+            }
+        }
+
+        public bool Combine(Street _otherStreet, bool _isMyStart, bool _otherStreetIsStart)
+        {
+            if (_otherStreet == null) return false;
+
+            RemoveDeadEnd(_isMyStart, _otherStreet); //Remove my DeadEnd
+
+            //Set Ref of other Street
+            if (_otherStreetIsStart)
+                _otherStreet.m_StreetConnect_Start = this;
+            else
+                _otherStreet.m_StreetConnect_End = this;
+
+            //Set my Ref
+            if (_isMyStart)
+            {
+                m_StreetConnect_Start = _otherStreet;
+                return true;
+            }
+            else if (!_isMyStart)
+            {
+                m_StreetConnect_End = _otherStreet;
+                return true;
+            }
+
+            return false;
         }
 
         private void Update()
@@ -107,13 +211,13 @@ namespace Streets
             }
 
             lastSegmentCount = segments;
+
         }
 
         private void OnDrawGizmos()
         {
             if (drawGridNormals)
             {
-                //m_Spline.CreateGridOPs();
                 for (int i = 0; i < m_Spline.GridOPs.Length; i++)
                 {
                     Gizmos.color = Color.green;

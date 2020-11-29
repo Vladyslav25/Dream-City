@@ -338,6 +338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   streetMat: {fileID: 2100000, guid: 28887894ac123dd47a2eb784281d1395, type: 2}
   previewStreetMat: {fileID: 2100000, guid: 1ab8d390690c06d469abd3677c9754f6, type: 2}
+  DeadEndMat: {fileID: 2100000, guid: c8c768953eeb8f141a5a77f11e11adce, type: 2}
 --- !u!4 &899825173
 Transform:
   m_ObjectHideFlags: 0
