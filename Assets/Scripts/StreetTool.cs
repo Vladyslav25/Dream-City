@@ -89,7 +89,6 @@ namespace Streets
                         Vector3 tangent2 = (pos2Tmp + hitPoint) * 0.5f; //The 2. Tangent is between the End and the Mid
                         UpdatePreview(tangent1, tangent2, hitPoint); //Update the Preview (update if Tanget is not locked)
                         //The Scecond Point cant Combine to an another Spline
-
                     }
 
                     if (pos1Set == true && pos2Set == true && pos3Set == false && previewStreet != null)
@@ -112,7 +111,6 @@ namespace Streets
                     pos3Set = false;
                     isTangent1Locked = false;
                     isTangent2Locked = false;
-
 
                     if (previewStreet != null)
                     {
@@ -362,9 +360,8 @@ namespace Streets
         private bool CheckForValidForm()
         {
             if (previewStreet == null) return false;
-
             float validDistanceStartEnd = 2f;
-            float maxDeltaAngel = 17f;
+            float maxDeltaAngel = 18f;
 
             Vector3 StartPos = previewStreet.m_Spline.StartPos;
             Vector3 EndPos = previewStreet.m_Spline.EndPos;
@@ -373,7 +370,7 @@ namespace Streets
 
             if (Vector3.Distance(StartPos, EndPos) < validDistanceStartEnd)
             {
-                StreetManager.SetStreetColor(previewStreet, Color.red);
+                previewStreet.m_HasValidForm = false;
                 return false;
             }
 
@@ -383,11 +380,11 @@ namespace Streets
                 Vector3 opTangent2 = previewStreet.m_Spline.GetTangentAt(previewStreet.m_Spline.OPs[i + 1].t);
                 if (Vector3.Angle(opTangent1, opTangent2) > maxDeltaAngel)
                 {
-                    StreetManager.SetStreetColor(previewStreet, Color.red);
+                    previewStreet.m_HasValidForm = false;
                     return false;
                 }
             }
-            StreetManager.SetStreetColor(previewStreet, Color.green);
+            previewStreet.m_HasValidForm = true;
             return true;
         }
 

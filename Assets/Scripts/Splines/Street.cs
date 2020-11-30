@@ -46,7 +46,10 @@ namespace Streets
         public Spline m_Spline;
         public MeshFilter m_MeshFilterRef;
         public MeshRenderer m_MeshRendererRef;
+        public MeshCollider m_MeshCollider;
         public ExtrudeShapeBase m_Shape;
+
+        private Street m_collisionStreet;
 
         public Street m_StreetConnect_Start;
         public bool m_StartIsConnectable
@@ -69,13 +72,24 @@ namespace Streets
             }
         }
 
-        public bool m_EndIsPreview
+        private bool m_inValidForm = true;
+        public bool m_HasValidForm
         {
             get
             {
-                if (m_StreetConnect_End != null && m_StreetConnect_End.ID == -1)
-                    return true;
-                return false;
+                return m_inValidForm;
+            }
+            set
+            {
+                m_inValidForm = value;
+                if (value)
+                {
+                    StreetManager.SetStreetColor(this, Color.green);
+                }
+                else
+                {
+                    StreetManager.SetStreetColor(this, Color.red);
+                }
             }
         }
 
@@ -125,6 +139,7 @@ namespace Streets
             m_MeshFilterRef = _meshFilter;
             m_MeshRendererRef = _meshRenderer;
             m_Shape = _shape;
+            m_MeshCollider = gameObject.AddComponent<MeshCollider>();
             MeshGenerator.Extrude(this);
             updateSpline = _updateMesh;
             if (_needID)
@@ -142,6 +157,16 @@ namespace Streets
                     Combine(_connectionEnd, false, _connectionEndIsOtherStart);
             }
             return this;
+        }
+
+        public void SetCollisionStreet(Street _collStreet)
+        {
+            m_collisionStreet = _collStreet;
+        }
+
+        public Street GetCollisionStreet()
+        {
+            return m_collisionStreet;
         }
 
         /// <summary>
@@ -178,6 +203,7 @@ namespace Streets
                 if (t == null) //if there is no DeadEnd GameObject -> Create
                 {
                     tmp = new GameObject("DeadEnd_Start");
+                    tmp.tag = "Street";
                     m_StreetConnect_Start = tmp.AddComponent<DeadEnd>();
                     DeadEnd de = (DeadEnd)m_StreetConnect_Start;
                     de.Init(new DeadEndShape(), this, true);
@@ -197,6 +223,7 @@ namespace Streets
                 if (t == null)
                 {
                     tmp = new GameObject("DeadEnd_End");
+                    tmp.tag = "Street";
                     m_StreetConnect_End = tmp.AddComponent<DeadEnd>();
                     DeadEnd de = (DeadEnd)m_StreetConnect_End;
                     de.Init(new DeadEndShape(), this, false);

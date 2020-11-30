@@ -50,6 +50,7 @@ public class DeadEnd : Street
         m_MeshFilterRef = gameObject.AddComponent<MeshFilter>();
         m_MeshRendererRef = gameObject.AddComponent<MeshRenderer>();
         m_MeshRendererRef.material = StreetManager.Instance.DeadEndMat;
+        m_MeshCollider = gameObject.AddComponent<MeshCollider>();
         transform.SetParent(m_StreetNeighbour.transform);
         MeshGenerator.Extrude(this);
         return this;
