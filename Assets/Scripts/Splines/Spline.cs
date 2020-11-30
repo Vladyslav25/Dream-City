@@ -28,25 +28,46 @@ namespace Splines
 
         public OrientedPoint[] OPs;
 
+        public OrientedPoint[] GridOPs;
+
         public int segments;
 
-        public Spline(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments)
+        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments)
         {
             pointsObj = new GameObject[4];
-            pointsObj[0] = _startPos;
-            pointsObj[1] = _tangent1;
-            pointsObj[2] = _tangent2;
-            pointsObj[3] = _endPos;
+            pointsObj[0] = _startObj;
+            pointsObj[1] = _tangent1Obj;
+            pointsObj[2] = _tangent2Obj;
+            pointsObj[3] = _endObj;
             segments = _segments;
             UpdateOPs();
         }
 
+        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent)
+        {
+            pointsObj = new GameObject[4];
+            pointsObj[0] = new GameObject("Start");
+            pointsObj[0].transform.position = _startPos;
+            pointsObj[0].transform.SetParent(_parent.transform);
+            pointsObj[1] = new GameObject("Tangent1");
+            pointsObj[1].transform.position = _tangent1Pos;
+            pointsObj[1].transform.SetParent(_parent.transform);
+            pointsObj[2] = new GameObject("Tangent2");
+            pointsObj[2].transform.position = _tangent2Pos;
+            pointsObj[2].transform.SetParent(_parent.transform);
+            pointsObj[3] = new GameObject("End");
+            pointsObj[3].transform.position = _endPos;
+            pointsObj[3].transform.SetParent(_parent.transform);
+            segments = _segments;
+            UpdateOPs();
+        }
+
+        #region -Set Tangents, Start and End-
         public void SetStartPos(Vector3 _newPos)
         {
             if (_newPos == Vector3.zero) return;
 
             StartPos = _newPos;
-            UpdateOPs();
         }
 
         public void SetTangent1Pos(Vector3 _newPos)
@@ -54,7 +75,6 @@ namespace Splines
             if (_newPos == Vector3.zero) return;
 
             Tangent1Pos = _newPos;
-            UpdateOPs();
         }
 
         public void SetTangent2Pos(Vector3 _newPos)
@@ -62,7 +82,6 @@ namespace Splines
             if (_newPos == Vector3.zero) return;
 
             Tangent2Pos = _newPos;
-            UpdateOPs();
         }
 
         public void SetEndPos(Vector3 _newPos)
@@ -70,8 +89,8 @@ namespace Splines
             if (_newPos == Vector3.zero) return;
 
             EndPos = _newPos;
-            UpdateOPs();
         }
+        #endregion
 
         /// <summary>
         /// Get the world position of the point on the spline depending of t
@@ -224,6 +243,14 @@ namespace Splines
             return OPs[0];
         }
 
+        public OrientedPoint GetCentredOrientedPoint()
+        {
+            return OPs[OPs.Length / 2];
+        }
+
+        /// <summary>
+        /// Update the Oriented Points
+        /// </summary>
         public void UpdateOPs()
         {
             OPs = new OrientedPoint[segments + 1];
@@ -232,6 +259,30 @@ namespace Splines
                 float t = 1.0f / segments * i;
                 OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
+        }
+
+        public void CreateGridOPs()
+        {
+            List<OrientedPoint> tmp = new List<OrientedPoint>();
+            tmp.Add(GetFirstOrientedPoint());
+
+            float distanceToEnd = Vector3.Distance(StartPos, EndPos);
+            float currT = 0;
+            int intT = 0;
+            Vector3 lastPos = StartPos;
+            while (distanceToEnd > GridManager.Instance.GridSize && intT <= 1000)
+            {
+                intT += 3;
+                currT = intT * 0.001f;
+                Vector3 tmPos = GetPositionAt(currT);
+                distanceToEnd = Vector3.Distance(tmPos, EndPos);
+                if (Vector3.Distance(lastPos, tmPos) >= GridManager.Instance.GridSize)
+                {
+                    tmp.Add(new OrientedPoint(tmPos, GetOrientationUp(currT), currT));
+                    lastPos = tmPos;
+                }
+            }
+            GridOPs = tmp.ToArray();
         }
     }
 
@@ -248,19 +299,35 @@ namespace Splines
             t = _t;
         }
 
+        /// <summary>
+        /// Calculate from Local Position to World Position
+        /// </summary>
+        /// <param name="_point">Local Position</param>
+        /// <returns></returns>
         public Vector3 LocalToWorld(Vector3 _point)
         {
             return Position + Rotation * _point;
         }
 
+        /// <summary>
+        /// Calculate from World Position to Local Position
+        /// </summary>
+        /// <param name="_point">World Position</param>
+        /// <returns></returns>
         public Vector3 WorldToLocal(Vector3 _point)
         {
             return Quaternion.Inverse(Rotation) * (_point - Position);
         }
 
+        /// <summary>
+        /// Calculate from Local Direction to World Direction
+        /// </summary>
+        /// <param name="_dir">Local Direction</param>
+        /// <returns></returns>
         public Vector3 LocalToWorldDirection(Vector3 _dir)
         {
             return Rotation * _dir;
         }
     }
+
 }
