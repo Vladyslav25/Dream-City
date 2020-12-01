@@ -13,6 +13,8 @@ namespace Streets
         GameObject spherePrefab;
         [SerializeField]
         Material previewStreetMaterial;
+        [SerializeField]
+        RenderTexture m_renderTexture;
 
         Vector3 pos1;
         Vector3 pos2;
@@ -27,8 +29,6 @@ namespace Streets
 
         bool isCurrendToolLine = false;
 
-        bool previewInValidForm = false;
-
         Street previewStreet;
 
         Street lastConnectedStreet;
@@ -36,9 +36,18 @@ namespace Streets
 
         GameObject sphere;
 
+        Texture2D texture;
+        Rect rectReadPic;
+        int renderTextureWidth;
+        int renderTextureHeight;
+
         private void Awake()
         {
             sphere = Instantiate(spherePrefab);
+            texture = new Texture2D(m_renderTexture.width, m_renderTexture.height, TextureFormat.ARGB32, false);
+            rectReadPic = new Rect(0, 0, m_renderTexture.width, m_renderTexture.height);
+            renderTextureWidth = m_renderTexture.width;
+            renderTextureHeight = m_renderTexture.height;
         }
 
         void Update()
@@ -129,6 +138,7 @@ namespace Streets
                                 previewStreet.m_StreetConnect_End.m_StreetConnect_End.CreateDeadEnd(false);
                         }
                         Destroy(previewStreet.gameObject); //Destroy PreviewStreet
+                        Destroy(previewStreet.GetCollisionStreet().gameObject);
                     }
 
                     if (lastConnectedStreetChildren != null)
@@ -144,9 +154,14 @@ namespace Streets
                     return;
                 }
 
-                if (previewStreet != null && !CheckForValidForm())
-                    return;
-
+                if (previewStreet != null)
+                    if (!CheckForValidForm() || CheckForCollision())
+                    {
+                        previewStreet.m_HasValidForm = false;
+                        return;
+                    }
+                    else
+                        previewStreet.m_HasValidForm = true;
 
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -191,6 +206,23 @@ namespace Streets
                     }
                 }
             }
+        }
+
+        private bool CheckForCollision()
+        {
+            RenderTexture.active = m_renderTexture;
+            texture.ReadPixels(rectReadPic, 0, 0);
+            RenderTexture.active = null;
+            for (int x = 0; x < renderTextureWidth; x++)
+            {
+                for (int y = 0; y < renderTextureHeight; y++)
+                {
+                    Color c = texture.GetPixel(x, y);
+                    if (c.r * c.g > 0.2)
+                        return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -365,12 +397,10 @@ namespace Streets
 
             Vector3 StartPos = previewStreet.m_Spline.StartPos;
             Vector3 EndPos = previewStreet.m_Spline.EndPos;
-            Vector3 Tangent1 = previewStreet.m_Spline.Tangent1Pos;
-            Vector3 Tangent2 = previewStreet.m_Spline.Tangent2Pos;
 
             if (Vector3.Distance(StartPos, EndPos) < validDistanceStartEnd)
             {
-                previewStreet.m_HasValidForm = false;
+                //previewStreet.m_HasValidForm = false;
                 return false;
             }
 
@@ -380,11 +410,9 @@ namespace Streets
                 Vector3 opTangent2 = previewStreet.m_Spline.GetTangentAt(previewStreet.m_Spline.OPs[i + 1].t);
                 if (Vector3.Angle(opTangent1, opTangent2) > maxDeltaAngel)
                 {
-                    previewStreet.m_HasValidForm = false;
                     return false;
                 }
             }
-            previewStreet.m_HasValidForm = true;
             return true;
         }
 

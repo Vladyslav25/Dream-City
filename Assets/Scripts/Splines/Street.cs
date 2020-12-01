@@ -195,6 +195,7 @@ namespace Streets
         /// <param name="isStart">Is it the Start of the Street?</param>
         public void CreateDeadEnd(bool isStart)
         {
+            if (gameObject.layer == 8) return;
             if (isStart && m_StartIsConnectable)
             {
                 //Look for maybe already created DeadEnd

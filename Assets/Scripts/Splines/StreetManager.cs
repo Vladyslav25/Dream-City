@@ -304,7 +304,9 @@ namespace Splines
             tangent1.transform.SetParent(obj.transform);
             tangent2.transform.SetParent(obj.transform);
             end.transform.SetParent(obj.transform);
+
             s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape(), false, true);
+
             return s;
         }
 
