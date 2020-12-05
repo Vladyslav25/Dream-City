@@ -122,23 +122,23 @@ namespace Streets
                     isTangent2Locked = false;
 
                     if (previewStreet != null)
-                    {
+                    {   //Recreate DeadEnds on PreviewStreet Conections
                         if (previewStreet.m_StreetConnect_Start != null)
                         {
                             if (previewStreet.m_StreetConnect_Start.m_StreetConnect_Start == previewStreet)
-                                previewStreet.m_StreetConnect_Start.m_StreetConnect_Start.CreateDeadEnd(true);
+                                previewStreet.m_StreetConnect_Start.CreateDeadEnd(true);
                             if (previewStreet.m_StreetConnect_Start.m_StreetConnect_End == previewStreet)
-                                previewStreet.m_StreetConnect_Start.m_StreetConnect_End.CreateDeadEnd(false);
+                                previewStreet.m_StreetConnect_Start.CreateDeadEnd(false);
                         }
                         if (previewStreet.m_StreetConnect_End != null)
                         {
                             if (previewStreet.m_StreetConnect_End.m_StreetConnect_Start == previewStreet)
-                                previewStreet.m_StreetConnect_End.m_StreetConnect_Start.CreateDeadEnd(true);
+                                previewStreet.m_StreetConnect_End.CreateDeadEnd(true);
                             if (previewStreet.m_StreetConnect_End.m_StreetConnect_End == previewStreet)
-                                previewStreet.m_StreetConnect_End.m_StreetConnect_End.CreateDeadEnd(false);
+                                previewStreet.m_StreetConnect_End.CreateDeadEnd(false);
                         }
-                        Destroy(previewStreet.gameObject); //Destroy PreviewStreet
                         Destroy(previewStreet.GetCollisionStreet().gameObject);
+                        Destroy(previewStreet.gameObject); //Destroy PreviewStreet
                     }
 
                     if (lastConnectedStreetChildren != null)
@@ -155,13 +155,17 @@ namespace Streets
                 }
 
                 if (previewStreet != null)
+                {
                     if (!CheckForValidForm() || CheckForCollision())
                     {
                         previewStreet.m_HasValidForm = false;
                         return;
                     }
                     else
+                    {
                         previewStreet.m_HasValidForm = true;
+                    }
+                }
 
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -208,6 +212,10 @@ namespace Streets
             }
         }
 
+        /// <summary>
+        /// Run the Collision Check beteween Preview Street and others
+        /// </summary>
+        /// <returns></returns>
         private bool CheckForCollision()
         {
             RenderTexture.active = m_renderTexture;
@@ -218,8 +226,11 @@ namespace Streets
                 for (int y = 0; y < renderTextureHeight; y++)
                 {
                     Color c = texture.GetPixel(x, y);
-                    if (c.r * c.g > 0.2)
+                    if (c.r * c.g > 0.2f)
+                    {
+                        Debug.Log("Overlapping");
                         return true;
+                    }
                 }
             }
             return false;
@@ -302,7 +313,7 @@ namespace Streets
 
                     StreetManager.UpdateStreetTangent1AndStartPoint(
                         previewStreet,
-                        dir * 4f + otherStreet.m_Spline.EndPos, //Set the Tanget to the half point symmetrical Position
+                        dir * 5f + otherStreet.m_Spline.EndPos, //Set the Tanget to the half point symmetrical Position
                         otherStreet.m_Spline.EndPos
                         ); //Set the EndPos
 
@@ -318,7 +329,7 @@ namespace Streets
 
                     StreetManager.UpdateStreetTangent2AndEndPoint(
                         previewStreet,
-                        dir * 4f + otherStreet.m_Spline.EndPos,
+                        dir * 5f + otherStreet.m_Spline.EndPos,
                         otherStreet.m_Spline.EndPos
                         );
 
@@ -337,7 +348,7 @@ namespace Streets
 
                     StreetManager.UpdateStreetTangent1AndStartPoint(
                         previewStreet,
-                        dir * 4f + otherStreet.m_Spline.StartPos,
+                        dir * 5f + otherStreet.m_Spline.StartPos,
                         otherStreet.m_Spline.StartPos
                         );
 
@@ -353,7 +364,7 @@ namespace Streets
 
                     StreetManager.UpdateStreetTangent2AndEndPoint(
                         previewStreet,
-                        dir * 4f + otherStreet.m_Spline.StartPos,
+                        dir * 5f + otherStreet.m_Spline.StartPos,
                         otherStreet.m_Spline.StartPos
                         );
 
@@ -365,6 +376,11 @@ namespace Streets
             }
         }
 
+        /// <summary>
+        /// Recreate the DeadEnd
+        /// </summary>
+        /// <param name="_lastConnectedStreet">The last connected Street, where to create the DeadEnd</param>
+        /// <param name="_lastConnectedStreetChildren">The GameObject to look for Street:Start or End</param>
         private void RecreateDeadEnd(Street _lastConnectedStreet, GameObject _lastConnectedStreetChildren)
         {
             if (previewStreet.m_StreetConnect_Start != null && previewStreet.m_StreetConnect_End != null
@@ -389,6 +405,10 @@ namespace Streets
                 }
         }
 
+        /// <summary>
+        /// Run the Check if the Form of the Street is Valid
+        /// </summary>
+        /// <returns></returns>
         private bool CheckForValidForm()
         {
             if (previewStreet == null) return false;
@@ -400,7 +420,6 @@ namespace Streets
 
             if (Vector3.Distance(StartPos, EndPos) < validDistanceStartEnd)
             {
-                //previewStreet.m_HasValidForm = false;
                 return false;
             }
 
