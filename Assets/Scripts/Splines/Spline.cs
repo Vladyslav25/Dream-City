@@ -32,13 +32,32 @@ namespace Splines
 
         public int segments;
 
-        public Spline(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments)
+        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments)
         {
             pointsObj = new GameObject[4];
-            pointsObj[0] = _startPos;
-            pointsObj[1] = _tangent1;
-            pointsObj[2] = _tangent2;
-            pointsObj[3] = _endPos;
+            pointsObj[0] = _startObj;
+            pointsObj[1] = _tangent1Obj;
+            pointsObj[2] = _tangent2Obj;
+            pointsObj[3] = _endObj;
+            segments = _segments;
+            UpdateOPs();
+        }
+
+        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent)
+        {
+            pointsObj = new GameObject[4];
+            pointsObj[0] = new GameObject("Start");
+            pointsObj[0].transform.position = _startPos;
+            pointsObj[0].transform.SetParent(_parent.transform);
+            pointsObj[1] = new GameObject("Tangent1");
+            pointsObj[1].transform.position = _tangent1Pos;
+            pointsObj[1].transform.SetParent(_parent.transform);
+            pointsObj[2] = new GameObject("Tangent2");
+            pointsObj[2].transform.position = _tangent2Pos;
+            pointsObj[2].transform.SetParent(_parent.transform);
+            pointsObj[3] = new GameObject("End");
+            pointsObj[3].transform.position = _endPos;
+            pointsObj[3].transform.SetParent(_parent.transform);
             segments = _segments;
             UpdateOPs();
         }
@@ -255,7 +274,6 @@ namespace Splines
             {
                 intT += 3;
                 currT = intT * 0.001f;
-                Debug.Log(currT);
                 Vector3 tmPos = GetPositionAt(currT);
                 distanceToEnd = Vector3.Distance(tmPos, EndPos);
                 if (Vector3.Distance(lastPos, tmPos) >= GridManager.Instance.GridSize)
