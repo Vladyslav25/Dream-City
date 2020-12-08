@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
+using Grid;
 
 namespace Splines
 {
@@ -270,13 +271,13 @@ namespace Splines
             float currT = 0;
             int intT = 0;
             Vector3 lastPos = StartPos;
-            while (distanceToEnd > GridManager.Instance.GridSize && intT <= 1000)
+            while (distanceToEnd > GridManager.Instance.CellSize && intT <= 1000)
             {
                 intT += 3;
                 currT = intT * 0.001f;
                 Vector3 tmPos = GetPositionAt(currT);
                 distanceToEnd = Vector3.Distance(tmPos, EndPos);
-                if (Vector3.Distance(lastPos, tmPos) >= GridManager.Instance.GridSize)
+                if (Vector3.Distance(lastPos, tmPos) >= GridManager.Instance.CellSize)
                 {
                     tmp.Add(new OrientedPoint(tmPos, GetOrientationUp(currT), currT));
                     lastPos = tmPos;

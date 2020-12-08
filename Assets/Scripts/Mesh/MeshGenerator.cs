@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Streets;
 using UnityEngine;
+using Grid;
 
 namespace MeshGeneration
 {
@@ -28,6 +29,27 @@ namespace MeshGeneration
             }
         }
         #endregion
+
+        public static Mesh CreateCellMesh(Cell _cell, bool _isLeft)
+        {
+            Mesh newMesh = new Mesh();
+            Vector3[] verts = new Vector3[4];
+            for (int i = 0; i < 4; i++)
+            {
+                verts[i] = _cell.m_Corner[i] - _cell.transform.position;
+            }
+            newMesh.vertices = verts;
+            if (_isLeft)
+                newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
+            else
+                newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
+
+            newMesh.RecalculateNormals();
+            newMesh.RecalculateBounds();
+            _cell.m_Mesh = newMesh;
+            return newMesh;
+        }
+
 
         public static void Extrude(Street _street)
         {

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Streets;
+using Grid;
 
 namespace Splines
 {
@@ -371,6 +372,7 @@ namespace Splines
 
             s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape(), false, true, _connectStart, connectStartIsOtherStart, _connectEnd, connectEndIsOtherStart);
             s.m_Spline.CreateGridOPs();
+            GridManager.CreateGrid(s);
             splineID_Dic.Add(s.ID, s);
             return s;
         }
