@@ -112,7 +112,7 @@ namespace Grid
 
             mf.mesh = MeshGenerator.CreateCellMesh(c, _isLeft);
 
-            _obj.AddComponent<MeshCollider>();
+            _obj.AddComponent<BoxCollider>();
 
             _obj.transform.SetParent(Instance.transform);
             c.CheckForCollision();

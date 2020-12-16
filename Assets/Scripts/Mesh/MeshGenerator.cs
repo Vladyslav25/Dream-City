@@ -34,10 +34,13 @@ namespace MeshGeneration
         {
             Mesh newMesh = new Mesh();
             Vector3[] verts = new Vector3[4];
+            Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cell.m_Orientation));
             for (int i = 0; i < 4; i++)
             {
                 verts[i] = _cell.m_Corner[i] - _cell.transform.position;
+                verts[i] = rotationMatrix * verts[i];
             }
+            
             newMesh.vertices = verts;
             if (_isLeft)
                 newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };

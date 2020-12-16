@@ -137,14 +137,5 @@ namespace Grid
         {
             m_CellAssignment = _newAssigment;
         }
-
-        private void OnDrawGizmosSelected()
-        {
-            if (m_Mesh != null)
-            {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawCube(m_WorldPosCenter, m_Corner[0] - m_Corner[3]);
-            }
-        }
     }
 }
