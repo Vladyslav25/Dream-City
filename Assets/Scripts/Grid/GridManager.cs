@@ -42,18 +42,18 @@ namespace Grid
             List<Cell> output = new List<Cell>();
 
             //Left Side
-            for (int x = 1; x < Instance.MaxGeneration + 1; x++)
+            for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
             {
-                for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
+                for (int x = 1; x < Instance.MaxGeneration + 1; x++)
                 {
                     GameObject obj = new GameObject(_street.ID + "_" + x + "_" + y + "_Left");
 
-                    Cell c = CreateCell(obj, _street, out bool hasValidSize, true, x, y);
+                    Cell c = CreateCell(obj, _street, out bool isValid, true, x, y);
 
-                    if (!hasValidSize)
+                    if (!isValid)
                     {
                         Destroy(obj);
-                        continue;
+                        break;
                     }
 
                     output.Add(c);
@@ -61,18 +61,18 @@ namespace Grid
             }
 
             //Right Side
-            for (int x = 1; x < Instance.MaxGeneration + 1; x++)
+            for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
             {
-                for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
+                for (int x = 1; x < Instance.MaxGeneration + 1; x++)
                 {
                     GameObject obj = new GameObject(_street.ID + "_" + x + "_" + y + "_Right");
 
-                    Cell c = CreateCell(obj, _street, out bool hasValidSize, false, x, y);
+                    Cell c = CreateCell(obj, _street, out bool isValid, false, x, y);
 
-                    if (!hasValidSize)
+                    if (!isValid)
                     {
                         Destroy(obj);
-                        continue;
+                        break;
                     }
 
                     output.Add(c);
@@ -86,18 +86,18 @@ namespace Grid
         /// Create a Cell with all needed Components
         /// </summary>
         /// <param name="_obj">The Gameobject of the Cell</param>
-        /// <param name="hasValidSize">out if the size is valid</param>
+        /// <param name="isValid">out if the size and position(collision) is valid</param>
         /// <param name="_isLeft"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>Return the Cell</returns>
-        private static Cell CreateCell(GameObject _obj, Street _street, out bool hasValidSize, bool _isLeft, int x, int y)
+        private static Cell CreateCell(GameObject _obj, Street _street, out bool isValid, bool _isLeft, int x, int y)
         {
             Cell c = _obj.AddComponent<Cell>();
             if (y + 1 >= _street.m_Spline.GridOPs.Length)
-                hasValidSize = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GetLastOrientedPoint().t, x, _isLeft);
+                isValid = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GetLastOrientedPoint().t, x, _isLeft);
             else
-                hasValidSize = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GridOPs[y + 1].t, x, _isLeft);
+                isValid = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GridOPs[y + 1].t, x, _isLeft);
 
             _obj.transform.rotation = c.m_Orientation;
             _obj.transform.position = c.m_WorldPosCenter;
@@ -115,7 +115,8 @@ namespace Grid
             _obj.AddComponent<BoxCollider>();
 
             _obj.transform.SetParent(Instance.transform);
-            c.CheckForCollision();
+            //if (c.CheckForCollision()) 
+            //    Destroy(c.gameObject);
 
             return c;
         }

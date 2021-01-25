@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Grid
@@ -43,6 +44,7 @@ namespace Grid
         private int m_generation;
         private float m_TStart;
         private float m_TEnd;
+        private BoxCollider m_collider;
 
         public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide)
         {
@@ -54,7 +56,8 @@ namespace Grid
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
             CalculateOrientation();
-            return CheckValidSize();
+            m_collider = gameObject.AddComponent<BoxCollider>();
+            return !CheckForCollision() && CheckValidSize();
         }
 
         private void CalculateOrientation()
@@ -62,15 +65,20 @@ namespace Grid
             m_Orientation = Quaternion.LookRotation(m_Street.m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Street.m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
         }
 
-        public void CheckForCollision()
+        /// <summary>
+        /// Check für Collider with a OverlapSphere
+        /// </summary>
+        /// <returns>return true if another Cell from a diffrent Street ID collid</returns>
+        public bool CheckForCollision()
         {
-            Collider[] coll = Physics.OverlapBox(
-                m_WorldPosCenter,
-                (m_WorldPosCenter - m_Corner[0]) * 0.5f,
-                m_Orientation,
-                0);
-
-            Debug.Log(coll.Length);
+            Collider[] coll = Physics.OverlapSphere(m_WorldPosCenter, 1);
+            foreach(Collider collider in coll)
+            {
+                Cell cell = collider.GetComponent<Cell>();
+                if (cell == null) continue;
+                else if (cell.m_Street.ID != this.m_Street.ID) return true;
+            }
+            return false;
         }
 
         private void CalculateCellCenter()
