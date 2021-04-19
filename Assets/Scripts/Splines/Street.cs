@@ -49,7 +49,8 @@ namespace Streets
         public MeshRenderer m_MeshRendererRef;
         public MeshCollider m_MeshCollider;
         public ExtrudeShapeBase m_Shape;
-        public List<Cell> m_AllCells;
+        public List<Cell> m_AllCells = new List<Cell>();
+        public Dictionary<BoxCollider, Cell> m_DicCollCell = new Dictionary<BoxCollider, Cell>();
 
         private Street m_collisionStreet;
 

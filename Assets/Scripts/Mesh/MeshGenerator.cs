@@ -53,7 +53,6 @@ namespace MeshGeneration
             return newMesh;
         }
 
-
         public static void Extrude(Street _street)
         {
             ExtrudeShapeBase Shape = _street.m_Shape;

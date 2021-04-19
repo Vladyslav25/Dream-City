@@ -36,18 +36,26 @@ namespace Streets
 
         GameObject sphere;
 
-        Texture2D texture;
-        Rect rectReadPic;
-        int renderTextureWidth;
-        int renderTextureHeight;
+        #region -ComputeShader Member-
+        [SerializeField]
+        ComputeShader m_computeShader;
+        ComputeBuffer m_computeBuffer;
+        Vector2[] m_pixel;
+        int m_kernelIndex;
+        int m_textureIndex;
+        int m_dataBufferIndex;
+        int m_widthIndex;
+        #endregion
 
         private void Awake()
         {
             sphere = Instantiate(spherePrefab);
-            texture = new Texture2D(m_renderTexture.width, m_renderTexture.height, TextureFormat.ARGB32, false);
-            rectReadPic = new Rect(0, 0, m_renderTexture.width, m_renderTexture.height);
-            renderTextureWidth = m_renderTexture.width;
-            renderTextureHeight = m_renderTexture.height;
+            m_computeBuffer = new ComputeBuffer(m_renderTexture.width * m_renderTexture.height, sizeof(float) * 2, ComputeBufferType.Structured);
+            m_pixel = new Vector2[m_renderTexture.width * m_renderTexture.height];
+            m_kernelIndex = m_computeShader.FindKernel("CSMain");
+            m_textureIndex = Shader.PropertyToID("inputTexture");
+            m_dataBufferIndex = Shader.PropertyToID("dataBuffer");
+            m_widthIndex = Shader.PropertyToID("width");
         }
 
         void Update()
@@ -137,8 +145,10 @@ namespace Streets
                             if (previewStreet.m_StreetConnect_End.m_StreetConnect_End == previewStreet)
                                 previewStreet.m_StreetConnect_End.CreateDeadEnd(false);
                         }
-                        Destroy(previewStreet.GetCollisionStreet().gameObject);
-                        Destroy(previewStreet.gameObject); //Destroy PreviewStreet
+                        if (previewStreet.GetCollisionStreet().gameObject != null)
+                            Destroy(previewStreet.GetCollisionStreet().gameObject);
+                        if (previewStreet.gameObject != null)
+                            Destroy(previewStreet.gameObject); //Destroy PreviewStreet
                     }
 
                     if (lastConnectedStreetChildren != null)
@@ -218,17 +228,21 @@ namespace Streets
         /// <returns></returns>
         private bool CheckForCollision()
         {
-            RenderTexture.active = m_renderTexture;
-            texture.ReadPixels(rectReadPic, 0, 0);
-            RenderTexture.active = null;
-            for (int x = 0; x < renderTextureWidth; x++)
+            m_computeShader.SetTexture(m_kernelIndex, m_textureIndex, m_renderTexture);
+            m_computeShader.SetBuffer(m_kernelIndex, m_dataBufferIndex, m_computeBuffer);
+            m_computeShader.SetInt(m_widthIndex, m_renderTexture.width);
+            m_computeShader.Dispatch(m_kernelIndex, m_renderTexture.width / 32, m_renderTexture.height / 32, 1);
+
+            m_computeBuffer.GetData(m_pixel);
+            int countPixel = 0;
+            for (int i = 0; i < m_pixel.Length; i++)
             {
-                for (int y = 0; y < renderTextureHeight; y++)
+                if (m_pixel[i].x * m_pixel[i].y > 0.2f)
                 {
-                    Color c = texture.GetPixel(x, y);
-                    if (c.r * c.g > 0.2f)
+                    Debug.Log("Overlapping");
+                    countPixel++;
+                    if (countPixel > 3)
                     {
-                        Debug.Log("Overlapping");
                         return true;
                     }
                 }

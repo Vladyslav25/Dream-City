@@ -1069,6 +1069,7 @@ MonoBehaviour:
   previewStreetMaterial: {fileID: 2100000, guid: 1ab8d390690c06d469abd3677c9754f6,
     type: 2}
   m_renderTexture: {fileID: 8400000, guid: b4dff8d4d1a1a1749a0231fe9911d061, type: 2}
+  m_computeShader: {fileID: 7200000, guid: 91fd7a89392ef5146a897703306fff28, type: 3}
 --- !u!1 &1807324187
 GameObject:
   m_ObjectHideFlags: 0

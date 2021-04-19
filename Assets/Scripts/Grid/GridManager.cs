@@ -79,6 +79,9 @@ namespace Grid
                 }
             }
 
+            MeshFilter mf = _street.GetComponent<MeshFilter>();
+
+
             return output;
         }
 
@@ -109,10 +112,13 @@ namespace Grid
             mr.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             mr.material = Instance.White;
-
+            
             mf.mesh = MeshGenerator.CreateCellMesh(c, _isLeft);
 
-            _obj.AddComponent<BoxCollider>();
+            BoxCollider coll = _obj.AddComponent<BoxCollider>();
+            _street.m_DicCollCell.Add(coll, c);
+            if (!_street.m_AllCells.Contains(c))
+                _street.m_AllCells.Add(c);
 
             _obj.transform.SetParent(Instance.transform);
             //if (c.CheckForCollision()) 
