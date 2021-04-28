@@ -6,6 +6,18 @@ namespace MyCustomCollsion
 {
     public class MyCollision
     {
+        public static bool SphereSphereSquar(Vector2 _pos1, float _radiusSquar1, Vector2 _pos2, float _radiusSquar2)
+        {
+            float r1_4 = _radiusSquar1 * _radiusSquar1;
+            float r2_4 = _radiusSquar2 * _radiusSquar2;
+            float tmp = r1_4 + 2 * _radiusSquar1 * _radiusSquar2 + r2_4;
+            Debug.Log(tmp);
+
+            if (Vector2.SqrMagnitude(_pos2 - _pos1) <= tmp)
+                return true;
+            return false;
+        }
+
         public static bool SphereSphere(Vector2 _pos1, float _radius1, Vector2 _pos2, float _radius2)
         {
             if (Vector2.SqrMagnitude(_pos2 - _pos1) <= (_radius1 + _radius2) * (_radius1 + _radius2))

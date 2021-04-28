@@ -282,6 +282,7 @@ namespace Splines
                     tmp.Add(new OrientedPoint(tmPos, GetOrientationUp(currT), currT));
                     lastPos = tmPos;
                 }
+                //TODO: if Distance is too big, short currT and check if it closer to cell size
             }
             GridOPs = tmp.ToArray();
         }
