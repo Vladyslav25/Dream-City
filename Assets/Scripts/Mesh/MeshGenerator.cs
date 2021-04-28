@@ -40,7 +40,7 @@ namespace MeshGeneration
                 verts[i] = _cell.m_Corner[i] - _cell.transform.position;
                 verts[i] = rotationMatrix * verts[i];
             }
-            
+
             newMesh.vertices = verts;
             if (_isLeft)
                 newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
@@ -49,8 +49,47 @@ namespace MeshGeneration
 
             newMesh.RecalculateNormals();
             newMesh.RecalculateBounds();
-            _cell.m_Mesh = newMesh;
-            return newMesh;
+            AddMesh(_cell, newMesh);
+            //_cell.m_Mesh = newMesh;
+            return _cell.m_Mesh;
+        }
+
+        /// <summary>
+        /// Add a Mesh to a currend Mesh
+        /// </summary>
+        /// <param name="_cell">The Cell which has a mesh</param>
+        /// <param name="_meshToAdd">The Mesh to add</param>
+        /// <returns></returns>
+        public static Mesh AddMesh(Cell _cell, Mesh _meshToAdd)
+        {
+            Mesh currMesh = _cell.m_Mesh;
+            CombineInstance combine = new CombineInstance();
+            combine.mesh = _meshToAdd;
+            CombineInstance[] cArray = new CombineInstance[] { combine };
+            currMesh.CombineMeshes(cArray, true);
+            return currMesh;
+        }
+
+        /// <summary>
+        /// Add Mehes to a currend Mesh
+        /// </summary>
+        /// <param name="_cell">The Cell which has a mesh</param>
+        /// <param name="_meshesToAdd">The Meshes to add</param>
+        /// <returns></returns>
+        public static Mesh AddMeshes(Cell _cell, Mesh[] _meshesToAdd)
+        {
+            Mesh currMesh = _cell.m_Mesh;
+
+            List<CombineInstance> cList = new List<CombineInstance>();
+            foreach (Mesh m in _meshesToAdd)
+            {
+                CombineInstance combine = new CombineInstance();
+                combine.mesh = m;
+                cList.Add(combine);
+            }
+
+            currMesh.CombineMeshes(cList.ToArray(), true);
+            return currMesh;
         }
 
         public static void Extrude(Street _street)
