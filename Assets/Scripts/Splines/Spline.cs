@@ -8,7 +8,7 @@ using Grid;
 
 namespace Splines
 {
-    public class Spline
+    public struct Spline
     {
         [Header("Spline Settings")]
         [MyReadOnly]
@@ -33,7 +33,7 @@ namespace Splines
 
         public int segments;
 
-        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments)
+        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments) : this()
         {
             pointsObj = new GameObject[4];
             pointsObj[0] = _startObj;
@@ -44,7 +44,7 @@ namespace Splines
             UpdateOPs();
         }
 
-        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent)
+        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent) : this()
         {
             pointsObj = new GameObject[4];
             pointsObj[0] = new GameObject("Start");
@@ -269,26 +269,27 @@ namespace Splines
 
             float distanceToEnd = Vector3.Distance(StartPos, EndPos);
             float currT = 0;
-            int intT = 0;
+            int iterrations = 0;
             Vector3 lastPos = StartPos;
-            while (distanceToEnd > GridManager.Instance.CellSize && intT <= 1000)
+            while (distanceToEnd > GridManager.Instance.CellSize && iterrations <= 1000)
             {
-                intT += 3;
-                currT = intT * 0.001f;
+                iterrations += 1;
+                currT = iterrations * 0.001f;
                 Vector3 tmPos = GetPositionAt(currT);
                 distanceToEnd = Vector3.Distance(tmPos, EndPos);
-                if (Vector3.Distance(lastPos, tmPos) >= GridManager.Instance.CellSize)
+                float distance = Vector3.Distance(lastPos, tmPos);
+
+                if (distance >= GridManager.Instance.CellSize)
                 {
                     tmp.Add(new OrientedPoint(tmPos, GetOrientationUp(currT), currT));
                     lastPos = tmPos;
                 }
-                //TODO: if Distance is too big, short currT and check if it closer to cell size
             }
             GridOPs = tmp.ToArray();
         }
     }
 
-    public class OrientedPoint
+    public struct OrientedPoint
     {
         public Vector3 Position;
         public Quaternion Rotation;

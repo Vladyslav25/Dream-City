@@ -35,28 +35,28 @@ namespace MeshGeneration
             List<Mesh> allMeshes = new List<Mesh>();
             List<Matrix4x4> allTransform = new List<Matrix4x4>();
 
-            foreach (Cell cell in _cellList)
+            for (int r = 0; r < _cellList.Count; r++)
             {
                 Mesh newMesh = new Mesh();
                 Vector3[] verts = new Vector3[4];
-                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(cell.m_Orientation));
+                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cellList[r].m_Orientation));
                 for (int i = 0; i < 4; i++)
                 {
-                    verts[i] = cell.m_WorldCorner[i] - cell.m_WorldPosCenter;
+                    verts[i] = _cellList[r].m_WorldCorner[i] - _cellList[r].m_WorldPosCenter;
                     verts[i] = rotationMatrix * verts[i];
                 }
 
                 newMesh.vertices = verts;
-                if (cell.m_isLeft)
+                if (_cellList[r].m_isLeft)
                     newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
                 else
                     newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
 
                 newMesh.RecalculateNormals();
                 newMesh.RecalculateBounds();
-                cell.m_Mesh = newMesh;
+                //_cellList[r].m_Mesh = newMesh;
                 allMeshes.Add(newMesh);
-                Matrix4x4 mat = Matrix4x4.TRS(cell.m_WorldPosCenter, cell.m_Orientation, Vector3.one);
+                Matrix4x4 mat = Matrix4x4.TRS(_cellList[r].m_WorldPosCenter, _cellList[r].m_Orientation, Vector3.one);
                 allTransform.Add(mat);
             }
 

@@ -5,6 +5,7 @@ using Streets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.Collections;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Grid
         INDUSTRY
     }
 
-    public class Cell
+    public struct Cell
     {
         public Vector3 m_WorldPosCenter { get; private set; }
 
@@ -31,7 +32,11 @@ namespace Grid
 
         public CellAssignment m_CellAssignment { get; private set; }
 
-        public Street m_Street { get; private set; }
+        //public Street m_Street { get; private set; }
+
+        public Spline m_Spline { get; private set; }
+
+        public int ID { get; private set; }
 
         public Vector3[] m_WorldCorner { get; private set; }
 
@@ -42,9 +47,9 @@ namespace Grid
         //  0 -- 1
         //  ->->-> SplineDirection
 
-        public Mesh m_Mesh;
-        public Cell m_NextCell;     //vlt nicht benötig
-        public Cell m_PreviousCell; //vlt nicht benötig
+        //public Mesh m_Mesh;
+        //public Cell m_NextCell;     //vlt nicht benötig
+        //public Cell m_PreviousCell; //vlt nicht benötig
         [ReadOnly]
         public float CellSquareSize;
 
@@ -52,20 +57,40 @@ namespace Grid
         private float m_TStart;
         private float m_TEnd;
         private float m_Radius;
+        public bool isValid;
 
         public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide)
         {
             m_CellAssignment = 0;
-            m_Street = _street;
+            //m_Street = _street;
             m_TStart = _tStart;
             m_TEnd = _tEnd;
             m_generation = _generation;
             m_isLeft = _isLeftSide;
+            //ID = m_Street.ID;
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
             CalculateOrientation();
             CalculateSquarRadius();
-            return !CheckForCollision() && CheckValidSize();
+            isValid = !CheckForCollision() && CheckValidSize();
+            return isValid;
+        }
+
+        public bool Init(Spline _spline,int _id, float _tStart, float _tEnd, int _generation, bool _isLeftSide)
+        {
+            m_CellAssignment = 0;
+            m_Spline = _spline;
+            m_TStart = _tStart;
+            m_TEnd = _tEnd;
+            m_generation = _generation;
+            m_isLeft = _isLeftSide;
+            ID = _id;
+            CalculateCornerPos(_isLeftSide);
+            CalculateCellCenter();
+            CalculateOrientation();
+            CalculateSquarRadius();
+            isValid = !CheckForCollision() && CheckValidSize();
+            return isValid;
         }
 
         private void CalculateSquarRadius()
@@ -84,7 +109,7 @@ namespace Grid
 
         private void CalculateOrientation()
         {
-            m_Orientation = Quaternion.LookRotation(m_Street.m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Street.m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
+            m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
         }
 
         /// <summary>
@@ -95,8 +120,8 @@ namespace Grid
         {
             List<Cell> cellToCheck = new List<Cell>();
 
-            foreach (Cell c in GridManager.m_allCells)
-                if (c.m_Street.ID != this.m_Street.ID && MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_PosCenter, c.m_Radius))
+            foreach (Cell c in GridManager.m_AllCells)
+                if (c.ID != this.ID && MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_PosCenter, c.m_Radius))
                     cellToCheck.Add(c);
 
             foreach (Cell c in cellToCheck)
@@ -159,7 +184,7 @@ namespace Grid
 
         private void CalculateCornerPos(bool _isLeftSide)
         {
-            Spline streetSpline = m_Street.m_Spline;
+            Spline streetSpline = m_Spline;
             int generationOffset = m_generation;
 
             float splineOffset = generationOffset * GridManager.Instance.CellSize - (GridManager.Instance.CellSize - 1);
