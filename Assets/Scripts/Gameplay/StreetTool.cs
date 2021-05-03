@@ -236,7 +236,6 @@ namespace Streets
             m_computeShader.Dispatch(m_kernelIndex, m_renderTexture.width / 32, m_renderTexture.height / 32, 1);
 
             m_computeBuffer.GetData(m_pixelCount);
-            Debug.Log(m_pixelCount[0]);
             if (m_pixelCount[0] > 3)
             {
                 return true;

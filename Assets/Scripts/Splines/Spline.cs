@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using Grid;
+using Streets;
 
 namespace Splines
 {
@@ -16,16 +17,16 @@ namespace Splines
         private GameObject[] pointsObj;
 
         [HideInInspector]
-        public Vector3 StartPos { get ;  private set ;  }
+        public Vector3 StartPos { get; private set; }
 
         [HideInInspector]
-        public Vector3 Tangent1Pos { get ;  private set ;  }
+        public Vector3 Tangent1Pos { get; private set; }
 
         [HideInInspector]
         public Vector3 Tangent2Pos { get; private set; }
 
         [HideInInspector]
-        public Vector3 EndPos { get ;  private set ; } 
+        public Vector3 EndPos { get; private set; }
 
         public OrientedPoint[] OPs;
 
@@ -260,7 +261,7 @@ namespace Splines
         /// <summary>
         /// Update the Oriented Points
         /// </summary>
-        public void UpdateOPs()
+        public void UpdateOPs(Street _street = null)
         {
             OPs = new OrientedPoint[segments + 1];
             for (int i = 0; i <= segments; i++)
@@ -268,6 +269,12 @@ namespace Splines
                 float t = 1.0f / segments * i;
                 OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
+            if (_street != null && _street.ID > 0)
+                for (int i = 0; i < OPs.Length; i++)
+                {
+                    _street.AddSegmentsCorner(OPs[i].Position + GetNormalAt(OPs[i].t));
+                    _street.AddSegmentsCorner(OPs[i].Position - GetNormalAt(OPs[i].t));
+                }
         }
 
         public void CreateGridOPs()

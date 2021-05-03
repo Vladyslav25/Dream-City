@@ -47,7 +47,6 @@ namespace Streets
         public Spline m_Spline;
         public MeshFilter m_MeshFilterRef;
         public MeshRenderer m_MeshRendererRef;
-        public MeshCollider m_MeshCollider;
         public ExtrudeShapeBase m_Shape;
         public List<Cell> m_StreetCells = new List<Cell>();
 
@@ -118,6 +117,8 @@ namespace Streets
         private bool lastDrawMeshSetting;
         private int lastSegmentCount;
 
+        private List<Vector3> m_segmentsCorner = new List<Vector3>();
+
         /// <summary>
         /// Init the Street. Need to call befor use.
         /// </summary>
@@ -141,8 +142,9 @@ namespace Streets
             m_MeshFilterRef = _meshFilter;
             m_MeshRendererRef = _meshRenderer;
             m_Shape = _shape;
-            m_MeshCollider = gameObject.AddComponent<MeshCollider>();
+            m_Spline.UpdateOPs();
             MeshGenerator.Extrude(this);
+
             updateSpline = _updateMesh;
             if (_needID)
             {
@@ -158,7 +160,14 @@ namespace Streets
                 else
                     Combine(_connectionEnd, false, _connectionEndIsOtherStart);
             }
+
             return this;
+        }
+
+        public void AddSegmentsCorner(Vector3 _input)
+        {
+            if (!m_segmentsCorner.Contains(_input))
+                m_segmentsCorner.Add(_input);
         }
 
         public void SetCollisionStreet(Street _collStreet)
@@ -271,7 +280,7 @@ namespace Streets
             if (lastDrawMeshSetting != drawMesh || updateSpline)
             {
                 if (updateSpline)
-                    m_Spline.UpdateOPs();
+                    m_Spline.UpdateOPs(this);
 
                 if (drawMesh)
                     MeshGenerator.Extrude(this);
@@ -284,7 +293,7 @@ namespace Streets
             if (lastSegmentCount != segments)
             {
                 m_Spline.segments = segments;
-                m_Spline.UpdateOPs();
+                m_Spline.UpdateOPs(this);
                 MeshGenerator.Extrude(this);
             }
 
@@ -294,6 +303,24 @@ namespace Streets
 
         private void OnDrawGizmos()
         {
+            if (m_segmentsCorner != null && m_segmentsCorner.Count > 0)
+            {
+                for (int i = 0; i < m_segmentsCorner.Count; i++)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawWireSphere(m_segmentsCorner[i], 0.2f);
+                }
+
+                for (int i = 0; i < m_Spline.OPs.Length; i++)
+                {
+                    Gizmos.color = Color.black;
+                    Vector3 PPos = m_Spline.OPs[i].Position + m_Spline.GetNormalAt(m_Spline.OPs[i].t);
+                    Vector3 NPos = m_Spline.OPs[i].Position - m_Spline.GetNormalAt(m_Spline.OPs[i].t);
+                    Gizmos.DrawWireCube(PPos, new Vector3(0.2f, 0.2f, 0.2f));
+                    Gizmos.DrawWireCube(NPos, new Vector3(0.2f, 0.2f, 0.2f));
+                }
+            }
+
             if (drawGridNormals)
             {
                 for (int i = 0; i < m_Spline.GridOPs.Length; i++)

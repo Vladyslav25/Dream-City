@@ -141,8 +141,6 @@ namespace MeshGeneration
             mesh.uv = uvs;
             mesh.RecalculateBounds();
             mesh.Optimize();
-            _street.m_MeshCollider.sharedMesh = null;
-            _street.m_MeshCollider.sharedMesh = mesh;
         }
 
         private static void CalcLengthTableInto(float[] arr, Spline _spline)
