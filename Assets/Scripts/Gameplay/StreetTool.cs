@@ -40,7 +40,7 @@ namespace Streets
         [SerializeField]
         ComputeShader m_computeShader;
         ComputeBuffer m_computeBuffer;
-        Vector2[] m_pixel;
+        int[] m_pixelCount;
         int m_kernelIndex;
         int m_textureIndex;
         int m_dataBufferIndex;
@@ -50,8 +50,8 @@ namespace Streets
         private void Awake()
         {
             sphere = Instantiate(spherePrefab);
-            m_computeBuffer = new ComputeBuffer(m_renderTexture.width * m_renderTexture.height, sizeof(float) * 2, ComputeBufferType.Structured);
-            m_pixel = new Vector2[m_renderTexture.width * m_renderTexture.height];
+            m_computeBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Structured);
+            m_pixelCount = new int[1];
             m_kernelIndex = m_computeShader.FindKernel("CSMain");
             m_textureIndex = Shader.PropertyToID("inputTexture");
             m_dataBufferIndex = Shader.PropertyToID("dataBuffer");
@@ -228,24 +228,18 @@ namespace Streets
         /// <returns></returns>
         private bool CheckForCollision()
         {
+            m_computeBuffer.SetData(new int[1]);
+
             m_computeShader.SetTexture(m_kernelIndex, m_textureIndex, m_renderTexture);
             m_computeShader.SetBuffer(m_kernelIndex, m_dataBufferIndex, m_computeBuffer);
             m_computeShader.SetInt(m_widthIndex, m_renderTexture.width);
             m_computeShader.Dispatch(m_kernelIndex, m_renderTexture.width / 32, m_renderTexture.height / 32, 1);
 
-            m_computeBuffer.GetData(m_pixel);
-            int countPixel = 0;
-            for (int i = 0; i < m_pixel.Length; i++)
+            m_computeBuffer.GetData(m_pixelCount);
+            Debug.Log(m_pixelCount[0]);
+            if (m_pixelCount[0] > 3)
             {
-                if (m_pixel[i].x * m_pixel[i].y > 0.2f)
-                {
-                    Debug.Log("Overlapping");
-                    countPixel++;
-                    if (countPixel > 3)
-                    {
-                        return true;
-                    }
-                }
+                return true;
             }
             return false;
         }
@@ -472,6 +466,16 @@ namespace Streets
                 }
             }
             return output;
+        }
+
+        private void OnDestroy()
+        {
+            m_computeBuffer.Dispose();
+        }
+
+        private void OnApplicationQuit()
+        {
+            m_computeBuffer.Dispose();
         }
     }
 }

@@ -8,7 +8,7 @@ using Grid;
 
 namespace Splines
 {
-    public class Spline
+    public struct Spline
     {
         [Header("Spline Settings")]
         [MyReadOnly]
@@ -16,16 +16,16 @@ namespace Splines
         private GameObject[] pointsObj;
 
         [HideInInspector]
-        public Vector3 StartPos { get { return pointsObj[0].transform.position; } private set { pointsObj[0].transform.position = value; } }
+        public Vector3 StartPos { get ;  private set ;  }
 
         [HideInInspector]
-        public Vector3 Tangent1Pos { get { return pointsObj[1].transform.position; } private set { pointsObj[1].transform.position = value; } }
+        public Vector3 Tangent1Pos { get ;  private set ;  }
 
         [HideInInspector]
-        public Vector3 Tangent2Pos { get { return pointsObj[2].transform.position; } private set { pointsObj[2].transform.position = value; } }
+        public Vector3 Tangent2Pos { get; private set; }
 
         [HideInInspector]
-        public Vector3 EndPos { get { return pointsObj[3].transform.position; } private set { pointsObj[3].transform.position = value; } }
+        public Vector3 EndPos { get ;  private set ; } 
 
         public OrientedPoint[] OPs;
 
@@ -33,19 +33,27 @@ namespace Splines
 
         public int segments;
 
-        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments)
+        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments) : this()
         {
             pointsObj = new GameObject[4];
             pointsObj[0] = _startObj;
+            StartPos = _startObj.transform.position;
             pointsObj[1] = _tangent1Obj;
+            Tangent1Pos = _tangent1Obj.transform.position;
             pointsObj[2] = _tangent2Obj;
+            Tangent2Pos = _tangent2Obj.transform.position;
             pointsObj[3] = _endObj;
+            EndPos = _endObj.transform.position;
             segments = _segments;
             UpdateOPs();
         }
 
-        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent)
+        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent) : this()
         {
+            StartPos = _startPos;
+            Tangent1Pos = _tangent1Pos;
+            Tangent2Pos = _tangent2Pos;
+            EndPos = _endPos;
             pointsObj = new GameObject[4];
             pointsObj[0] = new GameObject("Start");
             pointsObj[0].transform.position = _startPos;
@@ -269,15 +277,17 @@ namespace Splines
 
             float distanceToEnd = Vector3.Distance(StartPos, EndPos);
             float currT = 0;
-            int intT = 0;
+            int iterrations = 0;
             Vector3 lastPos = StartPos;
-            while (distanceToEnd > GridManager.Instance.CellSize && intT <= 1000)
+            while (distanceToEnd > GridManager.Instance.CellSize && iterrations <= 1000)
             {
-                intT += 3;
-                currT = intT * 0.001f;
+                iterrations += 1;
+                currT = iterrations * 0.001f;
                 Vector3 tmPos = GetPositionAt(currT);
                 distanceToEnd = Vector3.Distance(tmPos, EndPos);
-                if (Vector3.Distance(lastPos, tmPos) >= GridManager.Instance.CellSize)
+                float distance = Vector3.Distance(lastPos, tmPos);
+
+                if (distance >= GridManager.Instance.CellSize)
                 {
                     tmp.Add(new OrientedPoint(tmPos, GetOrientationUp(currT), currT));
                     lastPos = tmPos;
@@ -287,7 +297,7 @@ namespace Splines
         }
     }
 
-    public class OrientedPoint
+    public struct OrientedPoint
     {
         public Vector3 Position;
         public Quaternion Rotation;

@@ -30,66 +30,51 @@ namespace MeshGeneration
         }
         #endregion
 
-        public static Mesh CreateCellMesh(Cell _cell, bool _isLeft)
+        public static MeshFilter CreateGridMesh(List<Cell> _cellList, MeshFilter _mf)
         {
-            Mesh newMesh = new Mesh();
-            Vector3[] verts = new Vector3[4];
-            Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cell.m_Orientation));
-            for (int i = 0; i < 4; i++)
+            List<Mesh> allMeshes = new List<Mesh>();
+            List<Matrix4x4> allTransform = new List<Matrix4x4>();
+
+            for (int r = 0; r < _cellList.Count; r++)
             {
-                verts[i] = _cell.m_Corner[i] - _cell.transform.position;
-                verts[i] = rotationMatrix * verts[i];
+                Mesh newMesh = new Mesh();
+                Vector3[] verts = new Vector3[4];
+                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cellList[r].m_Orientation));
+                for (int i = 0; i < 4; i++)
+                {
+                    verts[i] = _cellList[r].m_WorldCorner[i] - _cellList[r].m_WorldPosCenter;
+                    verts[i] = rotationMatrix * verts[i];
+                }
+
+                newMesh.vertices = verts;
+                if (_cellList[r].m_isLeft)
+                    newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
+                else
+                    newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
+
+                allMeshes.Add(newMesh);
+                Matrix4x4 mat = Matrix4x4.TRS(_cellList[r].m_WorldPosCenter, _cellList[r].m_Orientation, Vector3.one);
+                allTransform.Add(mat);
             }
 
-            newMesh.vertices = verts;
-            if (_isLeft)
-                newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
-            else
-                newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
-
-            newMesh.RecalculateNormals();
-            newMesh.RecalculateBounds();
-            AddMesh(_cell, newMesh);
-            //_cell.m_Mesh = newMesh;
-            return _cell.m_Mesh;
+            _mf.mesh = CombineMeshes(allMeshes, allTransform);
+            return _mf;
         }
 
-        /// <summary>
-        /// Add a Mesh to a currend Mesh
-        /// </summary>
-        /// <param name="_cell">The Cell which has a mesh</param>
-        /// <param name="_meshToAdd">The Mesh to add</param>
-        /// <returns></returns>
-        public static Mesh AddMesh(Cell _cell, Mesh _meshToAdd)
+        public static Mesh CombineMeshes(List<Mesh> _m, List<Matrix4x4> _t)
         {
-            Mesh currMesh = _cell.m_Mesh;
-            CombineInstance combine = new CombineInstance();
-            combine.mesh = _meshToAdd;
-            CombineInstance[] cArray = new CombineInstance[] { combine };
-            currMesh.CombineMeshes(cArray, true);
-            return currMesh;
-        }
+            CombineInstance[] combineArr = new CombineInstance[_m.Count];
 
-        /// <summary>
-        /// Add Mehes to a currend Mesh
-        /// </summary>
-        /// <param name="_cell">The Cell which has a mesh</param>
-        /// <param name="_meshesToAdd">The Meshes to add</param>
-        /// <returns></returns>
-        public static Mesh AddMeshes(Cell _cell, Mesh[] _meshesToAdd)
-        {
-            Mesh currMesh = _cell.m_Mesh;
-
-            List<CombineInstance> cList = new List<CombineInstance>();
-            foreach (Mesh m in _meshesToAdd)
+            for (int i = 0; i < _m.Count; i++)
             {
-                CombineInstance combine = new CombineInstance();
-                combine.mesh = m;
-                cList.Add(combine);
+                combineArr[i].mesh = _m[i];
+                combineArr[i].transform = _t[i];
+                //combineArr[i].subMeshIndex = i;
             }
 
-            currMesh.CombineMeshes(cList.ToArray(), true);
-            return currMesh;
+            Mesh mesh = new Mesh();
+            mesh.CombineMeshes(combineArr, true, true);
+            return mesh;
         }
 
         public static void Extrude(Street _street)

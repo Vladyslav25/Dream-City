@@ -3,6 +3,9 @@ using Streets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 namespace Grid
@@ -32,55 +35,79 @@ namespace Grid
         public float CellSize { get; } = 1f;
 
         public int MaxGeneration { get; } = 5;
-        public float GridMaxSquareArea { get; } = 2f;
+        public float GridMaxSquareArea { get; } = 5f;
         public float GridMinSquareArea { get; } = 0.7f;
 
+        static List<Task<Cell>> listTask = new List<Task<Cell>>();
+        static List<Cell> output = new List<Cell>();
+        public static List<Cell> m_AllCells = new List<Cell>();
         public Material White;
+
+        public static IEnumerator CheckForFinish(Street _street)
+        {
+            while (listTask.Count > 0)
+            {
+                for (int i = listTask.Count - 1; i >= 0; i--)
+                {
+                    if (listTask[i].IsCompleted)
+                    {
+                        if (listTask[i].Result.isValid)
+                            output.Add(listTask[i].Result);
+                        listTask.RemoveAt(i);
+                    }
+                }
+                yield return null;
+            }
+            GameObject obj = new GameObject("Grid");
+            MeshFilter mf = obj.AddComponent<MeshFilter>();
+            MeshRenderer mr = obj.AddComponent<MeshRenderer>();
+            obj.transform.position = Vector3.zero;
+            obj.transform.parent = _street.transform;
+
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            mr.receiveShadows = false;
+            mr.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+            mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+            mr.material = Instance.White;
+
+            _street.m_StreetCells.AddRange(output);
+            MeshGenerator.CreateGridMesh(_street.m_StreetCells, mf);
+            m_AllCells.AddRange(output);
+        }
 
         public static List<Cell> CreateGrid(Street _street)
         {
-            List<Cell> output = new List<Cell>();
+            output.Clear();
 
             //Left Side
             for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
             {
-                for (int x = 1; x < Instance.MaxGeneration + 1; x++)
+                for (int x = 0; x < Instance.MaxGeneration; x++)
                 {
-                    GameObject obj = new GameObject(_street.ID + "_" + x + "_" + y + "_Left");
+                    CreateCellJob jobLeft = new CreateCellJob();
+                    jobLeft.s = _street;
+                    jobLeft.id = _street.ID;
+                    jobLeft.x = x + 1;
+                    jobLeft.y = y;
+                    jobLeft.isLeft = true;
 
-                    Cell c = CreateCell(obj, _street, out bool isValid, true, x, y);
+                    Task<Cell> tL = new Task<Cell>(jobLeft.CreateCell);
+                    listTask.Add(tL);
+                    tL.Start();
 
-                    if (!isValid)
-                    {
-                        Destroy(obj);
-                        break;
-                    }
-
-                    output.Add(c);
+                    CreateCellJob jobRight = new CreateCellJob();
+                    jobRight.s = _street;
+                    jobRight.id = _street.ID;
+                    jobRight.x = x + 1;
+                    jobRight.y = y;
+                    jobRight.isLeft = false;
+                    Task<Cell> tR = new Task<Cell>(jobRight.CreateCell);
+                    listTask.Add(tR);
+                    tR.Start();
                 }
             }
 
-            //Right Side
-            for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
-            {
-                for (int x = 1; x < Instance.MaxGeneration + 1; x++)
-                {
-                    GameObject obj = new GameObject(_street.ID + "_" + x + "_" + y + "_Right");
-
-                    Cell c = CreateCell(obj, _street, out bool isValid, false, x, y);
-
-                    if (!isValid)
-                    {
-                        Destroy(obj);
-                        break;
-                    }
-
-                    output.Add(c);
-                }
-            }
-
-            MeshFilter mf = _street.GetComponent<MeshFilter>();
-
+            Instance.StartCoroutine(CheckForFinish(_street));
 
             return output;
         }
@@ -94,37 +121,20 @@ namespace Grid
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>Return the Cell</returns>
-        private static Cell CreateCell(GameObject _obj, Street _street, out bool isValid, bool _isLeft, int x, int y)
+        private static Cell CreateCell(Street _street, out bool isValid, bool _isLeft, int x, int y)
         {
-            Cell c = _obj.AddComponent<Cell>();
+            Cell c = new Cell();
             if (y + 1 >= _street.m_Spline.GridOPs.Length)
                 isValid = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GetLastOrientedPoint().t, x, _isLeft);
             else
                 isValid = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GridOPs[y + 1].t, x, _isLeft);
 
-            _obj.transform.rotation = c.m_Orientation;
-            _obj.transform.position = c.m_WorldPosCenter;
-
-            MeshFilter mf = _obj.AddComponent<MeshFilter>();
-            MeshRenderer mr = _obj.AddComponent<MeshRenderer>();
-            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            mr.receiveShadows = false;
-            mr.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-            mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-            mr.material = Instance.White;
-            
-            mf.mesh = MeshGenerator.CreateCellMesh(c, _isLeft);
-
-            BoxCollider coll = _obj.AddComponent<BoxCollider>();
-            _street.m_DicCollCell.Add(coll, c);
-            if (!_street.m_AllCells.Contains(c))
-                _street.m_AllCells.Add(c);
-
-            _obj.transform.SetParent(Instance.transform);
-            //if (c.CheckForCollision()) 
-            //    Destroy(c.gameObject);
+            if (isValid)
+                _street.m_StreetCells.Add(c);
 
             return c;
         }
+
+
     }
 }
