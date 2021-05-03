@@ -3,6 +3,7 @@ using Streets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -37,64 +38,31 @@ namespace Grid
         public float GridMaxSquareArea { get; } = 5f;
         public float GridMinSquareArea { get; } = 0.7f;
 
+        static List<Task<Cell>> listTask = new List<Task<Cell>>();
+        static List<Cell> output = new List<Cell>();
         public static List<Cell> m_AllCells = new List<Cell>();
         public Material White;
 
-        public static List<Cell> CreateGrid(Street _street)
+        public static IEnumerator CheckForFinish(Street _street)
         {
-            List<Cell> output = new List<Cell>();
-
+            while (listTask.Count > 0)
+            {
+                for (int i = listTask.Count - 1; i >= 0; i--)
+                {
+                    if (listTask[i].IsCompleted)
+                    {
+                        if (listTask[i].Result.isValid)
+                            output.Add(listTask[i].Result);
+                        listTask.RemoveAt(i);
+                    }
+                }
+                yield return null;
+            }
             GameObject obj = new GameObject("Grid");
-            MeshRenderer mr = obj.AddComponent<MeshRenderer>();
             MeshFilter mf = obj.AddComponent<MeshFilter>();
+            MeshRenderer mr = obj.AddComponent<MeshRenderer>();
             obj.transform.position = Vector3.zero;
             obj.transform.parent = _street.transform;
-
-            NativeList<Cell> cellList = new NativeList<Cell>();
-
-            NativeList<JobHandle> jobHandelList = new NativeList<JobHandle>(Allocator.Temp);
-
-            //Left Side
-            for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
-            {
-                for (int x = 0; x < Instance.MaxGeneration; x++)
-                {
-                    //Cell c = CreateCell(_street, out bool isValid, true, x, y);
-                    CreateCellJob job = new CreateCellJob();
-                    job.s = _street.m_Spline;
-                    job.id = _street.ID;
-                    job.x = x + 1;
-                    job.y = y;
-                    job.isLeft = true;
-                    job.cellList = cellList;
-                    JobHandle handle = job.Schedule();
-                    jobHandelList.Add(handle);
-                }
-            }
-            JobHandle.CompleteAll(jobHandelList);
-
-            //if (!isValid)
-            //{
-            //    break;
-            //}
-            output.AddRange(cellList);
-
-            jobHandelList.Dispose();
-
-            //Right Side
-            for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
-            {
-                for (int x = 1; x < Instance.MaxGeneration + 1; x++)
-                {
-                    Cell c = CreateCell(_street, out bool isValid, false, x, y);
-
-                    if (!isValid)
-                    {
-                        break;
-                    }
-                    output.Add(c);
-                }
-            }
 
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
@@ -102,8 +70,45 @@ namespace Grid
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             mr.material = Instance.White;
 
+            _street.m_StreetCells.AddRange(output);
             MeshGenerator.CreateGridMesh(_street.m_StreetCells, mf);
             m_AllCells.AddRange(output);
+        }
+
+        public static List<Cell> CreateGrid(Street _street)
+        {
+            output.Clear();
+
+            //Left Side
+            for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
+            {
+                for (int x = 0; x < Instance.MaxGeneration; x++)
+                {
+                    CreateCellJob jobLeft = new CreateCellJob();
+                    jobLeft.s = _street;
+                    jobLeft.id = _street.ID;
+                    jobLeft.x = x + 1;
+                    jobLeft.y = y;
+                    jobLeft.isLeft = true;
+
+                    Task<Cell> tL = new Task<Cell>(jobLeft.CreateCell);
+                    listTask.Add(tL);
+                    tL.Start();
+
+                    CreateCellJob jobRight = new CreateCellJob();
+                    jobRight.s = _street;
+                    jobRight.id = _street.ID;
+                    jobRight.x = x + 1;
+                    jobRight.y = y;
+                    jobRight.isLeft = false;
+                    Task<Cell> tR = new Task<Cell>(jobRight.CreateCell);
+                    listTask.Add(tR);
+                    tR.Start();
+                }
+            }
+
+            Instance.StartCoroutine(CheckForFinish(_street));
+
             return output;
         }
 

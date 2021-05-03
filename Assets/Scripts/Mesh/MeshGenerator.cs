@@ -52,9 +52,6 @@ namespace MeshGeneration
                 else
                     newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
 
-                newMesh.RecalculateNormals();
-                newMesh.RecalculateBounds();
-                //_cellList[r].m_Mesh = newMesh;
                 allMeshes.Add(newMesh);
                 Matrix4x4 mat = Matrix4x4.TRS(_cellList[r].m_WorldPosCenter, _cellList[r].m_Orientation, Vector3.one);
                 allTransform.Add(mat);

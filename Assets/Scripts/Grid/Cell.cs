@@ -32,7 +32,7 @@ namespace Grid
 
         public CellAssignment m_CellAssignment { get; private set; }
 
-        //public Street m_Street { get; private set; }
+        public Street m_Street { get; private set; }
 
         public Spline m_Spline { get; private set; }
 
@@ -62,29 +62,13 @@ namespace Grid
         public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide)
         {
             m_CellAssignment = 0;
-            //m_Street = _street;
+            m_Street = _street;
+            m_Spline = _street.m_Spline;
             m_TStart = _tStart;
             m_TEnd = _tEnd;
             m_generation = _generation;
             m_isLeft = _isLeftSide;
-            //ID = m_Street.ID;
-            CalculateCornerPos(_isLeftSide);
-            CalculateCellCenter();
-            CalculateOrientation();
-            CalculateSquarRadius();
-            isValid = !CheckForCollision() && CheckValidSize();
-            return isValid;
-        }
-
-        public bool Init(Spline _spline,int _id, float _tStart, float _tEnd, int _generation, bool _isLeftSide)
-        {
-            m_CellAssignment = 0;
-            m_Spline = _spline;
-            m_TStart = _tStart;
-            m_TEnd = _tEnd;
-            m_generation = _generation;
-            m_isLeft = _isLeftSide;
-            ID = _id;
+            ID = m_Street.ID;
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
             CalculateOrientation();

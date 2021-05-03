@@ -16,16 +16,16 @@ namespace Splines
         private GameObject[] pointsObj;
 
         [HideInInspector]
-        public Vector3 StartPos { get { return pointsObj[0].transform.position; } private set { pointsObj[0].transform.position = value; } }
+        public Vector3 StartPos { get ;  private set ;  }
 
         [HideInInspector]
-        public Vector3 Tangent1Pos { get { return pointsObj[1].transform.position; } private set { pointsObj[1].transform.position = value; } }
+        public Vector3 Tangent1Pos { get ;  private set ;  }
 
         [HideInInspector]
-        public Vector3 Tangent2Pos { get { return pointsObj[2].transform.position; } private set { pointsObj[2].transform.position = value; } }
+        public Vector3 Tangent2Pos { get; private set; }
 
         [HideInInspector]
-        public Vector3 EndPos { get { return pointsObj[3].transform.position; } private set { pointsObj[3].transform.position = value; } }
+        public Vector3 EndPos { get ;  private set ; } 
 
         public OrientedPoint[] OPs;
 
@@ -37,15 +37,23 @@ namespace Splines
         {
             pointsObj = new GameObject[4];
             pointsObj[0] = _startObj;
+            StartPos = _startObj.transform.position;
             pointsObj[1] = _tangent1Obj;
+            Tangent1Pos = _tangent1Obj.transform.position;
             pointsObj[2] = _tangent2Obj;
+            Tangent2Pos = _tangent2Obj.transform.position;
             pointsObj[3] = _endObj;
+            EndPos = _endObj.transform.position;
             segments = _segments;
             UpdateOPs();
         }
 
         public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent) : this()
         {
+            StartPos = _startPos;
+            Tangent1Pos = _tangent1Pos;
+            Tangent2Pos = _tangent2Pos;
+            EndPos = _endPos;
             pointsObj = new GameObject[4];
             pointsObj[0] = new GameObject("Start");
             pointsObj[0].transform.position = _startPos;

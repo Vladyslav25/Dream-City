@@ -4,12 +4,12 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 Texture2D<float2> inputTexture;
-RWStructuredBuffer<float2> dataBuffer;
+RWStructuredBuffer<int> dataBuffer;
 uint width;
 
-
-[numthreads(32,32,1)]
-void CSMain (uint3 id : SV_DispatchThreadID) 
+[numthreads(32, 32, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    dataBuffer[id.x + id.y * width] = inputTexture[id.xy].xy;
+	InterlockedAdd(dataBuffer[0], sign(saturate(inputTexture[id.xy].x - 0.2f)) & sign(saturate(inputTexture[id.xy].y - 0.2f)));
+	/*dataBuffer[0] = dataBuffer[0] + sign(inputTexture[id.xy].x) & sign(inputTexture[id.xy].y);*/
 }
