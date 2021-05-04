@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Streets;
 using UnityEngine;
+using Grid;
 
 namespace MeshGeneration
 {
@@ -28,6 +29,53 @@ namespace MeshGeneration
             }
         }
         #endregion
+
+        public static MeshFilter CreateGridMesh(List<Cell> _cellList, MeshFilter _mf)
+        {
+            List<Mesh> allMeshes = new List<Mesh>();
+            List<Matrix4x4> allTransform = new List<Matrix4x4>();
+
+            for (int r = 0; r < _cellList.Count; r++)
+            {
+                Mesh newMesh = new Mesh();
+                Vector3[] verts = new Vector3[4];
+                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cellList[r].m_Orientation));
+                for (int i = 0; i < 4; i++)
+                {
+                    verts[i] = _cellList[r].m_WorldCorner[i] - _cellList[r].m_WorldPosCenter;
+                    verts[i] = rotationMatrix * verts[i];
+                }
+
+                newMesh.vertices = verts;
+                if (_cellList[r].m_isLeft)
+                    newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
+                else
+                    newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
+
+                allMeshes.Add(newMesh);
+                Matrix4x4 mat = Matrix4x4.TRS(_cellList[r].m_WorldPosCenter, _cellList[r].m_Orientation, Vector3.one);
+                allTransform.Add(mat);
+            }
+
+            _mf.mesh = CombineMeshes(allMeshes, allTransform);
+            return _mf;
+        }
+
+        public static Mesh CombineMeshes(List<Mesh> _m, List<Matrix4x4> _t)
+        {
+            CombineInstance[] combineArr = new CombineInstance[_m.Count];
+
+            for (int i = 0; i < _m.Count; i++)
+            {
+                combineArr[i].mesh = _m[i];
+                combineArr[i].transform = _t[i];
+                //combineArr[i].subMeshIndex = i;
+            }
+
+            Mesh mesh = new Mesh();
+            mesh.CombineMeshes(combineArr, true, true);
+            return mesh;
+        }
 
         public static void Extrude(Street _street)
         {
@@ -93,8 +141,6 @@ namespace MeshGeneration
             mesh.uv = uvs;
             mesh.RecalculateBounds();
             mesh.Optimize();
-            _street.m_MeshCollider.sharedMesh = null;
-            _street.m_MeshCollider.sharedMesh = mesh;
         }
 
         private static void CalcLengthTableInto(float[] arr, Spline _spline)

@@ -1,0 +1,14 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture2D<float2> inputTexture;
+RWStructuredBuffer<int> dataBuffer;
+uint width;
+
+[numthreads(32, 32, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+	InterlockedAdd(dataBuffer[0], sign(saturate(inputTexture[id.xy].x - 0.2f)) & sign(saturate(inputTexture[id.xy].y - 0.2f)));
+}

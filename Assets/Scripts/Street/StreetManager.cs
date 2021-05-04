@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Streets;
+using Grid;
+using Unity.Jobs;
 
 namespace Splines
 {
@@ -95,7 +97,6 @@ namespace Splines
 
             s.SetCollisionStreet(InitStreetForPreviewColl(_startPos));
             return s;
-
         }
 
         public static Street InitStreetForPreviewColl(Vector3 _startPos)
@@ -134,46 +135,46 @@ namespace Splines
         public static void UpdateStreetStartPos(Street _street, Vector3 _startPos)
         {
             _street.m_Spline.SetStartPos(_startPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
 
             if(_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetStartPos(_startPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
         public static void UpdateStreetEndPos(Street _street, Vector3 _endPos)
         {
             _street.m_Spline.SetEndPos(_endPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
 
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetEndPos(_endPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
         public static void UpdateStreetTangent1Pos(Street _street, Vector3 _tangent1Pos)
         {
             _street.m_Spline.SetTangent1Pos(_tangent1Pos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent1Pos(_tangent1Pos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
         public static void UpdateStreetTangent2Pos(Street _street, Vector3 _tangent2Pos)
         {
             _street.m_Spline.SetTangent2Pos(_tangent2Pos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent2Pos(_tangent2Pos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
@@ -181,12 +182,12 @@ namespace Splines
         {
             _street.m_Spline.SetTangent1Pos(_tangent1Pos);
             _street.m_Spline.SetTangent2Pos(_tangent2Pos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent1Pos(_tangent1Pos);
                 _street.GetCollisionStreet().m_Spline.SetTangent2Pos(_tangent2Pos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
@@ -195,13 +196,13 @@ namespace Splines
             _street.m_Spline.SetTangent1Pos(_tangent1Pos);
             _street.m_Spline.SetTangent2Pos(_tangent2Pos);
             _street.m_Spline.SetEndPos(_endPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent1Pos(_tangent1Pos);
                 _street.GetCollisionStreet().m_Spline.SetTangent2Pos(_tangent2Pos);
                 _street.GetCollisionStreet().m_Spline.SetEndPos(_endPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
@@ -210,13 +211,13 @@ namespace Splines
             _street.m_Spline.SetTangent1Pos(_tangent1Pos);
             _street.m_Spline.SetTangent2Pos(_tangent2Pos);
             _street.m_Spline.SetStartPos(_startPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent1Pos(_tangent1Pos);
                 _street.GetCollisionStreet().m_Spline.SetTangent2Pos(_tangent2Pos);
                 _street.GetCollisionStreet().m_Spline.SetStartPos(_startPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
@@ -224,12 +225,12 @@ namespace Splines
         {
             _street.m_Spline.SetTangent1Pos(_tangent1Pos);
             _street.m_Spline.SetEndPos(_endPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent1Pos(_tangent1Pos);
                 _street.GetCollisionStreet().m_Spline.SetEndPos(_endPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
@@ -237,12 +238,12 @@ namespace Splines
         {
             _street.m_Spline.SetTangent2Pos(_tangent2Pos);
             _street.m_Spline.SetEndPos(_endPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent2Pos(_tangent2Pos);
                 _street.GetCollisionStreet().m_Spline.SetEndPos(_endPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
@@ -250,12 +251,12 @@ namespace Splines
         {
             _street.m_Spline.SetTangent1Pos(_tangent1Pos);
             _street.m_Spline.SetStartPos(_startPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent1Pos(_tangent1Pos);
                 _street.GetCollisionStreet().m_Spline.SetStartPos(_startPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
 
@@ -263,12 +264,12 @@ namespace Splines
         {
             _street.m_Spline.SetTangent2Pos(_tangent2Pos);
             _street.m_Spline.SetStartPos(_startPos);
-            _street.m_Spline.UpdateOPs();
+            _street.m_Spline.UpdateOPs(_street);
             if (_street.GetCollisionStreet() != null)
             {
                 _street.GetCollisionStreet().m_Spline.SetTangent2Pos(_tangent2Pos);
                 _street.GetCollisionStreet().m_Spline.SetStartPos(_startPos);
-                _street.GetCollisionStreet().m_Spline.UpdateOPs();
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
         #endregion
@@ -371,6 +372,9 @@ namespace Splines
 
             s.Init(start, tangent1, tangent2, end, 20, mf, mr, new StreetShape(), false, true, _connectStart, connectStartIsOtherStart, _connectEnd, connectEndIsOtherStart);
             s.m_Spline.CreateGridOPs();
+            s.CheckCollision();
+            GridManager.CreateGrid(s);
+
             splineID_Dic.Add(s.ID, s);
             return s;
         }
