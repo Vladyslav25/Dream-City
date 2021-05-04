@@ -3,6 +3,7 @@ using Streets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
@@ -34,7 +35,7 @@ namespace Grid
 
         public float CellSize { get; } = 1f;
 
-        public int MaxGeneration { get; } = 5;
+        public int MaxGeneration { get; } = 4;
         public float GridMaxSquareArea { get; } = 5f;
         public float GridMinSquareArea { get; } = 0.7f;
 
@@ -70,9 +71,42 @@ namespace Grid
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             mr.material = Instance.White;
 
-            _street.m_StreetCells.AddRange(output);
-            MeshGenerator.CreateGridMesh(_street.m_StreetCells, mf);
+            foreach (Cell c in output)
+            {
+                _street.m_StreetCells.Add(c.pos, c);
+            }
+
+            for (int i = 0; i < output.Count; i++)
+            {
+                Cell c = output[i];
+                if (_street.m_StreetCells.ContainsKey(c.pos))
+                {
+                    if (c.m_isLeft && c.pos.x - 1 > 0 && !_street.m_StreetCells.ContainsKey(new Vector2(c.pos.x - 1, c.pos.y)))
+                    {
+                        Vector2 nextPose = c.pos;
+                        while (_street.m_StreetCells.ContainsKey(nextPose))
+                        {
+                            output.Remove(_street.m_StreetCells[nextPose]);
+                            _street.m_StreetCells.Remove(nextPose);
+                            nextPose = new Vector2(nextPose.x + 1, nextPose.y);
+                        }
+                    }
+                    if (!c.m_isLeft && c.pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2(c.pos.x + 1, c.pos.y)))
+                    {
+                        Vector2 nextPose = c.pos;
+                        while (_street.m_StreetCells.ContainsKey(nextPose))
+                        {
+                            output.Remove(_street.m_StreetCells[nextPose]);
+                            _street.m_StreetCells.Remove(nextPose);
+                            nextPose = new Vector2(nextPose.x - 1, nextPose.y);
+                        }
+                    }
+                }
+            }
+
+            MeshGenerator.CreateGridMesh(_street.m_StreetCells.Values.ToList(), mf);
             m_AllCells.AddRange(output);
+            _street.m_GridObj = obj;
         }
 
         public static List<Cell> CreateGrid(Street _street)
@@ -112,29 +146,9 @@ namespace Grid
             return output;
         }
 
-        /// <summary>
-        /// Create a Cell with all needed Components
-        /// </summary>
-        /// <param name="_obj">The Gameobject of the Cell</param>
-        /// <param name="isValid">out if the size and position(collision) is valid</param>
-        /// <param name="_isLeft"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns>Return the Cell</returns>
-        private static Cell CreateCell(Street _street, out bool isValid, bool _isLeft, int x, int y)
+        public static void RemoveGrid(Street _street)
         {
-            Cell c = new Cell();
-            if (y + 1 >= _street.m_Spline.GridOPs.Length)
-                isValid = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GetLastOrientedPoint().t, x, _isLeft);
-            else
-                isValid = c.Init(_street, _street.m_Spline.GridOPs[y].t, _street.m_Spline.GridOPs[y + 1].t, x, _isLeft);
-
-            if (isValid)
-                _street.m_StreetCells.Add(c);
-
-            return c;
+            _street.m_GridObj.GetComponent<MeshFilter>().mesh.Clear();
         }
-
-
     }
 }

@@ -11,5 +11,4 @@ uint width;
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
 	InterlockedAdd(dataBuffer[0], sign(saturate(inputTexture[id.xy].x - 0.2f)) & sign(saturate(inputTexture[id.xy].y - 0.2f)));
-	/*dataBuffer[0] = dataBuffer[0] + sign(inputTexture[id.xy].x) & sign(inputTexture[id.xy].y);*/
 }

@@ -34,7 +34,7 @@ public class DeadEnd : Street
             //Move the Tangent 2 up above the end Point
             Vector3 tangent2 = end - _streetRef.m_Spline.GetTangentAt(0);
             m_Spline = new Spline(
-                start, tangent1, tangent2, end, 10, gameObject
+                start, tangent1, tangent2, end, 10, gameObject, this
                 );
         }
         else
@@ -44,7 +44,7 @@ public class DeadEnd : Street
             Vector3 end = _streetRef.m_Spline.EndPos + _streetRef.m_Spline.GetNormalAt(1) * 0.5f;
             Vector3 tangent2 = end + _streetRef.m_Spline.GetTangentAt(1);
             m_Spline = new Spline(
-                start, tangent1, tangent2, end, 10, gameObject
+                start, tangent1, tangent2, end, 10, gameObject, this
                 );
         }
         m_MeshFilterRef = gameObject.AddComponent<MeshFilter>();

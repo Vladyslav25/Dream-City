@@ -34,7 +34,9 @@ namespace Splines
 
         public int segments;
 
-        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments) : this()
+        public Street m_Street;
+
+        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments, Street _street) : this()
         {
             pointsObj = new GameObject[4];
             pointsObj[0] = _startObj;
@@ -46,10 +48,11 @@ namespace Splines
             pointsObj[3] = _endObj;
             EndPos = _endObj.transform.position;
             segments = _segments;
-            UpdateOPs();
+            m_Street = _street;
+            UpdateOPs(_street);
         }
 
-        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent) : this()
+        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent, Street _street) : this()
         {
             StartPos = _startPos;
             Tangent1Pos = _tangent1Pos;
@@ -69,7 +72,8 @@ namespace Splines
             pointsObj[3].transform.position = _endPos;
             pointsObj[3].transform.SetParent(_parent.transform);
             segments = _segments;
-            UpdateOPs();
+            m_Street = _street;
+            UpdateOPs(_street);
         }
 
         #region -Set Tangents, Start and End-
@@ -270,13 +274,16 @@ namespace Splines
                 OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
             if (_street != null && _street.ID > 0)
+            {
+                _street.ClrearSegmentsCorner();
                 for (int i = 0; i < OPs.Length; i++)
                 {
                     _street.AddSegmentsCorner(OPs[i].Position + GetNormalAt(OPs[i].t));
                     _street.AddSegmentsCorner(OPs[i].Position - GetNormalAt(OPs[i].t));
                 }
+            }
         }
-
+        
         public void CreateGridOPs()
         {
             List<OrientedPoint> tmp = new List<OrientedPoint>();

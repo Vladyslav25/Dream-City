@@ -58,8 +58,9 @@ namespace Grid
         private float m_TEnd;
         private float m_Radius;
         public bool isValid;
+        public Vector2 pos;
 
-        public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide)
+        public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide, Vector2 _pos)
         {
             m_CellAssignment = 0;
             m_Street = _street;
@@ -69,6 +70,9 @@ namespace Grid
             m_generation = _generation;
             m_isLeft = _isLeftSide;
             ID = m_Street.ID;
+            if (!_isLeftSide)
+                _pos.x = -_pos.x;
+            pos = _pos;
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
             CalculateOrientation();
@@ -158,7 +162,7 @@ namespace Grid
             {
                 if (squareArea > GridManager.Instance.GridMaxSquareArea)
                 {
-                    Debug.Log("Fail Size: Too Big | Size: "+ squareArea + " Max: " + GridManager.Instance.GridMaxSquareArea + " AC: "+ AC.magnitude + " AB: " + AB.magnitude);
+                    Debug.Log("Fail Size: Too Big | Size: " + squareArea + " Max: " + GridManager.Instance.GridMaxSquareArea + " AC: " + AC.magnitude + " AB: " + AB.magnitude);
                 }
                 return false;
             }
@@ -197,5 +201,30 @@ namespace Grid
         {
             m_CellAssignment = _newAssigment;
         }
+
+        public void Delete()
+        {
+            if (m_Street.m_StreetCells.ContainsKey(pos))
+            {
+                Vector2 nextPos = pos;
+                while (m_Street.m_StreetCells.ContainsKey(nextPos))
+                {
+                    GridManager.m_AllCells.Remove(m_Street.m_StreetCells[nextPos]);
+                    m_Street.m_StreetCells.Remove(nextPos);
+
+                    if (m_isLeft)
+                    {
+                        nextPos = new Vector2(nextPos.x + 1, nextPos.y);
+                    }
+                    else
+                    {
+                        nextPos = new Vector2(nextPos.x - 1, nextPos.y);
+                    }
+                }
+
+            }
+        }
+
     }
 }
+
