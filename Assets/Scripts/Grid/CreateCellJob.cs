@@ -15,7 +15,6 @@ public struct CreateCellJob
     [ReadOnly]
     public int id;
     public bool isLeft;
-    public NativeList<Cell> cellList;
     public int x;
     public int y;
 
