@@ -55,4 +55,21 @@ public class DeadEnd : Street
         return this;
     }
 
+    public DeadEnd Init(ExtrudeShapeBase _shape, Transform _trans, Transform _parent)
+    {
+        id = -2;
+        m_Shape = _shape;
+        m_StreetNeighbour = null;
+        Vector3 start = _trans.position + _trans.right * 0.5f;
+        Vector3 end = _trans.position - _trans.right * 0.5f;
+        Vector3 tangent1 = start + transform.forward;
+        Vector3 tangent2 = end + transform.forward;
+        m_MeshFilterRef = gameObject.AddComponent<MeshFilter>();
+        m_MeshRendererRef = gameObject.AddComponent<MeshRenderer>();
+        m_MeshRendererRef.material = StreetManager.Instance.DeadEndMat;
+        transform.SetParent(_parent);
+        MeshGenerator.Extrude(this);
+        return this;
+    }
+
 }

@@ -1030,9 +1030,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1802645326}
+  - component: {fileID: 1802645328}
+  - component: {fileID: 1802645329}
   - component: {fileID: 1802645327}
   m_Layer: 0
-  m_Name: StreetTool
+  m_Name: ToolManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1064,12 +1066,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1329674f21a88441b53e89945f38b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spherePrefab: {fileID: 2188559368387382291, guid: 57495c74642e4b04cbd5ce86eb971ff8,
-    type: 3}
+  m_Type: 1
   previewStreetMaterial: {fileID: 2100000, guid: 1ab8d390690c06d469abd3677c9754f6,
     type: 2}
   m_renderTexture: {fileID: 8400000, guid: b4dff8d4d1a1a1749a0231fe9911d061, type: 2}
   m_computeShader: {fileID: 7200000, guid: 91fd7a89392ef5146a897703306fff28, type: 3}
+--- !u!114 &1802645328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802645325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87aeae67a603d8b40b8a491cf045da94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CurrendTool: {fileID: 0}
+  m_spherePrefab: {fileID: 2188559368387382291, guid: 57495c74642e4b04cbd5ce86eb971ff8,
+    type: 3}
+--- !u!114 &1802645329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802645325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acdb2e4c98cfe204c90054313bdedcc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Type: 2
+  m_crossPrefab: {fileID: 8624430937793105255, guid: bcb43ae4e3a3832419062597158d303a,
+    type: 3}
 --- !u!1 &1807324187
 GameObject:
   m_ObjectHideFlags: 0

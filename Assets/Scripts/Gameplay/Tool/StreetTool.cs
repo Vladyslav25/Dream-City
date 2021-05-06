@@ -4,13 +4,13 @@ using UnityEngine;
 using Splines;
 using UnityEditor;
 using System;
+using Gameplay.Tools;
+using Streets;
 
-namespace Streets
+namespace Gameplay.Streets
 {
-    public class StreetTool : MonoBehaviour
+    public class StreetTool : Tools.Tool
     {
-        [SerializeField]
-        GameObject spherePrefab;
         [SerializeField]
         Material previewStreetMaterial;
         [SerializeField]
@@ -34,8 +34,6 @@ namespace Streets
         Street lastConnectedStreet;
         GameObject lastConnectedStreetChildren;
 
-        GameObject sphere;
-
         #region -ComputeShader Member-
         [SerializeField]
         ComputeShader m_computeShader;
@@ -47,43 +45,37 @@ namespace Streets
         int m_widthIndex;
         #endregion
 
-        private void Awake()
+        private new void Awake()
         {
-            sphere = Instantiate(spherePrefab);
+            base.Awake();
             m_computeBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Structured);
             m_pixelCount = new int[1];
             m_kernelIndex = m_computeShader.FindKernel("CSMain");
             m_textureIndex = Shader.PropertyToID("inputTexture");
             m_dataBufferIndex = Shader.PropertyToID("dataBuffer");
             m_widthIndex = Shader.PropertyToID("width");
+            m_Type = TOOLTYPE.STREET;
         }
 
-        void Update()
+        public override void ToolUpdate()
         {
             if (Input.GetKeyUp(KeyCode.C)) //Change to Curve Tool
             {
-                sphere.GetComponent<MeshRenderer>().material.color = Color.blue;
+                SetSphereColor(Color.blue);
                 isCurrendToolLine = false;
             }
             if (Input.GetKeyUp(KeyCode.L)) //Change to Line Tool
             {
-                sphere.GetComponent<MeshRenderer>().material.color = Color.red;
+                SetSphereColor(Color.red);
                 isCurrendToolLine = true;
             }
 
-            //Raycast from Mouse to Playground
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit)) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
+            if (m_validHit) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
             {
-                Vector3 hitPoint = hit.point;
-                hitPoint.y = 0; //Set the hitpoint to y = 0 so collider if the Street get ignored
-                sphere.transform.position = hitPoint; //Set the Sphere for Debug and see possible combinations
 
                 if (pos1Set == false && pos2Set == false && pos3Set == false)
                 {
-                    FindStreetGameObject(hitPoint); //if no Point is set, look for not far away Street possible combinations
+                    FindStreetGameObject(m_hitPos); //if no Point is set, look for not far away Street possible combinations
                 }
 
                 if (isCurrendToolLine)
@@ -92,75 +84,34 @@ namespace Streets
                     {
                         Vector3 pos2Tmp = previewStreet.m_Spline.GetCentredOrientedPoint().Position; //Get the Midpoint on the Spline
                         Vector3 tangent1 = (pos1 + pos2Tmp) * 0.5f; // 1.Tanget must be between MidPoint and Start
-                        Vector3 tangent2 = (pos2Tmp + hitPoint) * 0.5f; // 2. Tanget must be between MidPoint and End (MousePos)
-                        UpdatePreview(tangent1, tangent2, hitPoint); //Update the Preview (update if Tanget is not locked)
-                        CheckForCombine(hitPoint, false); //If a Combine is possible it Combine (overwrite Tanget Pos)
+                        Vector3 tangent2 = (pos2Tmp + m_hitPos) * 0.5f; // 2. Tanget must be between MidPoint and End (MousePos)
+                        UpdatePreview(tangent1, tangent2, m_hitPos); //Update the Preview (update if Tanget is not locked)
+                        CheckForCombine(m_hitPos, false); //If a Combine is possible it Combine (overwrite Tanget Pos)
                     }
                 }
                 else
                 {
                     if (pos1Set == true && pos2Set == false && pos3Set == false && previewStreet != null) // Curve: First Point Set -> Wait for Sec Point
                     {
-                        Vector3 pos2Tmp = (pos1 + hitPoint) * 0.5f; //Get the Midpoint between Start and End
+                        Vector3 pos2Tmp = (pos1 + m_hitPos) * 0.5f; //Get the Midpoint between Start and End
                         Vector3 tangent1 = (pos1 + pos2Tmp) * 0.5f; //The 1.Tangent is between the Start and the Mid
-                        Vector3 tangent2 = (pos2Tmp + hitPoint) * 0.5f; //The 2. Tangent is between the End and the Mid
-                        UpdatePreview(tangent1, tangent2, hitPoint); //Update the Preview (update if Tanget is not locked)
+                        Vector3 tangent2 = (pos2Tmp + m_hitPos) * 0.5f; //The 2. Tangent is between the End and the Mid
+                        UpdatePreview(tangent1, tangent2, m_hitPos); //Update the Preview (update if Tanget is not locked)
                         //The Scecond Point cant Combine to an another Spline
                     }
 
                     if (pos1Set == true && pos2Set == true && pos3Set == false && previewStreet != null)
                     {
                         Vector3 tangent1 = (pos1 + pos2) * 0.5f; //The 1.Tanget is between Start and Sec Point 
-                        Vector3 tangent2 = (pos2 + hitPoint) * 0.5f; // The 2.Tanget is between Sec Point and EndPoint (MousePos)
-                        UpdatePreview(tangent1, tangent2, hitPoint); //Update the Preview (update if Tanget is not locked)
-                        CheckForCombine(hitPoint, false); //If a Combine is possible it Combine (overwrite Tanget Pos)
+                        Vector3 tangent2 = (pos2 + m_hitPos) * 0.5f; // The 2.Tanget is between Sec Point and EndPoint (MousePos)
+                        UpdatePreview(tangent1, tangent2, m_hitPos); //Update the Preview (update if Tanget is not locked)
+                        CheckForCombine(m_hitPos, false); //If a Combine is possible it Combine (overwrite Tanget Pos)
                     }
                 }
 
                 if (Input.GetKeyUp(KeyCode.Escape))
                 {
-                    //Reset
-                    pos1 = Vector3.zero;
-                    pos2 = Vector3.zero;
-                    pos3 = Vector3.zero;
-                    pos1Set = false;
-                    pos2Set = false;
-                    pos3Set = false;
-                    isTangent1Locked = false;
-                    isTangent2Locked = false;
-
-                    if (previewStreet != null)
-                    {   //Recreate DeadEnds on PreviewStreet Conections
-                        if (previewStreet.m_StreetConnect_Start != null)
-                        {
-                            if (previewStreet.m_StreetConnect_Start.m_StreetConnect_Start == previewStreet)
-                                previewStreet.m_StreetConnect_Start.CreateDeadEnd(true);
-                            if (previewStreet.m_StreetConnect_Start.m_StreetConnect_End == previewStreet)
-                                previewStreet.m_StreetConnect_Start.CreateDeadEnd(false);
-                        }
-                        if (previewStreet.m_StreetConnect_End != null)
-                        {
-                            if (previewStreet.m_StreetConnect_End.m_StreetConnect_Start == previewStreet)
-                                previewStreet.m_StreetConnect_End.CreateDeadEnd(true);
-                            if (previewStreet.m_StreetConnect_End.m_StreetConnect_End == previewStreet)
-                                previewStreet.m_StreetConnect_End.CreateDeadEnd(false);
-                        }
-                        if (previewStreet.GetCollisionStreet().gameObject != null)
-                            Destroy(previewStreet.GetCollisionStreet().gameObject);
-                        if (previewStreet.gameObject != null)
-                            Destroy(previewStreet.gameObject); //Destroy PreviewStreet
-                    }
-
-                    if (lastConnectedStreetChildren != null)
-                        if (lastConnectedStreetChildren.CompareTag("StreetStart"))
-                            lastConnectedStreet.CreateDeadEnd(true);
-                        else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
-                            lastConnectedStreet.CreateDeadEnd(false);
-
-                    lastConnectedStreet = null;
-                    lastConnectedStreetChildren = null;
-
-                    previewStreet = null;
+                    ResetTool();
                     return;
                 }
 
@@ -181,10 +132,10 @@ namespace Streets
                 {
                     if (pos1Set == false)
                     {
-                        pos1 = hitPoint;
+                        pos1 = m_hitPos;
                         pos1Set = true;
                         previewStreet = StreetManager.InitStreetForPreview(pos1); //Init a Preview Street (with invalid ID)
-                        CheckForCombine(hitPoint, true); //Check if the Start in the Preview Street can be combined
+                        CheckForCombine(m_hitPos, true); //Check if the Start in the Preview Street can be combined
                         return;
                     }
 
@@ -192,15 +143,15 @@ namespace Streets
                     {
                         if (pos2Set == false)
                         {
-                            pos2 = hitPoint;
+                            pos2 = m_hitPos;
                             pos2Set = true;
                             return;
                         }
                     }
                     if (pos3Set == false)
                     {
-                        pos3 = hitPoint;
-                        CheckForCombine(hitPoint, false); //Check if the End in the Preview Street can be combined
+                        pos3 = m_hitPos;
+                        CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
                         StreetManager.CreateStreet(previewStreet); //Create a valid Street from the preview Street
                         //Reset
                         pos1 = Vector3.zero;
@@ -220,6 +171,65 @@ namespace Streets
                     }
                 }
             }
+        }
+
+        public override void ToolEnd()
+        {
+            base.ToolEnd();
+            ResetTool();
+        }
+
+        public override void ToolStart()
+        {
+            base.ToolStart();
+            SetSphereActiv(true);
+        }
+
+        private void ResetTool()
+        {
+            //Reset
+            pos1 = Vector3.zero;
+            pos2 = Vector3.zero;
+            pos3 = Vector3.zero;
+            pos1Set = false;
+            pos2Set = false;
+            pos3Set = false;
+            isTangent1Locked = false;
+            isTangent2Locked = false;
+
+            if (previewStreet != null)
+            {   //Recreate DeadEnds on PreviewStreet Conections
+                if (previewStreet.m_StreetConnect_Start != null)
+                {
+                    if (previewStreet.m_StreetConnect_Start.m_StreetConnect_Start == previewStreet)
+                        previewStreet.m_StreetConnect_Start.CreateDeadEnd(true);
+                    if (previewStreet.m_StreetConnect_Start.m_StreetConnect_End == previewStreet)
+                        previewStreet.m_StreetConnect_Start.CreateDeadEnd(false);
+                }
+                if (previewStreet.m_StreetConnect_End != null)
+                {
+                    if (previewStreet.m_StreetConnect_End.m_StreetConnect_Start == previewStreet)
+                        previewStreet.m_StreetConnect_End.CreateDeadEnd(true);
+                    if (previewStreet.m_StreetConnect_End.m_StreetConnect_End == previewStreet)
+                        previewStreet.m_StreetConnect_End.CreateDeadEnd(false);
+                }
+                if (previewStreet.GetCollisionStreet().gameObject != null)
+                    Destroy(previewStreet.GetCollisionStreet().gameObject);
+                if (previewStreet.gameObject != null)
+                    Destroy(previewStreet.gameObject); //Destroy PreviewStreet
+            }
+
+            if (lastConnectedStreetChildren != null)
+                if (lastConnectedStreetChildren.CompareTag("StreetStart"))
+                    lastConnectedStreet.CreateDeadEnd(true);
+                else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
+                    lastConnectedStreet.CreateDeadEnd(false);
+
+            lastConnectedStreet = null;
+            lastConnectedStreetChildren = null;
+
+            previewStreet = null;
+            return;
         }
 
         /// <summary>
@@ -275,11 +285,15 @@ namespace Streets
                 if ((sphereHits[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable)
                     || (sphereHits[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable))
                     hittedStreetsChildern.Add(sphereHits[i].transform.gameObject); //if found a valid GameObject add it to a List
+
+                Cross tmpCross = sphereHits[i].GetComponent<Cross>();
+                if (tmpCross == null) continue;
+                hittedStreetsChildern.Add(sphereHits[i].transform.gameObject);
             }
             if (hittedStreetsChildern.Count == 0) return null; //return null if no valid Street GameObbject was found in the Sphere
 
             GameObject closestStreetChildren = GetClosesedGameObject(hittedStreetsChildern, _hitPoint); //Look for the closest GameObject of all valid GameObjects
-            sphere.transform.position = closestStreetChildren.transform.position; //Set the Sphere to the Pos of the closest valid Street GameObject
+            SetSpherePos(closestStreetChildren.transform.position); //Set the Sphere to the Pos of the closest valid Street GameObject
             return closestStreetChildren;
         }
 

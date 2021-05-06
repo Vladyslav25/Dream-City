@@ -32,15 +32,18 @@ namespace Splines
 
         [SerializeField]
         private Material streetMat;
-        [SerializeField]
-        private Material streetMatColl;
+
+        public Material streetMatColl;
+
         [SerializeField]
         private Material previewStreetMat;
+
         [SerializeField]
         private Material previewStreetMatColl;
+
         public Material DeadEndMat;
-        [SerializeField]
-        private GameObject StreetCollisionParent;
+
+        public GameObject StreetCollisionParent;
 
         private static Dictionary<int, Street> splineID_Dic = new Dictionary<int, Street>();
         private static int setSplineId;
