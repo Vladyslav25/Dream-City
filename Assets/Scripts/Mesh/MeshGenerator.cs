@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Streets;
 using UnityEngine;
 using Grid;
+using Gameplay.StreetComponents;
 
 namespace MeshGeneration
 {
@@ -77,10 +77,14 @@ namespace MeshGeneration
             return mesh;
         }
 
-        public static void Extrude(Street _street)
+        public static void Extrude(SplineStreetComonents _comp)
         {
-            ExtrudeShapeBase Shape = _street.m_Shape;
-            Spline Spline = _street.m_Spline;
+            ExtrudeShapeBase Shape = _comp.m_Shape;
+            if(Shape == null)
+            {
+                return;
+            }
+            Spline Spline = _comp.m_Spline;
 
             int vertsInShape = Shape.verts.Length;
             int segments = Spline.OPs.Length - 1;
@@ -103,7 +107,7 @@ namespace MeshGeneration
                 for (int j = 0; j < vertsInShape; j++)
                 {
                     int id = offset + j;
-                    verticies[id] = Spline.OPs[i].LocalToWorld(Shape.verts[j]) - _street.m_MeshOffset;
+                    verticies[id] = Spline.OPs[i].LocalToWorld(Shape.verts[j]) - _comp.m_MeshOffset;
                     uvs[id] = new Vector2(Shape.us[j], arr.Sample(i / ((float)edgeLoops)) / shapeLength);
                 }
             }
@@ -133,7 +137,7 @@ namespace MeshGeneration
                 }
             }
 
-            Mesh mesh = _street.m_MeshFilterRef.mesh;
+            Mesh mesh = _comp.m_MeshFilter.mesh;
             mesh.Clear();
             mesh.vertices = verticies;
             mesh.triangles = triangelIndices;

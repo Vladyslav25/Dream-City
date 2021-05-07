@@ -8,10 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Streets
+namespace Gameplay.StreetComponents
 {
-
-    public class Street : MonoBehaviour
+    public class Street : SplineStreetComonents
     {
         [Header("Gizmo Settings")]
         [SerializeField]
@@ -47,30 +46,25 @@ namespace Streets
         [SerializeField]
         private bool drawGridNormals = false;
 
-        public Spline m_Spline;
-        public MeshFilter m_MeshFilterRef;
-        public MeshRenderer m_MeshRendererRef;
-        public ExtrudeShapeBase m_Shape;
         public Dictionary<Vector2, Cell> m_StreetCells = new Dictionary<Vector2, Cell>();
         public GameObject m_GridObj;
         private Street m_collisionStreet;
 
-        public Street m_StreetConnect_Start;
         public bool m_StartIsConnectable
         {
             get
             {
-                if (m_StreetConnect_Start == null || m_StreetConnect_Start.ID < 0)
+                if (m_StartConnection == null || m_StartConnection.GetOtherComponent(this).ID < 0)
                     return true;
                 return false;
             }
         }
-        public Street m_StreetConnect_End;
+        public Connection m_EndConnection;
         public bool m_EndIsConnectable
         {
             get
             {
-                if (m_StreetConnect_End == null || m_StreetConnect_End.ID < 0)
+                if (m_EndConnection == null || m_EndConnection.GetOtherComponent(this).ID < 0)
                     return true;
                 return false;
             }
@@ -88,32 +82,12 @@ namespace Streets
                 m_inValidForm = value;
                 if (value)
                 {
-                    StreetManager.SetStreetColor(this, Color.green);
+                    StreetComponentManager.SetStreetColor(this, Color.green);
                 }
                 else
                 {
-                    StreetManager.SetStreetColor(this, Color.red);
+                    StreetComponentManager.SetStreetColor(this, Color.red);
                 }
-            }
-        }
-
-        public Vector3 m_MeshOffset
-        {
-            get
-            {
-                return transform.position;
-            }
-        }
-
-        [MyReadOnly]
-        [SerializeField]
-        protected int id = -1;
-
-        public int ID
-        {
-            get
-            {
-                return id;
             }
         }
 
@@ -122,47 +96,18 @@ namespace Streets
 
         private List<Vector3> m_segmentsCorner = new List<Vector3>();
 
-        /// <summary>
-        /// Init the Street. Need to call befor use.
-        /// </summary>
-        /// <param name="_startPos">Start GameObject of the Spline</param>
-        /// <param name="_tangent1">Tangent 1 GameObject of the Spline </param>
-        /// <param name="_tangent2">Tangent 2 GameObject of the Spline</param>
-        /// <param name="_endPos">End GameObject of the Spline</param>
-        /// <param name="_segments">The amount of segments</param>
-        /// <param name="_meshFilter">MeshFilter Ref</param>
-        /// <param name="_meshRenderer">MeshRenderer Ref</param>
-        /// <param name="_shape">The Shape of the Street</param>
-        /// <param name="_updateMesh">Update the form of the Street? <strong>Heavy impact on Performance. Use only for the Preview Street</strong></param>
-        /// <param name="_needID">Need the Street an id? <strong>If true: Create DeadEnds or Combines</strong></param>
-        /// <param name="_connectionStart">Ref to the Street Connection on the Start of the Street. <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
-        /// <param name="_connectionStartIsOtherStart">Is it the start of the other Street in the Street start? <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
-        /// <param name="_connectionEnd">Ref to the Street connection on the End of the Street. <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
-        /// <param name="_connectionEndIsOtherStart">Is it the start of the other Street in the Street end? <strong>Is needed if <paramref name="_needID"/> is true</strong></param>
-        public Street Init(GameObject _startPos, GameObject _tangent1, GameObject _tangent2, GameObject _endPos, int _segments, MeshFilter _meshFilter, MeshRenderer _meshRenderer, ExtrudeShapeBase _shape, bool _updateMesh = false, bool _needID = true, Street _connectionStart = null, bool _connectionStartIsOtherStart = true, Street _connectionEnd = null, bool _connectionEndIsOtherStart = true)
+        public Street Init(Vector3[] _splinePos, Connection _startConnection, Connection _endConnection, int _segmentAmount = 10, bool _needID = true, bool _updateSpline = false)
         {
-            m_Spline = new Spline(_startPos, _tangent1, _tangent2, _endPos, _segments, this);
-            m_MeshFilterRef = _meshFilter;
-            m_MeshRendererRef = _meshRenderer;
-            m_Shape = _shape;
-            m_Spline.UpdateOPs(this);
+            base.Init(_needID);
+            m_Spline = new Spline(_splinePos[0], _splinePos[1], _splinePos[2], _splinePos[3], _segmentAmount, this);
+            m_MeshFilter = GetComponent<MeshFilter>();
+            if (m_MeshFilter == null) Debug.LogError("No MeshFilter found in: " + ID);
+            m_MeshRenderer = GetComponent<MeshRenderer>();
+            if (m_MeshRenderer == null) Debug.LogError("No MeshRenderer found in: " + ID);
+            m_Shape = new StreetShape();
+            m_Spline.UpdateOPs();
             MeshGenerator.Extrude(this);
-
-            updateSpline = _updateMesh;
-            if (_needID)
-            {
-                id = StreetManager.GetNewSplineID();
-
-                if (_connectionStart == null)
-                    CreateDeadEnd(true);
-                else
-                    Combine(_connectionStart, true, _connectionStartIsOtherStart);
-
-                if (_connectionEnd == null)
-                    CreateDeadEnd(false);
-                else
-                    Combine(_connectionEnd, false, _connectionEndIsOtherStart);
-            }
+            updateSpline = _updateSpline;
 
             return this;
         }
@@ -183,74 +128,6 @@ namespace Streets
         public Street GetCollisionStreet()
         {
             return m_collisionStreet;
-        }
-
-        /// <summary>
-        /// Remove a DeadEnd and set the new Ref on the given StreetSide
-        /// </summary>
-        /// <param name="_isStart">Is it the Start of the Street?</param>
-        /// <param name="_newStreetRef">The new Street Ref on the Street Side</param>
-        public void RemoveDeadEnd(bool _isStart, Street _newStreetRef)
-        {
-            if (_isStart && m_StreetConnect_Start != null && m_StreetConnect_Start is DeadEnd)
-            {
-                Destroy(m_StreetConnect_Start.gameObject);
-                m_StreetConnect_Start = _newStreetRef;
-            }
-            else
-            if (!_isStart && m_StreetConnect_End != null && m_StreetConnect_End is DeadEnd)
-            {
-                Destroy(m_StreetConnect_End.gameObject);
-                m_StreetConnect_End = _newStreetRef;
-            }
-        }
-
-        /// <summary>
-        /// Create a DeadEnd on the given Side of the Street
-        /// </summary>
-        /// <param name="isStart">Is it the Start of the Street?</param>
-        public void CreateDeadEnd(bool isStart)
-        {
-            if (gameObject.layer == 8) return;
-            if (isStart && m_StartIsConnectable)
-            {
-                //Look for maybe already created DeadEnd
-                Transform t = transform.Find("DeadEnd_Start");
-                GameObject tmp;
-                if (t == null) //if there is no DeadEnd GameObject -> Create
-                {
-                    tmp = new GameObject("DeadEnd_Start");
-                    tmp.tag = "Street";
-                    m_StreetConnect_Start = tmp.AddComponent<DeadEnd>();
-                    DeadEnd de = (DeadEnd)m_StreetConnect_Start;
-                    de.Init(new DeadEndShape(), this, true);
-                }
-                else //If a DeadEnd GameObjec exist -> Reset Ref
-                {
-                    tmp = t.gameObject;
-                    m_StreetConnect_Start = tmp.GetComponent<DeadEnd>();
-                }
-            }
-            else
-            if (!isStart && m_EndIsConnectable)
-            {
-                //Look for maybe already created DeadEnd
-                Transform t = transform.Find("DeadEnd_End");
-                GameObject tmp;
-                if (t == null)
-                {
-                    tmp = new GameObject("DeadEnd_End");
-                    tmp.tag = "Street";
-                    m_StreetConnect_End = tmp.AddComponent<DeadEnd>();
-                    DeadEnd de = (DeadEnd)m_StreetConnect_End;
-                    de.Init(new DeadEndShape(), this, false);
-                }
-                else
-                {
-                    tmp = t.gameObject;
-                    m_StreetConnect_End = tmp.GetComponent<DeadEnd>();
-                }
-            }
         }
 
         public void CheckCollision()
@@ -282,42 +159,15 @@ namespace Streets
 
             foreach (int i in StreetsToRecreate)
             {
-                Street s = StreetManager.GetStreetByID(i);
+                Street s = StreetComponentManager.GetStreetByID(i) as Street;
                 GridManager.RemoveGrid(s);
                 MeshGenerator.CreateGridMesh(s.m_StreetCells.Values.ToList(), s.m_GridObj.GetComponent<MeshFilter>());
             }
         }
 
-        public void ClrearSegmentsCorner()
+        public void ClearSegmentsCorner()
         {
             m_segmentsCorner.Clear();
-        }
-
-        public bool Combine(Street _otherStreet, bool _isMyStart, bool _otherStreetIsStart)
-        {
-            if (_otherStreet == null) return false;
-
-            RemoveDeadEnd(_isMyStart, _otherStreet); //Remove my DeadEnd
-
-            //Set Ref of other Street
-            if (_otherStreetIsStart)
-                _otherStreet.m_StreetConnect_Start = this;
-            else
-                _otherStreet.m_StreetConnect_End = this;
-
-            //Set my Ref
-            if (_isMyStart)
-            {
-                m_StreetConnect_Start = _otherStreet;
-                return true;
-            }
-            else if (!_isMyStart)
-            {
-                m_StreetConnect_End = _otherStreet;
-                return true;
-            }
-
-            return false;
         }
 
         private void Update()
@@ -330,7 +180,7 @@ namespace Streets
                 if (drawMesh)
                     MeshGenerator.Extrude(this);
                 else
-                    m_MeshFilterRef.mesh.Clear();
+                    m_MeshFilter.mesh.Clear();
             }
 
             lastDrawMeshSetting = drawMesh;

@@ -5,7 +5,7 @@ using Splines;
 using UnityEditor;
 using System;
 using Gameplay.Tools;
-using Streets;
+using Gameplay.StreetComponents;
 
 namespace Gameplay.Streets
 {
@@ -29,7 +29,7 @@ namespace Gameplay.Streets
 
         bool isCurrendToolLine = false;
 
-        Street previewStreet;
+        Street m_previewStreet;
 
         Street lastConnectedStreet;
         GameObject lastConnectedStreetChildren;
@@ -80,9 +80,9 @@ namespace Gameplay.Streets
 
                 if (isCurrendToolLine)
                 {
-                    if (pos1Set == true && pos3Set == false && previewStreet != null) //Line: First Point Set -> Missing Sec Point
+                    if (pos1Set == true && pos3Set == false && m_previewStreet != null) //Line: First Point Set -> Missing Sec Point
                     {
-                        Vector3 pos2Tmp = previewStreet.m_Spline.GetCentredOrientedPoint().Position; //Get the Midpoint on the Spline
+                        Vector3 pos2Tmp = m_previewStreet.m_Spline.GetCentredOrientedPoint().Position; //Get the Midpoint on the Spline
                         Vector3 tangent1 = (pos1 + pos2Tmp) * 0.5f; // 1.Tanget must be between MidPoint and Start
                         Vector3 tangent2 = (pos2Tmp + m_hitPos) * 0.5f; // 2. Tanget must be between MidPoint and End (MousePos)
                         UpdatePreview(tangent1, tangent2, m_hitPos); //Update the Preview (update if Tanget is not locked)
@@ -91,7 +91,7 @@ namespace Gameplay.Streets
                 }
                 else
                 {
-                    if (pos1Set == true && pos2Set == false && pos3Set == false && previewStreet != null) // Curve: First Point Set -> Wait for Sec Point
+                    if (pos1Set == true && pos2Set == false && pos3Set == false && m_previewStreet != null) // Curve: First Point Set -> Wait for Sec Point
                     {
                         Vector3 pos2Tmp = (pos1 + m_hitPos) * 0.5f; //Get the Midpoint between Start and End
                         Vector3 tangent1 = (pos1 + pos2Tmp) * 0.5f; //The 1.Tangent is between the Start and the Mid
@@ -100,7 +100,7 @@ namespace Gameplay.Streets
                         //The Scecond Point cant Combine to an another Spline
                     }
 
-                    if (pos1Set == true && pos2Set == true && pos3Set == false && previewStreet != null)
+                    if (pos1Set == true && pos2Set == true && pos3Set == false && m_previewStreet != null)
                     {
                         Vector3 tangent1 = (pos1 + pos2) * 0.5f; //The 1.Tanget is between Start and Sec Point 
                         Vector3 tangent2 = (pos2 + m_hitPos) * 0.5f; // The 2.Tanget is between Sec Point and EndPoint (MousePos)
@@ -115,16 +115,16 @@ namespace Gameplay.Streets
                     return;
                 }
 
-                if (previewStreet != null)
+                if (m_previewStreet != null)
                 {
                     if (!CheckForValidForm() || CheckForCollision())
                     {
-                        previewStreet.m_HasValidForm = false;
+                        m_previewStreet.m_HasValidForm = false;
                         return;
                     }
                     else
                     {
-                        previewStreet.m_HasValidForm = true;
+                        m_previewStreet.m_HasValidForm = true;
                     }
                 }
 
@@ -134,7 +134,7 @@ namespace Gameplay.Streets
                     {
                         pos1 = m_hitPos;
                         pos1Set = true;
-                        previewStreet = StreetManager.InitStreetForPreview(pos1); //Init a Preview Street (with invalid ID)
+                        m_previewStreet = StreetComponentManager.InitStreetForPreview(pos1); //Init a Preview Street (with invalid ID)
                         CheckForCombine(m_hitPos, true); //Check if the Start in the Preview Street can be combined
                         return;
                     }
@@ -152,7 +152,7 @@ namespace Gameplay.Streets
                     {
                         pos3 = m_hitPos;
                         CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
-                        StreetManager.CreateStreet(previewStreet); //Create a valid Street from the preview Street
+                        StreetComponentManager.CreateStreet(m_previewStreet); //Create a valid Street from the preview Street
                         //Reset
                         pos1 = Vector3.zero;
                         pos2 = Vector3.zero;
@@ -162,8 +162,8 @@ namespace Gameplay.Streets
                         pos3Set = false;
                         isTangent1Locked = false;
                         isTangent2Locked = false;
-                        Destroy(previewStreet.gameObject); //Destroy PreviewStreet
-                        previewStreet = null;
+                        Destroy(m_previewStreet.gameObject); //Destroy PreviewStreet
+                        m_previewStreet = null;
 
                         lastConnectedStreet = null;
                         lastConnectedStreetChildren = null;
@@ -197,38 +197,38 @@ namespace Gameplay.Streets
             isTangent1Locked = false;
             isTangent2Locked = false;
 
-            if (previewStreet != null)
-            {   //Recreate DeadEnds on PreviewStreet Conections
-                if (previewStreet.m_StreetConnect_Start != null)
-                {
-                    if (previewStreet.m_StreetConnect_Start.m_StreetConnect_Start == previewStreet)
-                        previewStreet.m_StreetConnect_Start.CreateDeadEnd(true);
-                    if (previewStreet.m_StreetConnect_Start.m_StreetConnect_End == previewStreet)
-                        previewStreet.m_StreetConnect_Start.CreateDeadEnd(false);
-                }
-                if (previewStreet.m_StreetConnect_End != null)
-                {
-                    if (previewStreet.m_StreetConnect_End.m_StreetConnect_Start == previewStreet)
-                        previewStreet.m_StreetConnect_End.CreateDeadEnd(true);
-                    if (previewStreet.m_StreetConnect_End.m_StreetConnect_End == previewStreet)
-                        previewStreet.m_StreetConnect_End.CreateDeadEnd(false);
-                }
-                if (previewStreet.GetCollisionStreet().gameObject != null)
-                    Destroy(previewStreet.GetCollisionStreet().gameObject);
-                if (previewStreet.gameObject != null)
-                    Destroy(previewStreet.gameObject); //Destroy PreviewStreet
-            }
-
-            if (lastConnectedStreetChildren != null)
-                if (lastConnectedStreetChildren.CompareTag("StreetStart"))
-                    lastConnectedStreet.CreateDeadEnd(true);
-                else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
-                    lastConnectedStreet.CreateDeadEnd(false);
+            //if (m_previewStreet != null)
+            //{   //Recreate DeadEnds on PreviewStreet Conections
+            //    if (m_previewStreet.m_StreetConnect_Start != null)
+            //    {
+            //        if (m_previewStreet.m_StreetConnect_Start.m_StreetConnect_Start == m_previewStreet)
+            //            m_previewStreet.m_StreetConnect_Start.CreateDeadEnd(true);
+            //        if (m_previewStreet.m_StreetConnect_Start.m_StreetConnect_End == m_previewStreet)
+            //            m_previewStreet.m_StreetConnect_Start.CreateDeadEnd(false);
+            //    }
+            //    if (m_previewStreet.m_StreetConnect_End != null)
+            //    {
+            //        if (m_previewStreet.m_StreetConnect_End.m_StreetConnect_Start == m_previewStreet)
+            //            m_previewStreet.m_StreetConnect_End.CreateDeadEnd(true);
+            //        if (m_previewStreet.m_StreetConnect_End.m_StreetConnect_End == m_previewStreet)
+            //            m_previewStreet.m_StreetConnect_End.CreateDeadEnd(false);
+            //    }
+            //    if (m_previewStreet.GetCollisionStreet().gameObject != null)
+            //        Destroy(m_previewStreet.GetCollisionStreet().gameObject);
+            //    if (m_previewStreet.gameObject != null)
+            //        Destroy(m_previewStreet.gameObject); //Destroy PreviewStreet
+            //}
+            //
+            //if (lastConnectedStreetChildren != null)
+            //    if (lastConnectedStreetChildren.CompareTag("StreetStart"))
+            //        lastConnectedStreet.CreateDeadEnd(true);
+            //    else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
+            //        lastConnectedStreet.CreateDeadEnd(false);
 
             lastConnectedStreet = null;
             lastConnectedStreetChildren = null;
 
-            previewStreet = null;
+            m_previewStreet = null;
             return;
         }
 
@@ -262,10 +262,10 @@ namespace Gameplay.Streets
         private void UpdatePreview(Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos)
         {
             if (!isTangent1Locked)
-                StreetManager.UpdateStreetTangent1Pos(previewStreet, _tangent1);
+                StreetComponentManager.UpdateStreetTangent1Pos(m_previewStreet, _tangent1);
             if (!isTangent2Locked)
-                StreetManager.UpdateStreetTangent2Pos(previewStreet, _tangent2);
-            StreetManager.UpdateStreetEndPos(previewStreet, _endPos);
+                StreetComponentManager.UpdateStreetTangent2Pos(m_previewStreet, _tangent2);
+            StreetComponentManager.UpdateStreetEndPos(m_previewStreet, _endPos);
         }
 
         /// <summary>
@@ -309,8 +309,7 @@ namespace Gameplay.Streets
 
             if (closestStreetChildren == null) // if there is no valid Street GameObject around
             {
-                if (lastConnectedStreet != null && lastConnectedStreetChildren != null)
-                    RecreateDeadEnd(lastConnectedStreet, lastConnectedStreetChildren);
+                //Recreate Dead End
 
                 //Unlock the Tangent of the Pos which is not Set
                 if (pos1 == Vector3.zero)
@@ -322,9 +321,6 @@ namespace Gameplay.Streets
 
             Street otherStreet = closestStreetChildren.GetComponentInParent<Street>();
 
-            lastConnectedStreetChildren = closestStreetChildren;
-            lastConnectedStreet = otherStreet;
-
             if (closestStreetChildren.CompareTag("StreetEnd"))
             {
                 if (isStart)
@@ -332,15 +328,16 @@ namespace Gameplay.Streets
                     //other Street End and previewStreet Start -> Combine
                     Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized; //Get the point symmetrical Direction
 
-                    StreetManager.UpdateStreetTangent1AndStartPoint(
-                        previewStreet,
+                    StreetComponentManager.UpdateStreetTangent1AndStartPoint(
+                        m_previewStreet,
                         dir * 5f + otherStreet.m_Spline.EndPos, //Set the Tanget to the half point symmetrical Position
                         otherStreet.m_Spline.EndPos
                         ); //Set the EndPos
 
                     isTangent1Locked = true;
-                    otherStreet.RemoveDeadEnd(false, previewStreet);
-                    previewStreet.m_StreetConnect_Start = otherStreet;
+
+                    //Combine(_others End, preview Start) + Remove others DeadEnd at End
+
                     return;
                 }
                 else
@@ -348,15 +345,16 @@ namespace Gameplay.Streets
                     //other Street End and previewStreet End -> Combine
                     Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized;
 
-                    StreetManager.UpdateStreetTangent2AndEndPoint(
-                        previewStreet,
+                    StreetComponentManager.UpdateStreetTangent2AndEndPoint(
+                        m_previewStreet,
                         dir * 5f + otherStreet.m_Spline.EndPos,
                         otherStreet.m_Spline.EndPos
                         );
 
                     isTangent2Locked = true;
-                    otherStreet.RemoveDeadEnd(false, previewStreet);
-                    previewStreet.m_StreetConnect_End = otherStreet;
+
+                    //Combine(_others End, preview End) + Remove others DeadEnd at End
+
                     return;
                 }
             }
@@ -367,15 +365,16 @@ namespace Gameplay.Streets
                     //other Street Start and previewStreet Start -> Combine
                     Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
 
-                    StreetManager.UpdateStreetTangent1AndStartPoint(
-                        previewStreet,
+                    StreetComponentManager.UpdateStreetTangent1AndStartPoint(
+                        m_previewStreet,
                         dir * 5f + otherStreet.m_Spline.StartPos,
                         otherStreet.m_Spline.StartPos
                         );
 
                     isTangent1Locked = true;
-                    otherStreet.RemoveDeadEnd(true, previewStreet);
-                    previewStreet.m_StreetConnect_Start = otherStreet;
+
+                    //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
+
                     return;
                 }
                 else
@@ -383,47 +382,140 @@ namespace Gameplay.Streets
                     //other Street Start and previewStreet End -> Combine
                     Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
 
-                    StreetManager.UpdateStreetTangent2AndEndPoint(
-                        previewStreet,
+                    StreetComponentManager.UpdateStreetTangent2AndEndPoint(
+                        m_previewStreet,
                         dir * 5f + otherStreet.m_Spline.StartPos,
                         otherStreet.m_Spline.StartPos
                         );
 
                     isTangent2Locked = true;
-                    otherStreet.RemoveDeadEnd(true, previewStreet);
-                    previewStreet.m_StreetConnect_End = otherStreet;
+
+                    //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
+
                     return;
                 }
             }
         }
 
-        /// <summary>
-        /// Recreate the DeadEnd
-        /// </summary>
-        /// <param name="_lastConnectedStreet">The last connected Street, where to create the DeadEnd</param>
-        /// <param name="_lastConnectedStreetChildren">The GameObject to look for Street:Start or End</param>
-        private void RecreateDeadEnd(Street _lastConnectedStreet, GameObject _lastConnectedStreetChildren)
+        private void CombinePreview(Street _other, bool _otherStart, bool _previewStart)
         {
-            if (previewStreet.m_StreetConnect_Start != null && previewStreet.m_StreetConnect_End != null
-                && previewStreet.m_StreetConnect_End == previewStreet.m_StreetConnect_Start)
-                if (_lastConnectedStreetChildren.CompareTag("StreetStart") && _lastConnectedStreet.m_StreetConnect_End != previewStreet
-                    || _lastConnectedStreetChildren.CompareTag("StreetEnd") && _lastConnectedStreet.m_StreetConnect_Start != previewStreet)
+            if (_previewStart)
+            {
+                m_previewStreet.m_StartConnection = new Connection(m_previewStreet, _previewStart, _other, _otherStart, m_previewStreet.m_Spline.GetFirstOrientedPoint());
+            }
+            else
+            {
+                m_previewStreet.m_EndConnection = new Connection(m_previewStreet, _previewStart, _other, _otherStart, m_previewStreet.m_Spline.GetLastOrientedPoint());
+            }
+            if (_otherStart)
+            {
+                _other.m_StartConnection = new Connection(_other, _otherStart, m_previewStreet, _previewStart, _other.m_Spline.GetFirstOrientedPoint());
+            }
+            else
+            {
+                _other.m_EndConnection = new Connection(_other, _otherStart, m_previewStreet, _previewStart, _other.m_Spline.GetLastOrientedPoint());
+            }
+        }
+
+        private void CombinePreview(Cross _other, int _crossIndex, bool _previewStart)
+        {
+            OrientedPoint op;
+            if (_previewStart)
+            {
+                op = m_previewStreet.m_Spline.GetFirstOrientedPoint();
+                m_previewStreet.m_StartConnection = new Connection(m_previewStreet, _previewStart, _other, true, op);
+            }
+            else
+            {
+                op = m_previewStreet.m_Spline.GetLastOrientedPoint();
+                m_previewStreet.m_EndConnection = new Connection(m_previewStreet, _previewStart, _other, true, op);
+            }
+
+            _other.m_Connections[_crossIndex] = new Connection(_other, true, m_previewStreet, _previewStart, op);
+        }
+
+        private void DecombinePreview(bool _isStart)
+        {
+            StreetComponent other;
+            bool otherIsStart;
+            if (_isStart)
+            {
+                other = m_previewStreet.m_StartConnection.GetOtherComponent(m_previewStreet);
+                otherIsStart = m_previewStreet.m_StartConnection.GetOtheIsStart(m_previewStreet);
+            }
+            else
+            {
+                other = m_previewStreet.m_EndConnection.GetOtherComponent(m_previewStreet);
+                otherIsStart = m_previewStreet.m_EndConnection.GetOtheIsStart(m_previewStreet);
+            }
+
+            if (otherIsStart)
+            {
+                other.m_StartConnection = null;
+            }
+            else
+            {
+                if (other.GetType() == typeof(Street))
                 {
-                    previewStreet.m_StreetConnect_End = null;
-                    return;
+                    Street s = (Street)other;
+                    s.m_EndConnection = null;
+                    CreateDeadEnd(s, false);
                 }
-            if (previewStreet.m_StreetConnect_End == lastConnectedStreet)
-                if (_lastConnectedStreetChildren.CompareTag("StreetStart") && _lastConnectedStreet.m_StreetConnect_Start == previewStreet)
+                else if (other.GetType() == typeof(Cross))
                 {
-                    _lastConnectedStreet.CreateDeadEnd(true);
-                    previewStreet.m_StreetConnect_End = null;
+                    Cross c = (Cross)other;
+                    int index = c.GetIndex(m_previewStreet);
+                    c.m_Connections[index] = null;
+                }
+            }
+        }
+
+        private void CreateDeadEnd(Street _street, bool _isStart)
+        {
+            GameObject obj = new GameObject("DeadEnd");
+            DeadEnd de = obj.AddComponent<DeadEnd>();
+            OrientedPoint op;
+            if (_isStart) op = _street.m_Spline.GetFirstOrientedPoint();
+            else op = _street.m_Spline.GetLastOrientedPoint();
+            de.Init(_street, _isStart, op);
+
+            de.m_StartConnection = new Connection(de, true, _street, _isStart, op);
+            if (_isStart) _street.m_StartConnection = new Connection(_street, _isStart, de, true, op);
+            else _street.m_EndConnection = new Connection(_street, _isStart, de, true, op);
+        }
+
+        private void CreateDeadEnd(Cross _cross, int _index)
+        {
+            GameObject obj = new GameObject("DeadEnd");
+            DeadEnd de = obj.AddComponent<DeadEnd>();
+            de.Init(null, true, _cross.m_OPs[_index]);
+
+            _cross.m_Connections[_index] = new Connection(de, true, _cross, false, _cross.m_OPs[_index]);
+            de.m_StartConnection = new Connection(de, true, _cross, false, _cross.m_OPs[_index]);
+        }
+
+        private void RemoveDeadEnd(DeadEnd _de)
+        {
+            StreetComponent other = _de.m_StartConnection.GetOtherComponent(_de);
+            bool otherIsStart = _de.m_StartConnection.GetOtheIsStart(_de);
+            if (otherIsStart)
+                other.m_StartConnection = null;
+            else
+            {
+                if (other is Street)
+                {
+                    Street s = (Street)other;
+                    s.m_EndConnection = null;
                 }
                 else
-                if (_lastConnectedStreetChildren.CompareTag("StreetEnd") && _lastConnectedStreet.m_StreetConnect_End == previewStreet)
+                if (other is Cross)
                 {
-                    _lastConnectedStreet.CreateDeadEnd(false);
-                    previewStreet.m_StreetConnect_End = null;
+                    Cross c = (Cross)other;
+                    int index = c.GetIndex(_de);
+                    c.m_Connections[index] = null;
                 }
+            }
+            Destroy(_de.gameObject);
         }
 
         /// <summary>
@@ -432,22 +524,22 @@ namespace Gameplay.Streets
         /// <returns></returns>
         private bool CheckForValidForm()
         {
-            if (previewStreet == null) return false;
+            if (m_previewStreet == null) return false;
             float validDistanceStartEnd = 2f;
             float maxDeltaAngel = 18f;
 
-            Vector3 StartPos = previewStreet.m_Spline.StartPos;
-            Vector3 EndPos = previewStreet.m_Spline.EndPos;
+            Vector3 StartPos = m_previewStreet.m_Spline.StartPos;
+            Vector3 EndPos = m_previewStreet.m_Spline.EndPos;
 
             if (Vector3.Distance(StartPos, EndPos) < validDistanceStartEnd)
             {
                 return false;
             }
 
-            for (int i = 0; i < previewStreet.m_Spline.OPs.Length - 1; i++)
+            for (int i = 0; i < m_previewStreet.m_Spline.OPs.Length - 1; i++)
             {
-                Vector3 opTangent1 = previewStreet.m_Spline.GetTangentAt(previewStreet.m_Spline.OPs[i].t);
-                Vector3 opTangent2 = previewStreet.m_Spline.GetTangentAt(previewStreet.m_Spline.OPs[i + 1].t);
+                Vector3 opTangent1 = m_previewStreet.m_Spline.GetTangentAt(m_previewStreet.m_Spline.OPs[i].t);
+                Vector3 opTangent2 = m_previewStreet.m_Spline.GetTangentAt(m_previewStreet.m_Spline.OPs[i + 1].t);
                 if (Vector3.Angle(opTangent1, opTangent2) > maxDeltaAngel)
                 {
                     return false;

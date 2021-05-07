@@ -1,5 +1,5 @@
-﻿using MeshGeneration;
-using Streets;
+﻿using Gameplay.StreetComponents;
+using MeshGeneration;
 using System;
 using System.Collections;
 using System.Collections.Generic;

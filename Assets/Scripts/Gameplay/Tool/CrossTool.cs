@@ -1,4 +1,5 @@
-﻿using Gameplay.Tools;
+﻿using Gameplay.StreetComponents;
+using Gameplay.Tools;
 using Splines;
 using System.Collections;
 using System.Collections.Generic;
@@ -53,8 +54,8 @@ public class CrossTool : Tool
         GameObject[] output = new GameObject[2];
 
         output[0] = Instantiate(m_crossPrefab, m_hitPos, m_rotation);
-        output[0].transform.parent = StreetManager.Instance.transform;
-        GameObject obj = Instantiate(m_crossPrefab, m_hitPos, m_rotation, StreetManager.Instance.StreetCollisionParent.transform);
+        output[0].transform.parent = StreetComponentManager.Instance.transform;
+        GameObject obj = Instantiate(m_crossPrefab, m_hitPos, m_rotation, StreetComponentManager.Instance.StreetCollisionParent.transform);
         obj.layer = 8;
         obj.name = "Cross_Col";
 
@@ -63,7 +64,7 @@ public class CrossTool : Tool
             Destroy(c);
 
         MeshRenderer mr = obj.gameObject.GetComponent<MeshRenderer>();
-        mr.material = StreetManager.Instance.streetMatColl;
+        mr.material = StreetComponentManager.Instance.streetMatColl;
         output[1] = obj;
 
         return output;
