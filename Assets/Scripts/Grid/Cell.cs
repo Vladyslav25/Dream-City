@@ -116,7 +116,6 @@ namespace Grid
             {
                 if (MyCollision.PolyPoly(this.m_Corner, c.m_Corner))
                 {
-                    Debug.Log("Fail PolyPoly");
                     return true;
                 }
             }
@@ -162,7 +161,7 @@ namespace Grid
             {
                 if (squareArea > GridManager.Instance.GridMaxSquareArea)
                 {
-                    Debug.Log("Fail Size: Too Big | Size: " + squareArea + " Max: " + GridManager.Instance.GridMaxSquareArea + " AC: " + AC.magnitude + " AB: " + AB.magnitude);
+                    //Debug.Log("Fail Size: Too Big | Size: " + squareArea + " Max: " + GridManager.Instance.GridMaxSquareArea + " AC: " + AC.magnitude + " AB: " + AB.magnitude);
                 }
                 return false;
             }

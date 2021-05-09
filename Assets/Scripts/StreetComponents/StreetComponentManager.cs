@@ -108,6 +108,24 @@ namespace Gameplay.StreetComponents
             return s;
         }
 
+        public static DeadEnd CreateDeadEnd(Street _street, bool _isStart)
+        {
+            GameObject obj = new GameObject("DeadEnd");
+            DeadEnd de = obj.AddComponent<DeadEnd>();
+            OrientedPoint op;
+            if (_isStart) op = _street.m_Spline.GetFirstOrientedPoint();
+            else op = _street.m_Spline.GetLastOrientedPoint();
+            de.Init(_street, _isStart, op);
+            if (_isStart) Connection.Combine(_street.m_StartConnection, de.m_StartConnection);
+            return de;
+        }
+
+        public static void DestroyDeadEnd(DeadEnd _de)
+        {
+            Connection.DeCombine(_de.m_StartConnection, _de.m_StartConnection.m_OtherConnection);
+            Destroy(_de.gameObject);
+        }
+
         #region -Update Tangents, Start and End-
         public static void UpdateStreetStartPos(Street _street, Vector3 _startPos)
         {
@@ -270,8 +288,7 @@ namespace Gameplay.StreetComponents
             Street s = obj.gameObject.AddComponent<Street>();
             Vector3[] pos = new Vector3[] { _startPos, _tangent1, _tangent2, _endPos };
 
-
-            //s.Init(pos, null, false, 20, false, false);
+            s.Init(pos, null, null, 20, false);
 
             return s;
         }

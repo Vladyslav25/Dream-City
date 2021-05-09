@@ -85,6 +85,8 @@ namespace MeshGeneration
                 return;
             }
             Spline Spline = _comp.m_Spline;
+            if (Spline == null) 
+                return;
 
             int vertsInShape = Shape.verts.Length;
             int segments = Spline.OPs.Length - 1;

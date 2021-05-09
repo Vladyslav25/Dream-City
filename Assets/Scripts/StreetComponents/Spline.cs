@@ -9,7 +9,7 @@ using Gameplay.StreetComponents;
 
 namespace Splines
 {
-    public struct Spline
+    public class Spline
     {
         [HideInInspector]
         public Vector3 StartPos { get; private set; }
@@ -29,17 +29,17 @@ namespace Splines
 
         public int segments;
 
-        public Street m_Street;
+        public StreetComponent m_Component;
 
-        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, Street _street) : this()
+        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, StreetComponent _comp)
         {
             StartPos = _startPos;
             Tangent1Pos = _tangent1Pos;
             Tangent2Pos = _tangent2Pos;
             EndPos = _endPos;
             segments = _segments;
-            m_Street = _street;
-            UpdateOPs(_street);
+            m_Component = _comp;
+            UpdateOPs(_comp);
         }
 
         #region -Set Tangents, Start and End-
@@ -231,7 +231,7 @@ namespace Splines
         /// <summary>
         /// Update the Oriented Points
         /// </summary>
-        public void UpdateOPs(Street _street = null)
+        public void UpdateOPs(StreetComponent _comp = null)
         {
             OPs = new OrientedPoint[segments + 1];
             for (int i = 0; i <= segments; i++)
@@ -239,17 +239,21 @@ namespace Splines
                 float t = 1.0f / segments * i;
                 OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
-            if (_street != null && _street.ID > 0)
+            if (_comp != null && _comp is Street)
             {
-                _street.ClearSegmentsCorner();
-                for (int i = 0; i < OPs.Length; i++)
+                Street s = (Street)_comp;
+                if (s != null && s.ID > 0)
                 {
-                    _street.AddSegmentsCorner(OPs[i].Position + GetNormalAt(OPs[i].t));
-                    _street.AddSegmentsCorner(OPs[i].Position - GetNormalAt(OPs[i].t));
+                    s.ClearSegmentsCorner();
+                    for (int i = 0; i < OPs.Length; i++)
+                    {
+                        s.AddSegmentsCorner(OPs[i].Position + GetNormalAt(OPs[i].t));
+                        s.AddSegmentsCorner(OPs[i].Position - GetNormalAt(OPs[i].t));
+                    }
                 }
             }
         }
-        
+
         public void CreateGridOPs()
         {
             List<OrientedPoint> tmp = new List<OrientedPoint>();

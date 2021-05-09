@@ -30,7 +30,7 @@ namespace Gameplay.StreetComponents
         {
             for (int i = 0; i < m_Connections.Length; i++)
             {
-                if (m_Connections[i].GetOtherComponent(this) == _other)
+                if (m_Connections[i].m_OtherComponent == _other)
                     return i;
             }
             Debug.LogError("No Connection with this Component: " + _other);

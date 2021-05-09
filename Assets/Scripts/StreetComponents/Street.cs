@@ -54,7 +54,7 @@ namespace Gameplay.StreetComponents
         {
             get
             {
-                if (m_StartConnection == null || m_StartConnection.GetOtherComponent(this).ID < 0)
+                if ((m_StartConnection.m_OtherConnection == null || m_StartConnection.m_OtherComponent.ID <= 0))
                     return true;
                 return false;
             }
@@ -64,7 +64,7 @@ namespace Gameplay.StreetComponents
         {
             get
             {
-                if (m_EndConnection == null || m_EndConnection.GetOtherComponent(this).ID < 0)
+                if (m_EndConnection.m_OtherConnection == null || m_EndConnection.m_OtherComponent.ID <= 0)
                     return true;
                 return false;
             }
@@ -98,6 +98,9 @@ namespace Gameplay.StreetComponents
 
         public Street Init(Vector3[] _splinePos, Connection _startConnection, Connection _endConnection, int _segmentAmount = 10, bool _needID = true, bool _updateSpline = false)
         {
+            ID = 0;
+            if (_needID)
+                Debug.Log("");
             base.Init(_needID);
             m_Spline = new Spline(_splinePos[0], _splinePos[1], _splinePos[2], _splinePos[3], _segmentAmount, this);
             m_MeshFilter = GetComponent<MeshFilter>();
@@ -108,6 +111,21 @@ namespace Gameplay.StreetComponents
             m_Spline.UpdateOPs();
             MeshGenerator.Extrude(this);
             updateSpline = _updateSpline;
+            m_StartConnection = new Connection(null, this, true);
+            m_EndConnection = new Connection(null, this, false);
+            if (_needID)
+            {
+
+                if (_startConnection.m_OtherConnection != null) //if the preview Street had a connection to something
+                    Connection.Combine(m_StartConnection, _startConnection.m_OtherConnection); //combine the new Street with the preview othe connection
+                else
+                    StreetComponentManager.CreateDeadEnd(this, true);
+
+                if (_endConnection.m_OtherConnection != null)
+                    Connection.Combine(m_EndConnection, _endConnection.m_OtherConnection);
+                else
+                    StreetComponentManager.CreateDeadEnd(this, false);
+            }
 
             return this;
         }

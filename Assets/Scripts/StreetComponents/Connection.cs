@@ -1,46 +1,67 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 namespace Gameplay.StreetComponents
 {
+    [Serializable]
     public class Connection
     {
-        public StreetComponent[] m_Component = new StreetComponent[2];
-        public bool[] m_isStarts = new bool[2];
-        public OrientedPoint m_OP;
+        public int id = -777;
+        public Connection m_OtherConnection { get; private set; } //The other Connection to this
 
-        public Connection(StreetComponent _comp1, bool _isStart1, StreetComponent _comp2, bool _isStart2, OrientedPoint _op)
+        public StreetComponent m_OtherComponent //The other Component with the Connection to this
         {
-            m_Component[0] = _comp1;
-            m_Component[1] = _comp2;
-            m_isStarts[0] = _isStart1;
-            m_isStarts[1] = _isStart2;
-            m_OP = _op;
+            get
+            {
+                if (m_OtherConnection != null)
+                    return m_OtherConnection.m_Owner;
+                return null;
+            }
+        }
+        public bool? m_OtherStart //Are we ref to the Start of the others Component 
+        {
+            get
+            {
+                if (m_OtherConnection != null)
+                    return m_OtherConnection.m_OwnerStart;
+                return null;
+            }
         }
 
-        public Connection(StreetComponent _comp1, bool _isStart1, StreetComponent _comp2, bool _isStart2, Vector3 _pos, Quaternion _rot, float _t = -1)
+        public StreetComponent m_Owner { get; private set; } //The Component of this Connection
+        public bool m_OwnerStart { get; private set; } //Are we self at the Start of our Component
+
+        public Connection(Connection _otherConn, StreetComponent _self, bool _ownStart)
         {
-            m_Component[0] = _comp1;
-            m_Component[1] = _comp2;
-            m_isStarts[0] = _isStart1;
-            m_isStarts[1] = _isStart2;
-            m_OP = new OrientedPoint(_pos, _rot, _t);
+            if (_otherConn != null)
+                Combine(this, _otherConn);
+            m_Owner = _self;
+            m_OwnerStart = _ownStart;
+            if (m_OtherConnection != null)
+                id = m_OtherComponent.ID;
         }
 
-        public StreetComponent GetOtherComponent(StreetComponent _comp)
+        public static void Combine(Connection _conn1, Connection _conn2)
         {
-            if (m_Component[0] == _comp) return m_Component[1];
-            else if (m_Component[1] == _comp) return m_Component[0];
-            else return null;
+            _conn1.m_OtherConnection = _conn2;
+            _conn2.m_OtherConnection = _conn1;
+            if (_conn1.m_Owner != null && _conn2.m_Owner != null)
+            {
+                _conn2.id = _conn1.m_Owner.ID;
+                _conn1.id = _conn2.m_Owner.ID;
+            }
+            else
+            {
+                _conn2.id = -999;
+                _conn1.id = -999;
+            }
         }
 
-        public bool GetOtheIsStart(StreetComponent _comp)
+        public static void DeCombine(Connection _conn1, Connection _conn2)
         {
-            if (m_Component[0] == _comp) return m_isStarts[1];
-            else if (m_Component[1] == _comp) return m_isStarts[0];
-            
-            return false;
+            _conn2.m_OtherConnection = null;
+            _conn2.id = -500;
+            _conn1.m_OtherConnection = null;
+            _conn1.id = -500;
         }
     }
 }

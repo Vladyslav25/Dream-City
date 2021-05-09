@@ -7,9 +7,23 @@ namespace Gameplay.StreetComponents
 {
     public abstract class StreetComponent : MonoBehaviour
     {
+        [SerializeField]
         public Connection m_StartConnection;
 
-        public int ID { get; protected set; }
+        [SerializeField]
+        [MyReadOnly]
+        private int id;
+        public int ID
+        {
+            get
+            {
+                return id;
+            }
+            protected set
+            {
+                id = value;
+            }
+        }
 
         public virtual void Init(bool _needID)
         {
@@ -18,7 +32,7 @@ namespace Gameplay.StreetComponents
         }
     }
 
-    public struct OrientedPoint
+    public class OrientedPoint
     {
         public Vector3 Position;
         public Quaternion Rotation;
