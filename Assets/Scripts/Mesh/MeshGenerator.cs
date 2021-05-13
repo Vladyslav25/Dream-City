@@ -30,6 +30,12 @@ namespace MeshGeneration
         }
         #endregion
 
+        /// <summary>
+        /// Create the Mesh for the Grid
+        /// </summary>
+        /// <param name="_cellList">List of all Cells</param>
+        /// <param name="_mf">The MeshFilter of the GameObject where to put the Mesh in</param>
+        /// <returns>Return the MeshFilter with the Mesh</returns>
         public static MeshFilter CreateGridMesh(List<Cell> _cellList, MeshFilter _mf)
         {
             List<Mesh> allMeshes = new List<Mesh>();
@@ -61,29 +67,29 @@ namespace MeshGeneration
             return _mf;
         }
 
-        public static Mesh CombineMeshes(List<Mesh> _m, List<Matrix4x4> _t)
+        private static Mesh CombineMeshes(List<Mesh> _meshes, List<Matrix4x4> _transforms)
         {
-            CombineInstance[] combineArr = new CombineInstance[_m.Count];
+            CombineInstance[] combineArr = new CombineInstance[_meshes.Count];
 
-            for (int i = 0; i < _m.Count; i++)
+            for (int i = 0; i < _meshes.Count; i++)
             {
-                combineArr[i].mesh = _m[i];
-                combineArr[i].transform = _t[i];
-                //combineArr[i].subMeshIndex = i;
+                combineArr[i].mesh = _meshes[i];
+                combineArr[i].transform = _transforms[i];
+                //combineArr[i].subMeshIndex = i; //TODO: Give Rows own SubMesh to change color / Material
             }
 
             Mesh mesh = new Mesh();
-            mesh.CombineMeshes(combineArr, true, true);
+            mesh.CombineMeshes(combineArr, false, true);
             return mesh;
         }
+
 
         public static void Extrude(SplineStreetComonents _comp)
         {
             ExtrudeShapeBase Shape = _comp.m_Shape;
             if(Shape == null)
-            {
                 return;
-            }
+
             Spline Spline = _comp.m_Spline;
             if (Spline == null) 
                 return;
@@ -166,6 +172,7 @@ namespace MeshGeneration
         }
     }
 
+    #region -Shape Defenitions-
     public abstract class ExtrudeShapeBase
     {
         public float GetLineLength()
@@ -277,4 +284,5 @@ namespace MeshGeneration
             };
         }
     }
+    #endregion
 }

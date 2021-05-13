@@ -47,9 +47,6 @@ namespace Grid
         //  0 -- 1
         //  ->->-> SplineDirection
 
-        //public Mesh m_Mesh;
-        //public Cell m_NextCell;     //vlt nicht benötig
-        //public Cell m_PreviousCell; //vlt nicht benötig
         [ReadOnly]
         public float CellSquareSize;
 

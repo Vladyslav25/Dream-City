@@ -12,6 +12,7 @@ namespace Gameplay.StreetComponents
 {
     public class Street : SplineStreetComonents
     {
+        #region -Debug Settings-
         [Header("Gizmo Settings")]
         [SerializeField]
         [Tooltip("The Amount of Segments to Draw")]
@@ -46,40 +47,58 @@ namespace Gameplay.StreetComponents
         [SerializeField]
         private bool drawGridNormals = false;
 
-        public Dictionary<Vector2, Cell> m_StreetCells = new Dictionary<Vector2, Cell>();
-        public GameObject m_GridObj;
-        private Street m_collisionStreet;
+        //Debug Settings
+        private bool lastDrawMeshSetting;
+        private int lastSegmentCount;
+        #endregion
 
+        [HideInInspector]
+        public Dictionary<Vector2, Cell> m_StreetCells = new Dictionary<Vector2, Cell>(); //Dictionaray of the Cells as Value and there Position in the Grid as Key
+
+        public GameObject m_GridObj; //The Grid Parent Gameobject
+
+        private Street m_collisionStreet; //Ref to the Collision Street GameObject
+
+        //Check if the Start can be connected to a new Street
         public bool m_StartIsConnectable
         {
             get
             {
-                if ((m_StartConnection.m_OtherConnection == null || m_StartConnection.m_OtherComponent.ID <= 0))
-                    return true;
-                return false;
-            }
-        }
-        public Connection m_EndConnection;
-        public bool m_EndIsConnectable
-        {
-            get
-            {
-                if (m_EndConnection.m_OtherConnection == null || m_EndConnection.m_OtherComponent.ID <= 0)
-                    return true;
+                if ((m_StartConnection.m_OtherConnection == null        //If the Start is not connected 
+                    || m_StartConnection.m_OtherComponent.ID <= 0))     // OR If the Connected Street Component have an ID below Zero
+                    return true;                                        // Default = 0 | DeadEnds ID = -2 | Finished Streets ID > 0 
                 return false;
             }
         }
 
-        private bool m_inValidForm = true;
-        public bool m_HasValidForm
+        //The End Connection of the Street
+        public Connection m_EndConnection;
+
+        //Check if the End can be connected to a new Street
+        public bool m_EndIsConnectable
         {
             get
             {
-                return m_inValidForm;
+                if (m_EndConnection.m_OtherConnection == null           //If the End is not connected 
+                    || m_EndConnection.m_OtherComponent.ID <= 0)        // OR If the Connected Street Component have an ID below Zero
+                    return true;                                        // Default = 0 | DeadEnds ID = -2 | Finished Streets ID > 0 
+                return false;
+            }
+        }
+
+        private bool m_isInvalid = true;
+
+        //Can be Invalid if Street collide with something or have an invalid Form
+        public bool m_IsInvalid
+        {
+            get
+            {
+                return m_isInvalid;
             }
             set
             {
-                m_inValidForm = value;
+                m_isInvalid = value;
+                //Set the Color of the Preview Street
                 if (value)
                 {
                     StreetComponentManager.SetStreetColor(this, Color.green);
@@ -91,35 +110,48 @@ namespace Gameplay.StreetComponents
             }
         }
 
-        private bool lastDrawMeshSetting;
-        private int lastSegmentCount;
-
+        //List of segment Corners (Street - Cell Collision Test)
         private List<Vector3> m_segmentsCorner = new List<Vector3>();
 
+        /// <summary>
+        /// Initialize the Street
+        /// </summary>
+        /// <param name="_splinePos">The 4 Locations for the Spline (Start, Tangent 1, Tangent 2, End)</param>
+        /// <param name="_startConnection">The Start Connection of the Street Component</param>
+        /// <param name="_endConnection">The End Connection of the Street</param>
+        /// <param name="_segmentAmount">The Amount of Segments the Street needs</param>
+        /// <param name="_needID">Need the Street an ID?</param>
+        /// <param name="_updateSpline">Should the Spline be Updated?</param>
+        /// <returns>Returns the new Street</returns>
         public Street Init(Vector3[] _splinePos, Connection _startConnection, Connection _endConnection, int _segmentAmount = 10, bool _needID = true, bool _updateSpline = false)
         {
             ID = 0;
             if (_needID)
-                Debug.Log("");
-            base.Init(_needID);
+                base.Init(_needID);
             m_Spline = new Spline(_splinePos[0], _splinePos[1], _splinePos[2], _splinePos[3], _segmentAmount, this);
+
             m_MeshFilter = GetComponent<MeshFilter>();
             if (m_MeshFilter == null) Debug.LogError("No MeshFilter found in: " + ID);
             m_MeshRenderer = GetComponent<MeshRenderer>();
             if (m_MeshRenderer == null) Debug.LogError("No MeshRenderer found in: " + ID);
+
             m_Shape = new StreetShape();
             m_Spline.UpdateOPs();
             MeshGenerator.Extrude(this);
             updateSpline = _updateSpline;
+
+            //Create Start and End Connections
             m_StartConnection = new Connection(null, this, true);
             m_EndConnection = new Connection(null, this, false);
+
+            //If its an finished Street Combine the Connections from the Preview Street
             if (_needID)
             {
 
                 if (_startConnection.m_OtherConnection != null) //if the preview Street had a connection to something
-                    Connection.Combine(m_StartConnection, _startConnection.m_OtherConnection); //combine the new Street with the preview othe connection
+                    Connection.Combine(m_StartConnection, _startConnection.m_OtherConnection); //combine the new Street with the preview other connection
                 else
-                    StreetComponentManager.CreateDeadEnd(this, true);
+                    StreetComponentManager.CreateDeadEnd(this, true); //If there is no Connections to Combine, Create a DeadEnd
 
                 if (_endConnection.m_OtherConnection != null)
                     Connection.Combine(m_EndConnection, _endConnection.m_OtherConnection);
@@ -148,12 +180,13 @@ namespace Gameplay.StreetComponents
             return m_collisionStreet;
         }
 
+        /// <summary>
+        /// Check the Street - Cell Collision and Update the Grid of other Streets if needed
+        /// </summary>
         public void CheckCollision()
         {
-            if (ID > 0)
-                m_Spline.UpdateOPs(this);
-            List<Cell> cellsToCheck = new List<Cell>();
-            List<StreetSegment> segments = new List<StreetSegment>();
+            m_Spline.UpdateOPs(this);
+            List<StreetSegment> segments = new List<StreetSegment>(); //Create a List of StreetSegments
             int segmentsAmount = (m_segmentsCorner.Count - 2) / 2;
             int offset = 0;
             for (int i = 0; i < segmentsAmount; i++)
@@ -163,22 +196,24 @@ namespace Gameplay.StreetComponents
                 segmentCorner[1] = m_segmentsCorner[offset + 1];
                 segmentCorner[2] = m_segmentsCorner[offset + 2];
                 segmentCorner[3] = m_segmentsCorner[offset + 3];
-                offset += 2;
+                offset += 2; //Add 2 to the offset to get the last 2 Points of the last Segment as first two in the new Segment
                 StreetSegment newSegment = new StreetSegment(this, segmentCorner);
                 segments.Add(newSegment);
             }
 
-            HashSet<int> StreetsToRecreate = new HashSet<int>();
+            HashSet<int> StreetsToRecreate = new HashSet<int>(); //Create an HashSet of int (StreetComponent IDs) to save the Streets Grid thats needs to be recreated
             foreach (StreetSegment segment in segments)
             {
-                foreach (int i in segment.CheckCollision(GridManager.m_AllCells))
-                    StreetsToRecreate.Add(i);
+                List<int> IDs = segment.CheckCollision(GridManager.m_AllCells); //Saves the IDs of Streets which the segment collide with
+                foreach (int i in IDs)
+                    StreetsToRecreate.Add(i); //Saves the Id in the HashSet (no duplicates) 
             }
 
+            //Recreate the Streets Grid Mesh
             foreach (int i in StreetsToRecreate)
             {
-                Street s = StreetComponentManager.GetStreetByID(i) as Street;
-                GridManager.RemoveGrid(s);
+                Street s = StreetComponentManager.GetStreetByID(i);
+                GridManager.RemoveGridMesh(s); 
                 MeshGenerator.CreateGridMesh(s.m_StreetCells.Values.ToList(), s.m_GridObj.GetComponent<MeshFilter>());
             }
         }
@@ -293,6 +328,8 @@ namespace Gameplay.StreetComponents
             {
                 m_CornerPos[i] = new Vector2(_corner[i].x, _corner[i].z);
             }
+
+            //Calculate Collision Radius
             float dis02 = Vector3.Distance(_corner[0], _corner[2]);
             float dis01 = Vector3.Distance(_corner[0], _corner[1]);
             if (dis02 > dis01)
@@ -309,10 +346,17 @@ namespace Gameplay.StreetComponents
             }
         }
 
+        /// <summary>
+        /// Check the Segment Collision and Remove colliding Cells with there later Generations
+        /// </summary>
+        /// <param name="_cellsToCheck">The List of Cells to Check the Collision with</param>
+        /// <returns></returns>
         public List<int> CheckCollision(List<Cell> _cellsToCheck)
         {
             List<Cell> PolyPolyCheckList = new List<Cell>();
             List<int> StreetIDsToRecreate = new List<int>();
+
+            //Sphere Sphere Collsion | fast but not precies | Save the Cells that can possible collide for a more precies check 
             for (int i = 0; i < _cellsToCheck.Count; i++)
             {
                 if (MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].CellSquareSize))
@@ -321,14 +365,15 @@ namespace Gameplay.StreetComponents
                 }
             }
 
+            //Poly Poly Collision | slow but more precies 
             for (int i = 0; i < PolyPolyCheckList.Count; i++)
             {
                 if (MyCollision.PolyPoly(PolyPolyCheckList[i].m_Corner, m_CornerPos))
                 {
-                    PolyPolyCheckList[i].Delete();
+                    PolyPolyCheckList[i].Delete(); //Delete the Colliding Cell and the later Generations
                     int id = PolyPolyCheckList[i].m_Street.ID;
                     if (!StreetIDsToRecreate.Contains(id))
-                        StreetIDsToRecreate.Add(id);
+                        StreetIDsToRecreate.Add(id); //Saves the Street ID to recreate the Grid Mesh
                 }
             }
 

@@ -8,7 +8,7 @@ namespace Gameplay.StreetComponents
     public abstract class StreetComponent : MonoBehaviour
     {
         [SerializeField]
-        public Connection m_StartConnection;
+        public Connection m_StartConnection; //every StreetComponent have at least one Connection 
 
         [SerializeField]
         [MyReadOnly]
@@ -25,6 +25,10 @@ namespace Gameplay.StreetComponents
             }
         }
 
+        /// <summary>
+        /// Give the Component a new ID if needed (Attention: Call it only for fineshed Streets, not Preview)
+        /// </summary>
+        /// <param name="_needID">Need an new ID?</param>
         public virtual void Init(bool _needID)
         {
             if (_needID)
@@ -38,6 +42,12 @@ namespace Gameplay.StreetComponents
         public Quaternion Rotation;
         public float t;
 
+        /// <summary>
+        /// Create a new Oriented Point (Location and Rotation)
+        /// </summary>
+        /// <param name="_position">The Location of the Oriented Point</param>
+        /// <param name="_rotation">The Rotation of the Oriented Point</param>
+        /// <param name="_t">The t-Ratio on the Spline(0 <= t <= 1) | -1 if dont needed</param>
         public OrientedPoint(Vector3 _position, Quaternion _rotation, float _t = -1)
         {
             Position = _position;

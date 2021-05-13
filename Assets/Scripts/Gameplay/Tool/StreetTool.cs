@@ -119,12 +119,12 @@ namespace Gameplay.Streets
                 {
                     if (!CheckForValidForm() || CheckForCollision())
                     {
-                        m_previewStreet.m_HasValidForm = false;
+                        m_previewStreet.m_IsInvalid = false;
                         return;
                     }
                     else
                     {
-                        m_previewStreet.m_HasValidForm = true;
+                        m_previewStreet.m_IsInvalid = true;
                     }
                 }
 

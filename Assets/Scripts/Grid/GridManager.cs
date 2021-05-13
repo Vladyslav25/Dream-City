@@ -76,6 +76,7 @@ namespace Grid
                 _street.m_StreetCells.Add(c.pos, c);
             }
 
+            //Remove Cells if Generation before is missing
             for (int i = 0; i < output.Count; i++)
             {
                 Cell c = output[i];
@@ -113,11 +114,11 @@ namespace Grid
         {
             output.Clear();
 
-            //Left Side
             for (int y = 0; y < _street.m_Spline.GridOPs.Length; y++)
             {
                 for (int x = 0; x < Instance.MaxGeneration; x++)
                 {
+                    //Left Side
                     CreateCellJob jobLeft = new CreateCellJob();
                     jobLeft.s = _street;
                     jobLeft.id = _street.ID;
@@ -129,6 +130,7 @@ namespace Grid
                     listTask.Add(tL);
                     tL.Start();
 
+                    //Right Side
                     CreateCellJob jobRight = new CreateCellJob();
                     jobRight.s = _street;
                     jobRight.id = _street.ID;
@@ -146,7 +148,7 @@ namespace Grid
             return output;
         }
 
-        public static void RemoveGrid(Street _street)
+        public static void RemoveGridMesh(Street _street)
         {
             _street.m_GridObj.GetComponent<MeshFilter>().mesh.Clear();
         }

@@ -45,16 +45,17 @@ namespace Gameplay.StreetComponents
 
         public GameObject StreetCollisionParent;
 
-        private static Dictionary<int, StreetComponent> StreetComponentID_Dic = new Dictionary<int, StreetComponent>();
+        private static Dictionary<int, Street> StreetComponentID_Dic = new Dictionary<int, Street>(); //Contains all Streets by ID
+
         private static int setComponentId;
 
-        public static StreetComponent GetStreetByID(int _id)
+        public static Street GetStreetByID(int _id)
         {
             if (StreetComponentID_Dic.ContainsKey(_id))
             {
                 return StreetComponentID_Dic[_id];
             }
-            Debug.LogError($"No Spline with ID: {_id} found");
+            Debug.LogError($"No StreetComponent with ID: {_id} found");
             return null;
         }
 
@@ -70,13 +71,18 @@ namespace Gameplay.StreetComponents
                 _street.m_MeshRenderer.material.color = _newColor;
         }
 
+        /// <summary>
+        /// Initialize / Create a Street as Preview 
+        /// </summary>
+        /// <param name="_startPos">The World Location of the starting Point</param>
+        /// <returns>The new Preview Street</returns>
         public static Street InitStreetForPreview(Vector3 _startPos)
         {
             GameObject obj = new GameObject("Street:Preview");
             obj.transform.position = _startPos;
             obj.transform.SetParent(Instance.transform);
 
-            MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
+            obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
             mr.material = Instance.previewStreetMat;
 
@@ -89,6 +95,11 @@ namespace Gameplay.StreetComponents
             return s;
         }
 
+        /// <summary>
+        /// Initialize / Create a CollisionStreet for the Preview 
+        /// </summary>
+        /// <param name="_startPos"></param>
+        /// <returns></returns>
         public static Street InitStreetForPreviewColl(Vector3 _startPos)
         {
             GameObject obj = new GameObject("StreetColl_Preview");
@@ -96,7 +107,7 @@ namespace Gameplay.StreetComponents
             obj.layer = 8;
             obj.transform.SetParent(Instance.StreetCollisionParent.transform);
 
-            MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
+            obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
             mr.material = Instance.previewStreetMatColl;
 
@@ -108,18 +119,32 @@ namespace Gameplay.StreetComponents
             return s;
         }
 
+        /// <summary>
+        /// Create a Dead End and Combine the Street with it
+        /// </summary>
+        /// <param name="_street">The Street the Dead End is Connected to</param>
+        /// <param name="_isStart">Is it the Start of the Street</param>
+        /// <returns>The new Dead End</returns>
         public static DeadEnd CreateDeadEnd(Street _street, bool _isStart)
         {
             GameObject obj = new GameObject("DeadEnd");
             DeadEnd de = obj.AddComponent<DeadEnd>();
+
             OrientedPoint op;
             if (_isStart) op = _street.m_Spline.GetFirstOrientedPoint();
             else op = _street.m_Spline.GetLastOrientedPoint();
             de.Init(_street, _isStart, op);
+
             if (_isStart) Connection.Combine(_street.m_StartConnection, de.m_StartConnection);
+            else Connection.Combine(_street.m_EndConnection, de.m_StartConnection);
+
             return de;
         }
 
+        /// <summary>
+        /// Decombine and Destroy the Dead End
+        /// </summary>
+        /// <param name="_de">The Dead End to Destroy</param>
         public static void DestroyDeadEnd(DeadEnd _de)
         {
             Connection.DeCombine(_de.m_StartConnection, _de.m_StartConnection.m_OtherConnection);
@@ -269,12 +294,7 @@ namespace Gameplay.StreetComponents
         }
         #endregion
 
-        public static Street CreateCollisionStreet(Street _street)
-        {
-            return CreateCollisionStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_StartConnection, _street.m_EndConnection);
-        }
-
-        public static Street CreateCollisionStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConnection, Connection _endConnection)
+        private static Street CreateCollisionStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConnection, Connection _endConnection)
         {
             GameObject obj = new GameObject("Street_Col");
             obj.transform.position = _startPos;
@@ -289,24 +309,28 @@ namespace Gameplay.StreetComponents
             Vector3[] pos = new Vector3[] { _startPos, _tangent1, _tangent2, _endPos };
 
             s.Init(pos, null, null, 20, false);
-
             return s;
         }
 
+        /// <summary>
+        /// Create a finshed Street
+        /// </summary>
+        /// <param name="_street">The Preview Street</param>
+        /// <returns>Return the new finished Street</returns>
         public static Street CreateStreet(Street _street)
         {
-            CreateCollisionStreet(_street);
+            CreateCollisionStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_StartConnection, _street.m_EndConnection);
             Destroy(_street.GetCollisionStreet().gameObject);
             return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_StartConnection, _street.m_EndConnection);
         }
 
-        public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConn, Connection _endConn)
+        private static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConn, Connection _endConn)
         {
             GameObject obj = new GameObject("Street");
             obj.transform.position = _startPos;
             obj.transform.SetParent(Instance.transform);
 
-            MeshFilter mf = obj.gameObject.AddComponent<MeshFilter>();
+            obj.gameObject.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.gameObject.AddComponent<MeshRenderer>();
             mr.material = Instance.streetMat;
 

@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Gameplay.Tools
 {
+    /// <summary>
+    /// State Mashine for the Player Tools
+    /// </summary>
     public class ToolManager : MonoBehaviour
     {
         #region -SingeltonPattern-

@@ -12,10 +12,10 @@ namespace Gameplay.StreetComponents
         /// <summary>
         /// Initialize the DeadEnd
         /// </summary>
-        /// <param name="_shape">The Shape of the DeadEnd</param>
-        /// <param name="_streetRef">The Ref of the Street it is connected to</param>
+        /// <param name="_comp">The Street the Dead End is connected to</param>
         /// <param name="_isStart">Is it the Start of the Street?</param>
-        /// <returns>return the DeadEnd Class</returns>
+        /// <param name="_op">The OrientedPoint of the DeadEnd</param>
+        /// <returns>The new Dead End</returns>
         public DeadEnd Init(Street _comp, bool _isStart, OrientedPoint _op)
         {
             base.Init(false);
