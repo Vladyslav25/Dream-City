@@ -251,23 +251,9 @@ namespace Gameplay.StreetComponents
 
         private void OnDrawGizmosSelected()
         {
-            if (m_segmentsCorner != null && m_segmentsCorner.Count > 0)
-            {
-                for (int i = 0; i < m_segmentsCorner.Count; i++)
-                {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawWireSphere(m_segmentsCorner[i], 0.2f);
-                }
-
-                for (int i = 0; i < m_Spline.OPs.Length; i++)
-                {
-                    Gizmos.color = Color.black;
-                    Vector3 PPos = m_Spline.OPs[i].Position + m_Spline.GetNormalAt(m_Spline.OPs[i].t);
-                    Vector3 NPos = m_Spline.OPs[i].Position - m_Spline.GetNormalAt(m_Spline.OPs[i].t);
-                    Gizmos.DrawWireCube(PPos, new Vector3(0.2f, 0.2f, 0.2f));
-                    Gizmos.DrawWireCube(NPos, new Vector3(0.2f, 0.2f, 0.2f));
-                }
-            }
+            Gizmos.color = Color.black;
+            Gizmos.DrawWireSphere(m_Spline.Tangent1Pos, 0.5f);
+            Gizmos.DrawWireSphere(m_Spline.Tangent2Pos, 0.5f);
 
             if (drawGridNormals)
             {

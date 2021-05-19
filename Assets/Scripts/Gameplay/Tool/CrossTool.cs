@@ -16,14 +16,12 @@ public class CrossTool : Tool
 
     public override void ToolStart()
     {
-        base.ToolStart();
-        m_crossObj = SpawnCross();
         SetSphereActiv(false);
+        m_crossObj = SpawnCross();
     }
 
     public override void ToolEnd()
     {
-        base.ToolEnd();
         if (m_crossObj != null)
             Destroy(m_crossObj);
     }
@@ -42,6 +40,7 @@ public class CrossTool : Tool
         if (Input.GetMouseButtonDown(0))
         {
             SpawnCollCross(); //Spawn Coll Cross
+            m_cross.SetOP();
             m_cross.SetID();
             m_crossObj = SpawnCross(); //Spawn new Preview Cross
         }
@@ -94,7 +93,7 @@ public class CrossTool : Tool
 
     private GameObject SpawnCross()
     {
-        GameObject obj = Instantiate(m_crossPrefab, m_hitPos, Quaternion.identity);
+        GameObject obj = Instantiate(m_crossPrefab, m_hitPos, Quaternion.identity, StreetComponentManager.Instance.transform);
         m_cross = obj.GetComponent<Cross>();
         m_cross.Init(null, false);
         return obj;
@@ -138,7 +137,7 @@ public class CrossTool : Tool
         }
         if (hittedStreetsChildern.Count == 0) return null; //return null if no valid Street GameObbject was found in the Sphere
 
-        GameObject closestStreetChildren = GetClosesedGameObject(hittedStreetsChildern, _hitPoint); //Look for the closest GameObject of all valid GameObjects
+        GameObject closestStreetChildren = GetClosesetGameObject(hittedStreetsChildern, _hitPoint); //Look for the closest GameObject of all valid GameObjects
         Street s = closestStreetChildren.GetComponentInParent<Street>();
         if (closestStreetChildren.CompareTag("StreetEnd"))
         {
@@ -149,24 +148,5 @@ public class CrossTool : Tool
             return s.GetStartConnection();
         }
         return null;
-    }
-
-    private GameObject GetClosesedGameObject(List<GameObject> _objs, Vector3 _point)
-    {
-        if (_objs.Count == 1) return _objs[0];
-
-        float shortestDistance = float.MaxValue;
-        GameObject output = null;
-
-        for (int i = 0; i < _objs.Count; i++)
-        {
-            float distance = Vector3.Distance(_objs[i].transform.position, _point);
-            if (distance < shortestDistance)
-            {
-                shortestDistance = distance;
-                output = _objs[i];
-            }
-        }
-        return output;
     }
 }

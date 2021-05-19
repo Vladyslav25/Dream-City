@@ -20,14 +20,17 @@ namespace Gameplay.StreetComponents
             m_Connections[2] = new Connection(null, this, false);
             m_Connections[3] = new Connection(null, this, false);
 
-            Vector3 v = Vector3.back;
+            return this;
+        }
+
+        public void SetOP()
+        {
+            Vector3 v = -transform.forward;
             for (int i = 0; i < 4; i++)
             {
-                m_OPs[i] = new OrientedPoint(m_coll[i].center + transform.position, transform.rotation * Quaternion.LookRotation(v, Vector3.up));
-                v.y += 90;
+                m_OPs[i] = new OrientedPoint(transform.rotation * m_coll[i].center + transform.position, Quaternion.LookRotation(v, Vector3.up));
+                v = Quaternion.Euler(0, 90f, 0) * v;
             }
-
-            return this;
         }
 
         public int GetIndex(StreetComponent _other)
@@ -39,6 +42,22 @@ namespace Gameplay.StreetComponents
             }
             Debug.LogError("No Connection with this Component: " + _other);
             return -1;
+        }
+
+        public int GetIndexByConnection(Connection _conn)
+        {
+            for (int i = 0; i < m_Connections.Length; i++)
+            {
+                if (m_Connections[i] == _conn)
+                    return i;
+            }
+            Debug.LogError("Connection is not in the Cross");
+            return -1;
+        }
+
+        public Connection GetConnectionByIndex(int _index)
+        {
+            return m_Connections[_index];
         }
 
         public void SetID()
@@ -54,6 +73,17 @@ namespace Gameplay.StreetComponents
         public override Connection GetStartConnection()
         {
             return m_Connections[0];
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (m_OPs[0] == null) return;
+            Gizmos.color = Color.black;
+            foreach (OrientedPoint op in m_OPs)
+            {
+                Gizmos.DrawWireSphere(op.Position, 0.2f);
+                Gizmos.DrawLine(op.Position, op.Position + op.Rotation * Vector3.forward);
+            }
         }
     }
 }

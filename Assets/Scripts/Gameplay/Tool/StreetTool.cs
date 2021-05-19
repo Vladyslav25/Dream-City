@@ -6,6 +6,7 @@ using UnityEditor;
 using System;
 using Gameplay.Tools;
 using Gameplay.StreetComponents;
+using UnityEditor.IMGUI.Controls;
 
 namespace Gameplay.Streets
 {
@@ -75,7 +76,7 @@ namespace Gameplay.Streets
 
                 if (pos1Set == false && pos2Set == false && pos3Set == false)
                 {
-                    FindStreetGameObject(m_hitPos); //if no Point is set, look for not far away Street possible combinations
+                    FindClosestConnection(m_hitPos); //if no Point is set, look for not far away Street possible combinations
                 }
 
                 if (isCurrendToolLine)
@@ -169,7 +170,6 @@ namespace Gameplay.Streets
 
         public override void ToolEnd()
         {
-            base.ToolEnd();
             ResetTool();
             SetSphereActiv(false);
         }
@@ -240,43 +240,79 @@ namespace Gameplay.Streets
         /// </summary>
         /// <param name="_hitPoint">The Pos from where to look</param>
         /// <returns>The GameObject closest from the Pos (null if its too far away)</returns>
-        private GameObject FindStreetGameObject(Vector3 _hitPoint)
+        private Connection FindClosestConnection(Vector3 _hitPoint)
         {
-            Collider[] sphereHits = Physics.OverlapSphere(_hitPoint, 2); //Cast a Sphere on the give Pos
-            List<GameObject> hittedStreetsChildern = new List<GameObject>();
-
-            for (int i = 0; i < sphereHits.Length; i++) //Look if the Sphere overlap an valid Street GameObject
+            Collider[] colls = Physics.OverlapSphere(_hitPoint, 2); //Cast a Sphere on the give Pos
+            List<SphereCollider> validCollider = new List<SphereCollider>();
+            List<SphereCollider> sphereColls = new List<SphereCollider>();
+            for (int i = 0; i < colls.Length; i++)
             {
-                Street tmpStreet = sphereHits[i].GetComponentInParent<Street>();
-                if (tmpStreet == null) continue;
-                if (((sphereHits[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable)
-                    || (sphereHits[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable)))
-                    hittedStreetsChildern.Add(sphereHits[i].transform.gameObject); //if found a valid GameObject add it to a List
-
-                Cross tmpCross = sphereHits[i].GetComponent<Cross>();
-                if (tmpCross == null) continue;
-                hittedStreetsChildern.Add(sphereHits[i].transform.gameObject);
+                if (colls[i] is SphereCollider)
+                    sphereColls.Add((SphereCollider)colls[i]);
             }
-            if (hittedStreetsChildern.Count == 0) return null; //return null if no valid Street GameObbject was found in the Sphere
 
-            GameObject closestStreetChildren = GetClosesedGameObject(hittedStreetsChildern, _hitPoint); //Look for the closest GameObject of all valid GameObjects
-            SetSpherePos(closestStreetChildren.transform.position); //Set the Sphere to the Pos of the closest valid Street GameObject
-            return closestStreetChildren;
+            Street tmpStreet;
+            Cross tmpCross;
+
+            //look for all collider if there are valid for connection
+            for (int i = 0; i < sphereColls.Count; i++)
+            {
+                tmpStreet = sphereColls[i].GetComponentInParent<Street>();
+                if (tmpStreet != null)
+                    if ((sphereColls[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable)
+                        || (sphereColls[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable))
+                        validCollider.Add(sphereColls[i]); //if found a valid GameObject add it to a List
+
+                tmpCross = sphereColls[i].GetComponent<Cross>();
+                if (tmpCross != null)
+                    validCollider.Add(sphereColls[i]);
+            }
+
+            if (validCollider.Count == 0) return null; //return null if no valid Collider was found in the Range
+
+            SphereCollider closestCollider = GetClosesetCollider(validCollider, _hitPoint); //Look for the closest GameObject of all valid GameObjects
+            SetSpherePos(closestCollider.transform.position + closestCollider.center); //Set the Sphere to the Pos of the closest valid Street GameObject
+            tmpStreet = closestCollider.GetComponentInParent<Street>();
+            tmpCross = closestCollider.GetComponentInParent<Cross>();
+            Connection conn = null;
+            if (tmpStreet != null)
+            {
+                if (closestCollider.CompareTag("StreetStart"))
+                    conn = tmpStreet.GetStartConnection();
+                else if (closestCollider.CompareTag("StreetEnd"))
+                    conn = tmpStreet.m_EndConnection;
+            }
+            else if (tmpCross != null)
+            {
+                Vector3 collCenter = closestCollider.center;
+                if (collCenter.x == 0 && collCenter.z == -1.2f)
+                    conn = tmpCross.GetConnectionByIndex(0);
+                else
+                if (collCenter.x == -1.2f && collCenter.z == 0)
+                    conn = tmpCross.GetConnectionByIndex(1);
+                else
+                if (collCenter.x == 0 && collCenter.z == 1.2f)
+                    conn = tmpCross.GetConnectionByIndex(2);
+                else
+                if (collCenter.x == 1.2f && collCenter.z == 0)
+                    conn = tmpCross.GetConnectionByIndex(3);
+            }
+            return conn;
         }
 
         /// <summary>
         /// Check on the given Pos if a combine to another Street is possible
         /// </summary>
         /// <param name="_hitPoint">The Pos to check around</param>
-        /// <param name="isStart">Is it the Start of the PreviewStreet</param>
+        /// <param name="_isStart">Is it the Start of the PreviewStreet</param>
         /// <returns></returns>
-        private void CheckForCombine(Vector3 _hitPoint, bool isStart)
+        private void CheckForCombine(Vector3 _hitPoint, bool _isStart)
         {
-            GameObject closestStreetChildren = FindStreetGameObject(_hitPoint);
+            Connection closestConnection = FindClosestConnection(_hitPoint);
 
-            if (closestStreetChildren == null) // if there is no valid Street GameObject around
+            if (closestConnection == null) // if there is no valid Street GameObject around
             {
-                //TODO: Recreate Dead End
+                //Recreate Dead End + Decombine
                 DecombinePreview(false);
 
                 //Unlock the Tangent of the Pos which is not Set
@@ -291,104 +327,125 @@ namespace Gameplay.Streets
                 return;
             }
 
-            Street otherStreet = closestStreetChildren.GetComponentInParent<Street>();
-
-            if (closestStreetChildren.CompareTag("StreetEnd"))
+            if (closestConnection.m_Owner is Street)
             {
-                if (isStart)
+                Street otherStreet = (Street)closestConnection.m_Owner;
+                if (!closestConnection.m_OwnerStart)
                 {
-                    //other Street End and previewStreet Start -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized; //Get the point symmetrical Direction
-
-                    StreetComponentManager.UpdateStreetTangent1AndStartPoint(
-                        m_previewStreet,
-                        dir * 5f + otherStreet.m_Spline.EndPos, //Set the Tanget to the half point symmetrical Position
-                                    otherStreet.m_Spline.EndPos
-                                    ); //Set the EndPos
-
-                    isTangent1Locked = true;
-
-                    //Combine(_others End, preview Start) + Remove others DeadEnd at End
-                    if (otherStreet.m_EndConnection.m_OtherComponent is DeadEnd)
+                    if (_isStart)
                     {
-                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_EndConnection.m_OtherComponent);
-                    }
-                    CombinePreview(otherStreet, false, true);
+                        //other Street End and previewStreet Start -> Combine
+                        Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized; //Get the point symmetrical Direction
 
-                    return;
+                        StreetComponentManager.UpdateStreetTangent1AndStartPoint(
+                            m_previewStreet,
+                            dir * 5f + otherStreet.m_Spline.EndPos, //Set the Tanget to the half point symmetrical Position
+                                        otherStreet.m_Spline.EndPos
+                                        ); //Set the EndPos
+
+                        isTangent1Locked = true;
+
+                        //Combine(_others End, preview Start) + Remove others DeadEnd at End
+                        if (otherStreet.m_EndConnection.m_OtherComponent is DeadEnd)
+                        {
+                            StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_EndConnection.m_OtherComponent);
+                        }
+                        CombinePreview(otherStreet, false, true);
+
+                        return;
+                    }
+                    else
+                    {
+                        //other Street End and previewStreet End -> Combine
+                        Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized;
+
+                        StreetComponentManager.UpdateStreetTangent2AndEndPoint(
+                            m_previewStreet,
+                            dir * 5f + otherStreet.m_Spline.EndPos,
+                                                otherStreet.m_Spline.EndPos
+                                                );
+
+                        isTangent2Locked = true;
+
+                        //Combine(_others End, preview End) + Remove others DeadEnd at End
+                        if (otherStreet.m_EndConnection.m_OtherComponent is DeadEnd)
+                        {
+                            StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_EndConnection.m_OtherComponent);
+                        }
+                        CombinePreview(otherStreet, false, false);
+
+                        return;
+                    }
+                }
+                else if (closestConnection.m_OwnerStart)
+                {
+                    if (_isStart)
+                    {
+                        //other Street Start and previewStreet Start -> Combine
+                        Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
+
+                        StreetComponentManager.UpdateStreetTangent1AndStartPoint(
+                            m_previewStreet,
+                            dir * 5f + otherStreet.m_Spline.StartPos,
+                                                otherStreet.m_Spline.StartPos
+                                                );
+
+                        isTangent1Locked = true;
+
+                        //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
+                        if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
+                        {
+                            StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
+                            Debug.Log("Remove DeadEnd");
+                        }
+                        CombinePreview(otherStreet, true, true);
+
+                        return;
+                    }
+                    else
+                    {
+                        //other Street Start and previewStreet End -> Combine
+                        Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
+
+                        StreetComponentManager.UpdateStreetTangent2AndEndPoint(
+                            m_previewStreet,
+                            dir * 5f + otherStreet.m_Spline.StartPos,
+                                                otherStreet.m_Spline.StartPos
+                                                );
+
+                        isTangent2Locked = true;
+
+                        //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
+                        if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
+                        {
+                            StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
+                            Debug.Log("Remove DeadEnd");
+                        }
+                        CombinePreview(otherStreet, true, false);
+
+                        return;
+                    }
+                }
+            }
+
+            if (closestConnection.m_Owner is Cross)
+            {
+                Cross otherCross = (Cross)closestConnection.m_Owner;
+                OrientedPoint op = otherCross.m_OPs[otherCross.GetIndexByConnection(closestConnection)];
+                if (_isStart)
+                {
+                    StreetComponentManager.UpdateStreetTangent1AndStartPoint(m_previewStreet, op.Position + op.Rotation * Vector3.forward * 3f, op.Position);
+                    isTangent1Locked = true;
+                    Connection.Combine(m_previewStreet.GetStartConnection(), closestConnection);
                 }
                 else
                 {
-                    //other Street End and previewStreet End -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent2Pos - otherStreet.m_Spline.EndPos).normalized;
-
-                    StreetComponentManager.UpdateStreetTangent2AndEndPoint(
-                        m_previewStreet,
-                        dir * 5f + otherStreet.m_Spline.EndPos,
-                                            otherStreet.m_Spline.EndPos
-                                            );
-
+                    StreetComponentManager.UpdateStreetTangent2AndEndPoint(m_previewStreet, op.Position + op.Rotation * Vector3.forward * 3f, op.Position);
                     isTangent2Locked = true;
-
-                    //Combine(_others End, preview End) + Remove others DeadEnd at End
-                    if (otherStreet.m_EndConnection.m_OtherComponent is DeadEnd)
-                    {
-                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_EndConnection.m_OtherComponent);
-                    }
-                    CombinePreview(otherStreet, false, false);
-
-                    return;
+                    Connection.Combine(m_previewStreet.m_EndConnection, closestConnection);
                 }
             }
-            else if (closestStreetChildren.CompareTag("StreetStart"))
-            {
-                if (isStart)
-                {
-                    //other Street Start and previewStreet Start -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
 
-                    StreetComponentManager.UpdateStreetTangent1AndStartPoint(
-                        m_previewStreet,
-                        dir * 5f + otherStreet.m_Spline.StartPos,
-                                            otherStreet.m_Spline.StartPos
-                                            );
-
-                    isTangent1Locked = true;
-
-                    //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
-                    if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
-                    {
-                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
-                        Debug.Log("Remove DeadEnd");
-                    }
-                    CombinePreview(otherStreet, true, true);
-
-                    return;
-                }
-                else
-                {
-                    //other Street Start and previewStreet End -> Combine
-                    Vector3 dir = -(otherStreet.m_Spline.Tangent1Pos - otherStreet.m_Spline.StartPos).normalized;
-
-                    StreetComponentManager.UpdateStreetTangent2AndEndPoint(
-                        m_previewStreet,
-                        dir * 5f + otherStreet.m_Spline.StartPos,
-                                            otherStreet.m_Spline.StartPos
-                                            );
-
-                    isTangent2Locked = true;
-
-                    //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
-                    if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
-                    {
-                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
-                        Debug.Log("Remove DeadEnd");
-                    }
-                    CombinePreview(otherStreet, true, false);
-
-                    return;
-                }
-            }
         }
 
         private void CombinePreview(Street _other, bool _otherStart, bool _previewStart)
@@ -461,30 +518,7 @@ namespace Gameplay.Streets
             return true;
         }
 
-        /// <summary>
-        /// Get the closest GameObject from the given List
-        /// </summary>
-        /// <param name="_objs">The List of GameObject</param>
-        /// <param name="_point">The Point from where to look</param>
-        /// <returns>The closest GameObject to the Point</returns>
-        private GameObject GetClosesedGameObject(List<GameObject> _objs, Vector3 _point)
-        {
-            if (_objs.Count == 1) return _objs[0];
 
-            float shortestDistance = float.MaxValue;
-            GameObject output = null;
-
-            for (int i = 0; i < _objs.Count; i++)
-            {
-                float distance = Vector3.Distance(_objs[i].transform.position, _point);
-                if (distance < shortestDistance)
-                {
-                    shortestDistance = distance;
-                    output = _objs[i];
-                }
-            }
-            return output;
-        }
 
         private void OnDestroy()
         {

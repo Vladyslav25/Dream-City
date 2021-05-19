@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Gameplay.Tools
@@ -58,6 +59,50 @@ namespace Gameplay.Tools
         public void SetSpherePos(Vector3 _pos)
         {
             m_sphere.transform.position = _pos;
+        }
+
+        /// <summary>
+        /// Get the closest GameObject from the given List
+        /// </summary>
+        /// <param name="_objs">The List of GameObject</param>
+        /// <param name="_point">The Point from where to look</param>
+        /// <returns>The closest GameObject to the Point</returns>
+        protected GameObject GetClosesetGameObject(List<GameObject> _objs, Vector3 _point)
+        {
+            if (_objs.Count == 1) return _objs[0];
+
+            float shortestDistance = float.MaxValue;
+            GameObject output = null;
+
+            for (int i = 0; i < _objs.Count; i++)
+            {
+                float distance = Vector3.Distance(_objs[i].transform.position, _point);
+                if (distance < shortestDistance)
+                {
+                    shortestDistance = distance;
+                    output = _objs[i];
+                }
+            }
+            return output;
+        }
+
+        protected SphereCollider GetClosesetCollider(List<SphereCollider> _objs, Vector3 _point)
+        {
+            if (_objs.Count == 1) return _objs[0];
+
+            float shortestDistance = float.MaxValue;
+            SphereCollider output = null;
+
+            for (int i = 0; i < _objs.Count; i++)
+            {
+                float distance = Vector3.SqrMagnitude(_objs[i].transform.position - _point);
+                if (distance < shortestDistance)
+                {
+                    shortestDistance = distance;
+                    output = _objs[i];
+                }
+            }
+            return output;
         }
 
         public abstract void ToolUpdate();
