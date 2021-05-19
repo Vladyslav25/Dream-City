@@ -111,6 +111,11 @@ namespace Gameplay.Streets
 
                 if (Input.GetKeyUp(KeyCode.Escape))
                 {
+                    if (m_previewStreet != null)
+                    {
+                        DecombinePreview(true);
+                        DecombinePreview(false);
+                    }
                     ResetTool();
                     return;
                 }
@@ -153,24 +158,9 @@ namespace Gameplay.Streets
                         pos3 = m_hitPos;
                         CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
                         Street newStreet = StreetComponentManager.CreateStreet(m_previewStreet); //Create a valid Street from the preview Street
-                        if (newStreet.m_StartConnection == null)
-                            StreetComponentManager.CreateDeadEnd(newStreet, true);
-                        if (newStreet.m_EndConnection == null)
-                            StreetComponentManager.CreateDeadEnd(newStreet, false);
-                        //Reset
-                        pos1 = Vector3.zero;
-                        pos2 = Vector3.zero;
-                        pos3 = Vector3.zero;
-                        pos1Set = false;
-                        pos2Set = false;
-                        pos3Set = false;
-                        isTangent1Locked = false;
-                        isTangent2Locked = false;
-                        Destroy(m_previewStreet.gameObject); //Destroy PreviewStreet
-                        m_previewStreet = null;
 
-                        lastConnectedStreet = null;
-                        lastConnectedStreetChildren = null;
+                        //Reset
+                        ResetTool();
                         return;
                     }
                 }
@@ -200,40 +190,12 @@ namespace Gameplay.Streets
             pos3Set = false;
             isTangent1Locked = false;
             isTangent2Locked = false;
-
-            //if (m_previewStreet != null)
-            //{   //Recreate DeadEnds on PreviewStreet Conections
-            //    if (m_previewStreet.m_StreetConnect_Start != null)
-            //    {
-            //        if (m_previewStreet.m_StreetConnect_Start.m_StreetConnect_Start == m_previewStreet)
-            //            m_previewStreet.m_StreetConnect_Start.CreateDeadEnd(true);
-            //        if (m_previewStreet.m_StreetConnect_Start.m_StreetConnect_End == m_previewStreet)
-            //            m_previewStreet.m_StreetConnect_Start.CreateDeadEnd(false);
-            //    }
-            //    if (m_previewStreet.m_StreetConnect_End != null)
-            //    {
-            //        if (m_previewStreet.m_StreetConnect_End.m_StreetConnect_Start == m_previewStreet)
-            //            m_previewStreet.m_StreetConnect_End.CreateDeadEnd(true);
-            //        if (m_previewStreet.m_StreetConnect_End.m_StreetConnect_End == m_previewStreet)
-            //            m_previewStreet.m_StreetConnect_End.CreateDeadEnd(false);
-            //    }
-            //    if (m_previewStreet.GetCollisionStreet().gameObject != null)
-            //        Destroy(m_previewStreet.GetCollisionStreet().gameObject);
-            //    if (m_previewStreet.gameObject != null)
-            //        Destroy(m_previewStreet.gameObject); //Destroy PreviewStreet
-            //}
-            //
-            //if (lastConnectedStreetChildren != null)
-            //    if (lastConnectedStreetChildren.CompareTag("StreetStart"))
-            //        lastConnectedStreet.CreateDeadEnd(true);
-            //    else if (lastConnectedStreetChildren.CompareTag("StreetEnd"))
-            //        lastConnectedStreet.CreateDeadEnd(false);
+            Destroy(m_previewStreet?.gameObject); //Destroy PreviewStreet
+            Destroy(m_previewStreet?.GetCollisionStreet().gameObject); //Destroy CollStreet
+            m_previewStreet = null;
 
             lastConnectedStreet = null;
             lastConnectedStreetChildren = null;
-
-            m_previewStreet = null;
-            return;
         }
 
         /// <summary>
@@ -286,8 +248,8 @@ namespace Gameplay.Streets
             {
                 Street tmpStreet = sphereHits[i].GetComponentInParent<Street>();
                 if (tmpStreet == null) continue;
-                if ((sphereHits[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable)
-                    || (sphereHits[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable))
+                if (((sphereHits[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable)
+                    || (sphereHits[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable)))
                     hittedStreetsChildern.Add(sphereHits[i].transform.gameObject); //if found a valid GameObject add it to a List
 
                 Cross tmpCross = sphereHits[i].GetComponent<Cross>();
@@ -314,12 +276,17 @@ namespace Gameplay.Streets
             if (closestStreetChildren == null) // if there is no valid Street GameObject around
             {
                 //TODO: Recreate Dead End
+                DecombinePreview(false);
 
                 //Unlock the Tangent of the Pos which is not Set
                 if (pos1 == Vector3.zero)
+                {
                     isTangent1Locked = false;
+                }
                 if (pos3 == Vector3.zero)
+                {
                     isTangent2Locked = false;
+                }
                 return;
             }
 
@@ -344,7 +311,6 @@ namespace Gameplay.Streets
                     if (otherStreet.m_EndConnection.m_OtherComponent is DeadEnd)
                     {
                         StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_EndConnection.m_OtherComponent);
-                        Debug.Log("Remove DeadEnd");
                     }
                     CombinePreview(otherStreet, false, true);
 
@@ -390,9 +356,9 @@ namespace Gameplay.Streets
                     isTangent1Locked = true;
 
                     //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
-                    if (otherStreet.m_StartConnection.m_OtherComponent is DeadEnd)
+                    if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
                     {
-                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_StartConnection.m_OtherComponent);
+                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
                         Debug.Log("Remove DeadEnd");
                     }
                     CombinePreview(otherStreet, true, true);
@@ -413,9 +379,9 @@ namespace Gameplay.Streets
                     isTangent2Locked = true;
 
                     //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
-                    if (otherStreet.m_StartConnection.m_OtherComponent is DeadEnd)
+                    if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
                     {
-                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_StartConnection.m_OtherComponent);
+                        StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
                         Debug.Log("Remove DeadEnd");
                     }
                     CombinePreview(otherStreet, true, false);
@@ -429,25 +395,41 @@ namespace Gameplay.Streets
         {
             if (_previewStart && _otherStart)
             {
-                Connection.Combine(m_previewStreet.m_StartConnection, _other.m_StartConnection);
+                Connection.Combine(m_previewStreet.GetStartConnection(), _other.GetStartConnection());
                 return;
             }
-            if(_previewStart && !_otherStart)
+            if (_previewStart && !_otherStart)
             {
-                Connection.Combine(m_previewStreet.m_StartConnection, _other.m_EndConnection);
+                Connection.Combine(m_previewStreet.GetStartConnection(), _other.m_EndConnection);
                 return;
             }
-            if (!_previewStart && _otherStart)
+            if (!_previewStart && _otherStart && m_previewStreet.GetStartConnection().m_OtherConnection != _other.GetStartConnection())
             {
-                Connection.Combine(m_previewStreet.m_EndConnection, _other.m_StartConnection);
+                Connection.Combine(m_previewStreet.m_EndConnection, _other.GetStartConnection());
                 return;
             }
-            if (!_previewStart && !_otherStart)
+            if (!_previewStart && !_otherStart && m_previewStreet.GetStartConnection().m_OtherConnection != _other.m_EndConnection)
             {
                 Connection.Combine(m_previewStreet.m_EndConnection, _other.m_EndConnection);
                 return;
             }
-        }      
+        }
+
+        private void DecombinePreview(bool _isStart)
+        {
+            if (_isStart && m_previewStreet.GetStartConnection().m_OtherConnection != null)
+            {
+                Connection oldConnection = m_previewStreet.GetStartConnection().m_OtherConnection;
+                Connection.DeCombine(m_previewStreet.GetStartConnection(), m_previewStreet.GetStartConnection().m_OtherConnection);
+                StreetComponentManager.CreateDeadEnd((Street)oldConnection.m_Owner, oldConnection.m_OwnerStart);
+            }
+            else if (m_previewStreet.m_EndConnection.m_OtherConnection != null)
+            {
+                Connection oldConnection = m_previewStreet.m_EndConnection.m_OtherConnection;
+                Connection.DeCombine(m_previewStreet.m_EndConnection, m_previewStreet.m_EndConnection.m_OtherConnection);
+                StreetComponentManager.CreateDeadEnd((Street)oldConnection.m_Owner, oldConnection.m_OwnerStart);
+            }
+        }
 
         /// <summary>
         /// Run the Check if the Form of the Street is Valid

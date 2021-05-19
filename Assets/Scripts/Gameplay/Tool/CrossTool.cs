@@ -33,8 +33,8 @@ public class CrossTool : Tool
 
         if (Input.GetMouseButtonDown(0))
         {
-            GameObject[] obj = SpawnCross();
-            m_cross = Instantiate(m_crossPrefab, m_hitPos, m_rotation);
+            GameObject[] obj = SpawnCross(); //Spawn Crosses + Coll Cross
+            m_cross = Instantiate(m_crossPrefab, m_hitPos, m_rotation); //Spawn new Preview Cross
         }
 
         if (Input.GetKey(KeyCode.Comma))
@@ -52,17 +52,27 @@ public class CrossTool : Tool
     private GameObject[] SpawnCross()
     {
         GameObject[] output = new GameObject[2];
-
+        //Visible Cross
         output[0] = Instantiate(m_crossPrefab, m_hitPos, m_rotation);
         output[0].transform.parent = StreetComponentManager.Instance.transform;
+        Cross c = output[0].GetComponent<Cross>();
+        c.Init(null, true);
+        for (int i = 0; i < 4; i++)
+        {
+            StreetComponentManager.CreateDeadEnd(c, i);
+        }
+
+        //Collider Cross
         GameObject obj = Instantiate(m_crossPrefab, m_hitPos, m_rotation, StreetComponentManager.Instance.StreetCollisionParent.transform);
         obj.layer = 8;
         obj.name = "Cross_Col";
 
+        //Remove Collision Sphere Collider from Prefab
         Collider[] coll = obj.GetComponents<Collider>();
-        foreach (Collider c in coll)
-            Destroy(c);
+        foreach (Collider co in coll)
+            Destroy(co);
 
+        //Set Coll Material
         MeshRenderer mr = obj.gameObject.GetComponent<MeshRenderer>();
         mr.material = StreetComponentManager.Instance.streetMatColl;
         output[1] = obj;

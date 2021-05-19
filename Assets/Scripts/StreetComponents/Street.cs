@@ -64,8 +64,8 @@ namespace Gameplay.StreetComponents
         {
             get
             {
-                if ((m_StartConnection.m_OtherConnection == null        //If the Start is not connected 
-                    || m_StartConnection.m_OtherComponent.ID <= 0))     // OR If the Connected Street Component have an ID below Zero
+                if ((GetStartConnection().m_OtherConnection == null        //If the Start is not connected 
+                    || GetStartConnection().m_OtherComponent.ID <= 0))     // OR If the Connected Street Component have an ID below Zero
                     return true;                                        // Default = 0 | DeadEnds ID = -2 | Finished Streets ID > 0 
                 return false;
             }
@@ -141,7 +141,7 @@ namespace Gameplay.StreetComponents
             updateSpline = _updateSpline;
 
             //Create Start and End Connections
-            m_StartConnection = new Connection(null, this, true);
+            SetStartConnection(new Connection(null, this, true));
             m_EndConnection = new Connection(null, this, false);
 
             //If its an finished Street Combine the Connections from the Preview Street
@@ -149,7 +149,7 @@ namespace Gameplay.StreetComponents
             {
 
                 if (_startConnection.m_OtherConnection != null) //if the preview Street had a connection to something
-                    Connection.Combine(m_StartConnection, _startConnection.m_OtherConnection); //combine the new Street with the preview other connection
+                    Connection.Combine(GetStartConnection(), _startConnection.m_OtherConnection); //combine the new Street with the preview other connection
                 else
                     StreetComponentManager.CreateDeadEnd(this, true); //If there is no Connections to Combine, Create a DeadEnd
 

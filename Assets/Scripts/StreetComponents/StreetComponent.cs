@@ -8,7 +8,7 @@ namespace Gameplay.StreetComponents
     public abstract class StreetComponent : MonoBehaviour
     {
         [SerializeField]
-        public Connection m_StartConnection; //every StreetComponent have at least one Connection 
+        private Connection m_StartConnection; //every StreetComponent have at least one Connection 
 
         [SerializeField]
         [MyReadOnly]
@@ -33,6 +33,16 @@ namespace Gameplay.StreetComponents
         {
             if (_needID)
                 ID = StreetComponentManager.GetNewStreetComponentID();
+        }
+
+        public virtual Connection GetStartConnection()
+        {
+            return m_StartConnection;
+        }
+
+        public virtual void SetStartConnection(Connection _conn)
+        {
+            m_StartConnection = _conn;
         }
     }
 

@@ -79,7 +79,7 @@ namespace MeshGeneration
             }
 
             Mesh mesh = new Mesh();
-            mesh.CombineMeshes(combineArr, false, true);
+            mesh.CombineMeshes(combineArr, true, true);
             return mesh;
         }
 

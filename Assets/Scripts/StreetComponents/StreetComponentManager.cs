@@ -135,9 +135,19 @@ namespace Gameplay.StreetComponents
             else op = _street.m_Spline.GetLastOrientedPoint();
             de.Init(_street, _isStart, op);
 
-            if (_isStart) Connection.Combine(_street.m_StartConnection, de.m_StartConnection);
-            else Connection.Combine(_street.m_EndConnection, de.m_StartConnection);
+            if (_isStart) Connection.Combine(_street.GetStartConnection(), de.GetStartConnection());
+            else Connection.Combine(_street.m_EndConnection, de.GetStartConnection());
 
+            return de;
+        }
+
+        public static DeadEnd CreateDeadEnd(Cross _cross, int _index)
+        {
+            GameObject obj = new GameObject("DeadEnd");
+            DeadEnd de = obj.AddComponent<DeadEnd>();
+
+            OrientedPoint op = _cross.m_OPs[_index];
+            de.Init(_cross, _index, op);
             return de;
         }
 
@@ -147,7 +157,7 @@ namespace Gameplay.StreetComponents
         /// <param name="_de">The Dead End to Destroy</param>
         public static void DestroyDeadEnd(DeadEnd _de)
         {
-            Connection.DeCombine(_de.m_StartConnection, _de.m_StartConnection.m_OtherConnection);
+            Connection.DeCombine(_de.GetStartConnection(), _de.GetStartConnection().m_OtherConnection);
             Destroy(_de.gameObject);
         }
 
@@ -319,9 +329,9 @@ namespace Gameplay.StreetComponents
         /// <returns>Return the new finished Street</returns>
         public static Street CreateStreet(Street _street)
         {
-            CreateCollisionStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_StartConnection, _street.m_EndConnection);
+            CreateCollisionStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.GetStartConnection(), _street.m_EndConnection);
             Destroy(_street.GetCollisionStreet().gameObject);
-            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.m_StartConnection, _street.m_EndConnection);
+            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.GetStartConnection(), _street.m_EndConnection);
         }
 
         private static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConn, Connection _endConn)

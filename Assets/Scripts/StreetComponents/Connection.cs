@@ -17,13 +17,13 @@ namespace Gameplay.StreetComponents
                 return null;
             }
         }
-        public bool? m_OtherStart //Are we ref to the Start of the others Component? 
+        public bool m_OtherStart //Are we ref to the Start of the others Component? 
         {
             get
             {
                 if (m_OtherConnection != null)
                     return m_OtherConnection.m_OwnerStart;
-                return null;
+                return false;
             }
         }
 
