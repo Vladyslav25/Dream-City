@@ -5,17 +5,12 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using Grid;
-using Streets;
+using Gameplay.StreetComponents;
 
 namespace Splines
 {
-    public struct Spline
+    public class Spline
     {
-        [Header("Spline Settings")]
-        [MyReadOnly]
-        [SerializeField]
-        private GameObject[] pointsObj;
-
         [HideInInspector]
         public Vector3 StartPos { get; private set; }
 
@@ -34,46 +29,17 @@ namespace Splines
 
         public int segments;
 
-        public Street m_Street;
+        public StreetComponent m_Component;
 
-        public Spline(GameObject _startObj, GameObject _tangent1Obj, GameObject _tangent2Obj, GameObject _endObj, int _segments, Street _street) : this()
-        {
-            pointsObj = new GameObject[4];
-            pointsObj[0] = _startObj;
-            StartPos = _startObj.transform.position;
-            pointsObj[1] = _tangent1Obj;
-            Tangent1Pos = _tangent1Obj.transform.position;
-            pointsObj[2] = _tangent2Obj;
-            Tangent2Pos = _tangent2Obj.transform.position;
-            pointsObj[3] = _endObj;
-            EndPos = _endObj.transform.position;
-            segments = _segments;
-            m_Street = _street;
-            UpdateOPs(_street);
-        }
-
-        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, GameObject _parent, Street _street) : this()
+        public Spline(Vector3 _startPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos, Vector3 _endPos, int _segments, StreetComponent _comp)
         {
             StartPos = _startPos;
             Tangent1Pos = _tangent1Pos;
             Tangent2Pos = _tangent2Pos;
             EndPos = _endPos;
-            pointsObj = new GameObject[4];
-            pointsObj[0] = new GameObject("Start");
-            pointsObj[0].transform.position = _startPos;
-            pointsObj[0].transform.SetParent(_parent.transform);
-            pointsObj[1] = new GameObject("Tangent1");
-            pointsObj[1].transform.position = _tangent1Pos;
-            pointsObj[1].transform.SetParent(_parent.transform);
-            pointsObj[2] = new GameObject("Tangent2");
-            pointsObj[2].transform.position = _tangent2Pos;
-            pointsObj[2].transform.SetParent(_parent.transform);
-            pointsObj[3] = new GameObject("End");
-            pointsObj[3].transform.position = _endPos;
-            pointsObj[3].transform.SetParent(_parent.transform);
             segments = _segments;
-            m_Street = _street;
-            UpdateOPs(_street);
+            m_Component = _comp;
+            UpdateOPs(_comp);
         }
 
         #region -Set Tangents, Start and End-
@@ -265,7 +231,7 @@ namespace Splines
         /// <summary>
         /// Update the Oriented Points
         /// </summary>
-        public void UpdateOPs(Street _street = null)
+        public void UpdateOPs(StreetComponent _comp = null)
         {
             OPs = new OrientedPoint[segments + 1];
             for (int i = 0; i <= segments; i++)
@@ -273,17 +239,21 @@ namespace Splines
                 float t = 1.0f / segments * i;
                 OPs[i] = new OrientedPoint(GetPositionAt(t), GetOrientationUp(t), t);
             }
-            if (_street != null && _street.ID > 0)
+            if (_comp != null && _comp is Street)
             {
-                _street.ClrearSegmentsCorner();
-                for (int i = 0; i < OPs.Length; i++)
+                Street s = (Street)_comp;
+                if (s != null && s.ID > 0)
                 {
-                    _street.AddSegmentsCorner(OPs[i].Position + GetNormalAt(OPs[i].t));
-                    _street.AddSegmentsCorner(OPs[i].Position - GetNormalAt(OPs[i].t));
+                    s.ClearSegmentsCorner();
+                    for (int i = 0; i < OPs.Length; i++)
+                    {
+                        s.AddSegmentsCorner(OPs[i].Position + GetNormalAt(OPs[i].t));
+                        s.AddSegmentsCorner(OPs[i].Position - GetNormalAt(OPs[i].t));
+                    }
                 }
             }
         }
-        
+
         public void CreateGridOPs()
         {
             List<OrientedPoint> tmp = new List<OrientedPoint>();
@@ -310,49 +280,4 @@ namespace Splines
             GridOPs = tmp.ToArray();
         }
     }
-
-    public struct OrientedPoint
-    {
-        public Vector3 Position;
-        public Quaternion Rotation;
-        public float t;
-
-        public OrientedPoint(Vector3 _position, Quaternion _rotation, float _t)
-        {
-            Position = _position;
-            Rotation = _rotation;
-            t = _t;
-        }
-
-        /// <summary>
-        /// Calculate from Local Position to World Position
-        /// </summary>
-        /// <param name="_point">Local Position</param>
-        /// <returns></returns>
-        public Vector3 LocalToWorld(Vector3 _point)
-        {
-            return Position + Rotation * _point;
-        }
-
-        /// <summary>
-        /// Calculate from World Position to Local Position
-        /// </summary>
-        /// <param name="_point">World Position</param>
-        /// <returns></returns>
-        public Vector3 WorldToLocal(Vector3 _point)
-        {
-            return Quaternion.Inverse(Rotation) * (_point - Position);
-        }
-
-        /// <summary>
-        /// Calculate from Local Direction to World Direction
-        /// </summary>
-        /// <param name="_dir">Local Direction</param>
-        /// <returns></returns>
-        public Vector3 LocalToWorldDirection(Vector3 _dir)
-        {
-            return Rotation * _dir;
-        }
-    }
-
 }

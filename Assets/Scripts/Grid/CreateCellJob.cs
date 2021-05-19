@@ -1,7 +1,7 @@
-﻿using Grid;
+﻿using Gameplay.StreetComponents;
+using Grid;
 using MeshGeneration;
 using Splines;
-using Streets;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -15,7 +15,6 @@ public struct CreateCellJob
     [ReadOnly]
     public int id;
     public bool isLeft;
-    public NativeList<Cell> cellList;
     public int x;
     public int y;
 

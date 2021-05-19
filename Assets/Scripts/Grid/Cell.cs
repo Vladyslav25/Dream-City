@@ -1,7 +1,7 @@
-﻿using MeshGeneration;
+﻿using Gameplay.StreetComponents;
+using MeshGeneration;
 using MyCustomCollsion;
 using Splines;
-using Streets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,9 +47,6 @@ namespace Grid
         //  0 -- 1
         //  ->->-> SplineDirection
 
-        //public Mesh m_Mesh;
-        //public Cell m_NextCell;     //vlt nicht benötig
-        //public Cell m_PreviousCell; //vlt nicht benötig
         [ReadOnly]
         public float CellSquareSize;
 
@@ -116,7 +113,6 @@ namespace Grid
             {
                 if (MyCollision.PolyPoly(this.m_Corner, c.m_Corner))
                 {
-                    Debug.Log("Fail PolyPoly");
                     return true;
                 }
             }
@@ -162,7 +158,7 @@ namespace Grid
             {
                 if (squareArea > GridManager.Instance.GridMaxSquareArea)
                 {
-                    Debug.Log("Fail Size: Too Big | Size: " + squareArea + " Max: " + GridManager.Instance.GridMaxSquareArea + " AC: " + AC.magnitude + " AB: " + AB.magnitude);
+                    //Debug.Log("Fail Size: Too Big | Size: " + squareArea + " Max: " + GridManager.Instance.GridMaxSquareArea + " AC: " + AC.magnitude + " AB: " + AB.magnitude);
                 }
                 return false;
             }

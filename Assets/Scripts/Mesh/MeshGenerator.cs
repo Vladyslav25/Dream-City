@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Streets;
 using UnityEngine;
 using Grid;
+using Gameplay.StreetComponents;
 
 namespace MeshGeneration
 {
@@ -30,6 +30,12 @@ namespace MeshGeneration
         }
         #endregion
 
+        /// <summary>
+        /// Create the Mesh for the Grid
+        /// </summary>
+        /// <param name="_cellList">List of all Cells</param>
+        /// <param name="_mf">The MeshFilter of the GameObject where to put the Mesh in</param>
+        /// <returns>Return the MeshFilter with the Mesh</returns>
         public static MeshFilter CreateGridMesh(List<Cell> _cellList, MeshFilter _mf)
         {
             List<Mesh> allMeshes = new List<Mesh>();
@@ -61,15 +67,15 @@ namespace MeshGeneration
             return _mf;
         }
 
-        public static Mesh CombineMeshes(List<Mesh> _m, List<Matrix4x4> _t)
+        private static Mesh CombineMeshes(List<Mesh> _meshes, List<Matrix4x4> _transforms)
         {
-            CombineInstance[] combineArr = new CombineInstance[_m.Count];
+            CombineInstance[] combineArr = new CombineInstance[_meshes.Count];
 
-            for (int i = 0; i < _m.Count; i++)
+            for (int i = 0; i < _meshes.Count; i++)
             {
-                combineArr[i].mesh = _m[i];
-                combineArr[i].transform = _t[i];
-                //combineArr[i].subMeshIndex = i;
+                combineArr[i].mesh = _meshes[i];
+                combineArr[i].transform = _transforms[i];
+                //combineArr[i].subMeshIndex = i; //TODO: Give Rows own SubMesh to change color / Material
             }
 
             Mesh mesh = new Mesh();
@@ -77,10 +83,16 @@ namespace MeshGeneration
             return mesh;
         }
 
-        public static void Extrude(Street _street)
+
+        public static void Extrude(SplineStreetComonents _comp)
         {
-            ExtrudeShapeBase Shape = _street.m_Shape;
-            Spline Spline = _street.m_Spline;
+            ExtrudeShapeBase Shape = _comp.m_Shape;
+            if(Shape == null)
+                return;
+
+            Spline Spline = _comp.m_Spline;
+            if (Spline == null) 
+                return;
 
             int vertsInShape = Shape.verts.Length;
             int segments = Spline.OPs.Length - 1;
@@ -103,7 +115,7 @@ namespace MeshGeneration
                 for (int j = 0; j < vertsInShape; j++)
                 {
                     int id = offset + j;
-                    verticies[id] = Spline.OPs[i].LocalToWorld(Shape.verts[j]) - _street.m_MeshOffset;
+                    verticies[id] = Spline.OPs[i].LocalToWorld(Shape.verts[j]) - _comp.m_MeshOffset;
                     uvs[id] = new Vector2(Shape.us[j], arr.Sample(i / ((float)edgeLoops)) / shapeLength);
                 }
             }
@@ -133,7 +145,7 @@ namespace MeshGeneration
                 }
             }
 
-            Mesh mesh = _street.m_MeshFilterRef.mesh;
+            Mesh mesh = _comp.m_MeshFilter.mesh;
             mesh.Clear();
             mesh.vertices = verticies;
             mesh.triangles = triangelIndices;
@@ -160,6 +172,7 @@ namespace MeshGeneration
         }
     }
 
+    #region -Shape Defenitions-
     public abstract class ExtrudeShapeBase
     {
         public float GetLineLength()
@@ -271,4 +284,5 @@ namespace MeshGeneration
             };
         }
     }
+    #endregion
 }
