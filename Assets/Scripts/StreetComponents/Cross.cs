@@ -41,6 +41,11 @@ namespace Gameplay.StreetComponents
             return -1;
         }
 
+        public void SetID()
+        {
+            ID = StreetComponentManager.GetNewStreetComponentID();
+        }
+
         public override void SetStartConnection(Connection _conn)
         {
             m_Connections[0] = _conn;

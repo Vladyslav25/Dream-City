@@ -10,7 +10,7 @@ public class CrossTool : Tool
 {
     [SerializeField]
     private GameObject m_crossPrefab;
-
+    private Cross m_cross;
     private GameObject m_crossObj;
     private Quaternion m_rotation;
 
@@ -30,16 +30,20 @@ public class CrossTool : Tool
 
     public override void ToolUpdate()
     {
-        OrientedPoint closestStreetOP = FindStreetOP(m_hitPos);
-        if (closestStreetOP != null)
-            SetCrossToOP(closestStreetOP);
+        Connection closestStreetConnection = FindStreetConnection(m_hitPos);
+        if (closestStreetConnection != null)
+            ConnectCrossToStreet((Street)closestStreetConnection.m_Owner, closestStreetConnection.m_OwnerStart);
         else
+        {
+            RemoveStartConnection();
             m_crossObj.transform.position = m_hitPos;
+        }
 
         if (Input.GetMouseButtonDown(0))
         {
             SpawnCollCross(); //Spawn Coll Cross
-            m_crossObj = Instantiate(m_crossPrefab, m_hitPos, m_rotation); //Spawn new Preview Cross
+            m_cross.SetID();
+            m_crossObj = SpawnCross(); //Spawn new Preview Cross
         }
 
         if (Input.GetKey(KeyCode.Comma))
@@ -54,24 +58,52 @@ public class CrossTool : Tool
         }
     }
 
-    private void SetCrossToOP(OrientedPoint closestStreetOP)
+    private void RemoveStartConnection()
     {
-        m_crossObj.transform.rotation = closestStreetOP.Rotation;
-        m_crossObj.transform.position = m_crossObj.transform.forward * 1.2f + closestStreetOP.Position;
+        Connection otherConnection = m_cross.GetStartConnection().m_OtherConnection;
+        if (otherConnection == null) return;
+        Connection.DeCombine(m_cross.GetStartConnection(), otherConnection);
+        StreetComponentManager.CreateDeadEnd((Street)otherConnection.m_Owner, otherConnection.m_OwnerStart);
+    }
+
+    private void SetCrossTransform(Vector3 _pos, Quaternion _rot)
+    {
+        m_crossObj.transform.position = _pos;
+        m_crossObj.transform.rotation = _rot;
+    }
+
+    private void ConnectCrossToStreet(Street _street, bool _isStreetStart)
+    {
+        if (m_cross.GetStartConnection().m_OtherComponent == null)
+            if (_isStreetStart)
+            {
+                OrientedPoint op = _street.m_Spline.GetFirstOrientedPoint();
+                SetCrossTransform(op.Position - op.LocalToWorldDirection(Vector3.forward) * 1.2f, op.Rotation * Quaternion.Euler(0, 180f, 0));
+                StreetComponentManager.DestroyDeadEnd((DeadEnd)_street.GetStartConnection().m_OtherComponent);
+                Connection.Combine(m_cross.GetStartConnection(), _street.GetStartConnection());
+            }
+            else
+            {
+                OrientedPoint op = _street.m_Spline.GetLastOrientedPoint();
+                SetCrossTransform(op.Position + op.LocalToWorldDirection(Vector3.forward) * 1.2f, op.Rotation);
+                StreetComponentManager.DestroyDeadEnd((DeadEnd)_street.m_EndConnection.m_OtherComponent);
+                Connection.Combine(m_cross.GetStartConnection(), _street.m_EndConnection);
+            }
+
     }
 
     private GameObject SpawnCross()
     {
         GameObject obj = Instantiate(m_crossPrefab, m_hitPos, Quaternion.identity);
-        Cross c = GetComponent<Cross>();
-        c.Init(null, false);
+        m_cross = obj.GetComponent<Cross>();
+        m_cross.Init(null, false);
         return obj;
     }
 
     private GameObject SpawnCollCross()
     {
         //Collider Cross
-        GameObject obj = Instantiate(m_crossPrefab, m_hitPos, m_rotation, StreetComponentManager.Instance.StreetCollisionParent.transform);
+        GameObject obj = Instantiate(m_crossPrefab, m_crossObj.transform.position, m_crossObj.transform.rotation, StreetComponentManager.Instance.StreetCollisionParent.transform);
         obj.layer = 8;
         obj.name = "Cross_Col";
 
@@ -87,7 +119,7 @@ public class CrossTool : Tool
         return obj;
     }
 
-    private OrientedPoint FindStreetOP(Vector3 _hitPoint)
+    private Connection FindStreetConnection(Vector3 _hitPoint)
     {
         Collider[] sphereHits = Physics.OverlapSphere(_hitPoint, 2); //Cast a Sphere on the give Pos
         List<GameObject> hittedStreetsChildern = new List<GameObject>();
@@ -110,11 +142,11 @@ public class CrossTool : Tool
         Street s = closestStreetChildren.GetComponentInParent<Street>();
         if (closestStreetChildren.CompareTag("StreetEnd"))
         {
-            return s.m_Spline.GetLastOrientedPoint();
+            return s.m_EndConnection;
         }
         else if (closestStreetChildren.CompareTag("StreetStart"))
         {
-            return s.m_Spline.GetFirstOrientedPoint();
+            return s.GetStartConnection();
         }
         return null;
     }
