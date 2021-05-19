@@ -8,7 +8,7 @@ namespace Gameplay.StreetComponents
 {
     public class Cross : StreetComponent
     {
-        public List<SphereCollider> m_coll = new List<SphereCollider>(4);
+        public List<SphereCollider> m_coll = new List<SphereCollider>(4); //assigned in Editor
         public Connection[] m_Connections = new Connection[4];
         public OrientedPoint[] m_OPs = new OrientedPoint[4];
 

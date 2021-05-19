@@ -171,6 +171,7 @@ namespace Gameplay.Streets
         {
             base.ToolEnd();
             ResetTool();
+            SetSphereActiv(false);
         }
 
         public override void ToolStart()
@@ -333,7 +334,6 @@ namespace Gameplay.Streets
                     if (otherStreet.m_EndConnection.m_OtherComponent is DeadEnd)
                     {
                         StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.m_EndConnection.m_OtherComponent);
-                        Debug.Log("Remove DeadEnd");
                     }
                     CombinePreview(otherStreet, false, false);
 
