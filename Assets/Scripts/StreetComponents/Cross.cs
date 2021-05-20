@@ -12,6 +12,7 @@ namespace Gameplay.StreetComponents
         public Connection[] m_Connections = new Connection[4];
         public OrientedPoint[] m_OPs = new OrientedPoint[4];
 
+
         public Cross Init(Connection _otherConn, bool _needID = false)
         {
             base.Init(_needID);
@@ -21,6 +22,37 @@ namespace Gameplay.StreetComponents
             m_Connections[3] = new Connection(null, this, false);
 
             return this;
+        }
+
+        public void CreateDeadEnds()
+        {
+            for (int i = 0; i < m_Connections.Length; i++)
+            {
+                if (m_Connections[i].m_OtherConnection == null)
+                    StreetComponentManager.CreateDeadEnd(this, i);
+
+            }
+        }
+
+        public bool IsConnectabel(SphereCollider _coll)
+        {
+            int index = -1;
+            for (int i = 0; i < m_coll.Count; i++)
+            {
+                if (_coll == m_coll[i])
+                {
+                    index = i;
+                }
+            }
+
+            if (index == -1)
+            {
+                Debug.LogError("Cant find Collider in Cross");
+                return false;
+            }
+
+            if (m_Connections[index].m_OtherConnection == null || m_Connections[index].m_OtherComponent.ID <= 0) return true;
+            return false;
         }
 
         public void SetOP()

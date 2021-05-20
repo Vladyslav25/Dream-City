@@ -31,9 +31,7 @@ namespace Gameplay.Streets
         bool isCurrendToolLine = false;
 
         Street m_previewStreet;
-
-        Street lastConnectedStreet;
-        GameObject lastConnectedStreetChildren;
+        Connection m_previewLastConnected;
 
         #region -ComputeShader Member-
         [SerializeField]
@@ -194,9 +192,6 @@ namespace Gameplay.Streets
             Destroy(m_previewStreet?.gameObject); //Destroy PreviewStreet
             Destroy(m_previewStreet?.GetCollisionStreet().gameObject); //Destroy CollStreet
             m_previewStreet = null;
-
-            lastConnectedStreet = null;
-            lastConnectedStreetChildren = null;
         }
 
         /// <summary>
@@ -258,20 +253,19 @@ namespace Gameplay.Streets
             for (int i = 0; i < sphereColls.Count; i++)
             {
                 tmpStreet = sphereColls[i].GetComponentInParent<Street>();
-                if (tmpStreet != null)
-                    if ((sphereColls[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable)
-                        || (sphereColls[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable))
-                        validCollider.Add(sphereColls[i]); //if found a valid GameObject add it to a List
+                if (tmpStreet != null && ((sphereColls[i].CompareTag("StreetEnd") && tmpStreet.m_EndIsConnectable)
+                    || (sphereColls[i].CompareTag("StreetStart") && tmpStreet.m_StartIsConnectable)))
+                    validCollider.Add(sphereColls[i]); //if found a valid GameObject add it to a List
 
                 tmpCross = sphereColls[i].GetComponent<Cross>();
-                if (tmpCross != null)
+                if (tmpCross != null && tmpCross.IsConnectabel(sphereColls[i]))
                     validCollider.Add(sphereColls[i]);
             }
 
             if (validCollider.Count == 0) return null; //return null if no valid Collider was found in the Range
 
             SphereCollider closestCollider = GetClosesetCollider(validCollider, _hitPoint); //Look for the closest GameObject of all valid GameObjects
-            SetSpherePos(closestCollider.transform.position + closestCollider.center); //Set the Sphere to the Pos of the closest valid Street GameObject
+            SetSpherePos(closestCollider.transform.position + closestCollider.transform.rotation * closestCollider.center); //Set the Sphere to the Pos of the closest valid Street GameObject
             tmpStreet = closestCollider.GetComponentInParent<Street>();
             tmpCross = closestCollider.GetComponentInParent<Cross>();
             Connection conn = null;
@@ -309,6 +303,11 @@ namespace Gameplay.Streets
         private void CheckForCombine(Vector3 _hitPoint, bool _isStart)
         {
             Connection closestConnection = FindClosestConnection(_hitPoint);
+            if (closestConnection != null && m_previewLastConnected != closestConnection)
+            {
+                //Recreate Dead End + Decombine
+                DecombinePreview(false);
+            }
 
             if (closestConnection == null) // if there is no valid Street GameObject around
             {
@@ -327,6 +326,8 @@ namespace Gameplay.Streets
                 return;
             }
 
+            m_previewLastConnected = closestConnection; //check next Update if new closestConnection has chanded to create a DeadEnd on the old place
+            if (m_previewStreet.GetStartConnection().m_OtherConnection == closestConnection) return;
             if (closestConnection.m_Owner is Street)
             {
                 Street otherStreet = (Street)closestConnection.m_Owner;
@@ -431,7 +432,14 @@ namespace Gameplay.Streets
             if (closestConnection.m_Owner is Cross)
             {
                 Cross otherCross = (Cross)closestConnection.m_Owner;
-                OrientedPoint op = otherCross.m_OPs[otherCross.GetIndexByConnection(closestConnection)];
+                int otherCrossConnectionIndex = otherCross.GetIndexByConnection(closestConnection);
+                OrientedPoint op = otherCross.m_OPs[otherCrossConnectionIndex];
+
+                if (otherCross.m_Connections[otherCrossConnectionIndex].m_OtherComponent is DeadEnd)
+                {
+                    StreetComponentManager.DestroyDeadEnd((DeadEnd)otherCross.m_Connections[otherCrossConnectionIndex].m_OtherComponent);
+                }
+
                 if (_isStart)
                 {
                     StreetComponentManager.UpdateStreetTangent1AndStartPoint(m_previewStreet, op.Position + op.Rotation * Vector3.forward * 3f, op.Position);
@@ -478,13 +486,25 @@ namespace Gameplay.Streets
             {
                 Connection oldConnection = m_previewStreet.GetStartConnection().m_OtherConnection;
                 Connection.DeCombine(m_previewStreet.GetStartConnection(), m_previewStreet.GetStartConnection().m_OtherConnection);
-                StreetComponentManager.CreateDeadEnd((Street)oldConnection.m_Owner, oldConnection.m_OwnerStart);
+                if (oldConnection.m_Owner is Street)
+                    StreetComponentManager.CreateDeadEnd((Street)oldConnection.m_Owner, oldConnection.m_OwnerStart);
+                else if (oldConnection.m_Owner is Cross)
+                {
+                    Cross c = (Cross)oldConnection.m_Owner;
+                    StreetComponentManager.CreateDeadEnd((Cross)oldConnection.m_Owner, c.GetIndexByConnection(oldConnection));
+                }
             }
             else if (m_previewStreet.m_EndConnection.m_OtherConnection != null)
             {
                 Connection oldConnection = m_previewStreet.m_EndConnection.m_OtherConnection;
                 Connection.DeCombine(m_previewStreet.m_EndConnection, m_previewStreet.m_EndConnection.m_OtherConnection);
-                StreetComponentManager.CreateDeadEnd((Street)oldConnection.m_Owner, oldConnection.m_OwnerStart);
+                if (oldConnection.m_Owner is Street)
+                    StreetComponentManager.CreateDeadEnd((Street)oldConnection.m_Owner, oldConnection.m_OwnerStart);
+                else if (oldConnection.m_Owner is Cross)
+                {
+                    Cross c = (Cross)oldConnection.m_Owner;
+                    StreetComponentManager.CreateDeadEnd((Cross)oldConnection.m_Owner, c.GetIndexByConnection(oldConnection));
+                }
             }
         }
 
@@ -517,8 +537,6 @@ namespace Gameplay.Streets
             }
             return true;
         }
-
-
 
         private void OnDestroy()
         {

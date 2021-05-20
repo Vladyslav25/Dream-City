@@ -148,6 +148,7 @@ namespace Gameplay.StreetComponents
 
             OrientedPoint op = _cross.m_OPs[_index];
             de.Init(_cross, _index, op);
+            obj.transform.parent = _cross.transform;
             return de;
         }
 

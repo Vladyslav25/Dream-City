@@ -41,6 +41,7 @@ public class CrossTool : Tool
         {
             SpawnCollCross(); //Spawn Coll Cross
             m_cross.SetOP();
+            m_cross.CreateDeadEnds();
             m_cross.SetID();
             m_crossObj = SpawnCross(); //Spawn new Preview Cross
         }

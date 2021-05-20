@@ -69,14 +69,18 @@ namespace Gameplay.StreetComponents
             SetStartConnection(new Connection(null, this, true));
 
             Vector3 start = _op.Position + (_op.Rotation * Vector3.right) * 0.5f;
-            Vector3 tangent1 = start - _op.Rotation * Vector3.forward * 0.8f;
-            Vector3 end = _op.Position + (_op.Rotation * Vector3.right) * 0.5f;
-            Vector3 tangent2 = end - _op.Rotation * Vector3.forward * 0.8f;
+            Vector3 tangent1 = start + _op.Rotation * Vector3.forward * 0.8f;
+            Vector3 end = _op.Position - (_op.Rotation * Vector3.right) * 0.5f;
+            Vector3 tangent2 = end + _op.Rotation * Vector3.forward * 0.8f;
 
             m_Spline = new Spline(
                 start, tangent1, tangent2, end, 10, this
                 );
 
+            m_MeshFilter = gameObject.AddComponent<MeshFilter>();
+            m_MeshRenderer = gameObject.AddComponent<MeshRenderer>();
+            m_MeshRenderer.material = StreetComponentManager.Instance.DeadEndMat;
+            MeshGenerator.Extrude(this);
             Connection.Combine(GetStartConnection(), _cross.m_Connections[_index]);
 
             return this;
