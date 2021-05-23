@@ -13,7 +13,6 @@ namespace Gameplay.StreetComponents
     {
         public Spline m_Spline;
         public MeshFilter m_MeshFilter;
-        public MeshRenderer m_MeshRenderer;
         public ExtrudeShapeBase m_Shape;
         public Vector3 m_MeshOffset
         {

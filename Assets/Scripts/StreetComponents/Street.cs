@@ -86,32 +86,9 @@ namespace Gameplay.StreetComponents
             }
         }
 
-        private bool m_isInvalid = true;
-
-        //Can be Invalid if Street collide with something or have an invalid Form
-        public bool m_IsInvalid
-        {
-            get
-            {
-                return m_isInvalid;
-            }
-            set
-            {
-                m_isInvalid = value;
-                //Set the Color of the Preview Street
-                if (value)
-                {
-                    StreetComponentManager.SetStreetColor(this, Color.green);
-                }
-                else
-                {
-                    StreetComponentManager.SetStreetColor(this, Color.red);
-                }
-            }
-        }
-
         //List of segment Corners (Street - Cell Collision Test)
         private List<Vector3> m_segmentsCorner = new List<Vector3>();
+        public List<StreetSegment> m_Segments = new List<StreetSegment>();
 
         /// <summary>
         /// Initialize the Street
@@ -159,7 +136,27 @@ namespace Gameplay.StreetComponents
                     StreetComponentManager.CreateDeadEnd(this, false);
             }
 
+            CreateSegments();
+
             return this;
+        }
+
+        private void CreateSegments()
+        {
+            m_Spline.UpdateOPs(this);
+            int segmentsAmount = (m_segmentsCorner.Count - 2) / 2;
+            int offset = 0;
+            for (int i = 0; i < segmentsAmount; i++)
+            {
+                Vector3[] segmentCorner = new Vector3[4];
+                segmentCorner[0] = m_segmentsCorner[offset];
+                segmentCorner[1] = m_segmentsCorner[offset + 1];
+                segmentCorner[2] = m_segmentsCorner[offset + 2];
+                segmentCorner[3] = m_segmentsCorner[offset + 3];
+                offset += 2; //Add 2 to the offset to get the last 2 Points of the last Segment as first two in the new Segment
+                StreetSegment newSegment = new StreetSegment(this, segmentCorner);
+                m_Segments.Add(newSegment);
+            }
         }
 
         public void AddSegmentsCorner(Vector3 _input)
@@ -185,24 +182,8 @@ namespace Gameplay.StreetComponents
         /// </summary>
         public void CheckCollision()
         {
-            m_Spline.UpdateOPs(this);
-            List<StreetSegment> segments = new List<StreetSegment>(); //Create a List of StreetSegments
-            int segmentsAmount = (m_segmentsCorner.Count - 2) / 2;
-            int offset = 0;
-            for (int i = 0; i < segmentsAmount; i++)
-            {
-                Vector3[] segmentCorner = new Vector3[4];
-                segmentCorner[0] = m_segmentsCorner[offset];
-                segmentCorner[1] = m_segmentsCorner[offset + 1];
-                segmentCorner[2] = m_segmentsCorner[offset + 2];
-                segmentCorner[3] = m_segmentsCorner[offset + 3];
-                offset += 2; //Add 2 to the offset to get the last 2 Points of the last Segment as first two in the new Segment
-                StreetSegment newSegment = new StreetSegment(this, segmentCorner);
-                segments.Add(newSegment);
-            }
-
             HashSet<int> StreetsToRecreate = new HashSet<int>(); //Create an HashSet of int (StreetComponent IDs) to save the Streets Grid thats needs to be recreated
-            foreach (StreetSegment segment in segments)
+            foreach (StreetSegment segment in m_Segments)
             {
                 List<int> IDs = segment.CheckCollision(GridManager.m_AllCells); //Saves the IDs of Streets which the segment collide with
                 foreach (int i in IDs)
@@ -213,7 +194,7 @@ namespace Gameplay.StreetComponents
             foreach (int i in StreetsToRecreate)
             {
                 Street s = StreetComponentManager.GetStreetByID(i);
-                GridManager.RemoveGridMesh(s); 
+                GridManager.RemoveGridMesh(s);
                 MeshGenerator.CreateGridMesh(s.m_StreetCells.Values.ToList(), s.m_GridObj.GetComponent<MeshFilter>());
             }
         }

@@ -48,12 +48,14 @@ namespace Gameplay.Tools
 
         public void SetSphereColor(Color _color)
         {
-            m_sphereRender.material.color = _color;
+            if (m_sphereRender != null)
+                m_sphereRender.material.color = _color;
         }
 
         public void SetSphereActiv(bool _input)
         {
-            m_sphereRender.enabled = _input;
+            if (m_sphereRender != null)
+                m_sphereRender.enabled = _input;
         }
 
         public void SetSpherePos(Vector3 _pos)

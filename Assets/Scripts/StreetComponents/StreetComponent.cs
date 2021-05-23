@@ -25,6 +25,32 @@ namespace Gameplay.StreetComponents
             }
         }
 
+        public MeshRenderer m_MeshRenderer;
+
+        private bool m_isInvalid = true;
+
+        //Can be Invalid if Street collide with something or have an invalid Form
+        public bool m_IsInvalid
+        {
+            get
+            {
+                return m_isInvalid;
+            }
+            set
+            {
+                m_isInvalid = value;
+                //Set the Color of the Preview Street
+                if (value)
+                {
+                    StreetComponentManager.SetStreetColor(this, Color.green);
+                }
+                else
+                {
+                    StreetComponentManager.SetStreetColor(this, Color.red);
+                }
+            }
+        }
+
         /// <summary>
         /// Give the Component a new ID if needed (Attention: Call it only for fineshed Streets, not Preview)
         /// </summary>

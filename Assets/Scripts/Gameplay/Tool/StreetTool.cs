@@ -14,8 +14,6 @@ namespace Gameplay.Streets
     {
         [SerializeField]
         Material previewStreetMaterial;
-        [SerializeField]
-        RenderTexture m_renderTexture;
 
         Vector3 pos1;
         Vector3 pos2;
@@ -34,6 +32,8 @@ namespace Gameplay.Streets
         Connection m_previewLastConnected;
 
         #region -ComputeShader Member-
+        [SerializeField]
+        RenderTexture m_renderTexture;
         [SerializeField]
         ComputeShader m_computeShader;
         ComputeBuffer m_computeBuffer;
