@@ -1101,6 +1101,10 @@ MonoBehaviour:
   m_Type: 2
   m_crossPrefab: {fileID: 8624430937793105255, guid: bcb43ae4e3a3832419062597158d303a,
     type: 3}
+  m_crossCollPrefab: {fileID: 569220522560688451, guid: 973d6a8c161a7d84486c626be144d06c,
+    type: 3}
+  m_renderTexture: {fileID: 8400000, guid: b4dff8d4d1a1a1749a0231fe9911d061, type: 2}
+  m_computeShader: {fileID: 7200000, guid: 91fd7a89392ef5146a897703306fff28, type: 3}
 --- !u!1 &1807324187
 GameObject:
   m_ObjectHideFlags: 0
