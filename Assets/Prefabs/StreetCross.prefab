@@ -151,6 +151,7 @@ MonoBehaviour:
   m_StartConnection:
     id: 0
   id: 0
+  m_MeshRenderer: {fileID: 0}
   m_coll:
   - {fileID: 9033256348815290248}
   - {fileID: 8766179988798400803}

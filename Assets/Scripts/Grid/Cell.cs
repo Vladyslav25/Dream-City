@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using Unity.Collections;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 namespace Grid
 {
@@ -104,18 +105,49 @@ namespace Grid
         public bool CheckForCollision()
         {
             List<Cell> cellToCheck = new List<Cell>();
+            List<StreetSegment> segToCheck = new List<StreetSegment>();
+            List<Cross> crossToCheck = new List<Cross>();
 
+            //Sphere Sphere
+            //Cell Cell
             foreach (Cell c in GridManager.m_AllCells)
                 if (c.ID != this.ID && MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_PosCenter, c.m_Radius))
                     cellToCheck.Add(c);
 
-            foreach (Cell c in cellToCheck)
+            //Cell Segment
+            foreach (StreetComponent comp in StreetComponentManager.GetAllStreets())
             {
-                if (MyCollision.PolyPoly(this.m_Corner, c.m_Corner))
+                if (comp.ID == this.ID) continue;
+                if (comp is Street)
                 {
-                    return true;
+                    Street s = (Street)comp;
+                    foreach (StreetSegment seg in s.m_Segments)
+                        if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, seg.m_Center, seg.m_CollisionRadius))
+                            segToCheck.Add(seg);
+                }
+                else if (comp is Cross)
+                {
+                    Cross c = (Cross)comp;
+                    if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_center, 1.7f)) ;
+                    crossToCheck.Add(c);
                 }
             }
+
+            //Poly Poly
+            //Cell Cross
+            foreach (Cross c in crossToCheck)
+                if (MyCollision.PolyPoly(this.m_Corner, c.m_corners))
+                    return true;
+
+            //Cell Segment
+            foreach (StreetSegment seg in segToCheck)
+                if (MyCollision.PolyPoly(this.m_Corner, seg.m_CornerPos))
+                    return true;
+
+            //Cell Cell
+            foreach (Cell c in cellToCheck)
+                if (MyCollision.PolyPoly(this.m_Corner, c.m_Corner))
+                    return true;
 
             return false;
         }

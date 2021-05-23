@@ -5,6 +5,7 @@ using UnityEngine;
 using Grid;
 using Unity.Jobs;
 using TMPro;
+using System.Linq;
 
 namespace Gameplay.StreetComponents
 {
@@ -38,18 +39,27 @@ namespace Gameplay.StreetComponents
         [SerializeField]
         private Material previewStreetMat;
 
-        [SerializeField]
-        private Material previewStreetMatColl;
+        public Material previewStreetMatColl;
 
         public Material DeadEndMat;
 
         public GameObject StreetCollisionParent;
 
-        private static Dictionary<int, Street> StreetComponentID_Dic = new Dictionary<int, Street>(); //Contains all Streets by ID
+        private static Dictionary<int, StreetComponent> StreetComponentID_Dic = new Dictionary<int, StreetComponent>(); //Contains all Streets by ID
 
         private static int setComponentId;
 
         public static Street GetStreetByID(int _id)
+        {
+            return GetComponentByID(_id) as Street;
+        }
+
+        public static Cross GetCrossByID(int _id)
+        {
+            return GetComponentByID(_id) as Cross;
+        }
+
+        public static StreetComponent GetComponentByID(int _id)
         {
             if (StreetComponentID_Dic.ContainsKey(_id))
             {
@@ -59,16 +69,26 @@ namespace Gameplay.StreetComponents
             return null;
         }
 
+        public static List<StreetComponent> GetAllStreets()
+        {
+            return StreetComponentID_Dic.Values.ToList();
+        }
+
+        public static void AddCross(Cross _c)
+        {
+            StreetComponentID_Dic.Add(_c.ID, _c);
+        }
+
         public static int GetNewStreetComponentID()
         {
             setComponentId++;
             return setComponentId;
         }
 
-        public static void SetStreetColor(Street _street, Color _newColor)
+        public static void SetStreetColor(StreetComponent _comp, Color _newColor)
         {
-            if (_street.m_MeshRenderer.material.color != _newColor)
-                _street.m_MeshRenderer.material.color = _newColor;
+            if (_comp.m_MeshRenderer.material.color != _newColor)
+                _comp.m_MeshRenderer.material.color = _newColor;
         }
 
         /// <summary>

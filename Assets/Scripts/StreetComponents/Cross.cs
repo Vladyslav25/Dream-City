@@ -1,7 +1,10 @@
-﻿using MeshGeneration;
+﻿using Grid;
+using MeshGeneration;
+using MyCustomCollsion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Gameplay.StreetComponents
@@ -11,7 +14,8 @@ namespace Gameplay.StreetComponents
         public List<SphereCollider> m_coll = new List<SphereCollider>(4); //assigned in Editor
         public Connection[] m_Connections = new Connection[4];
         public OrientedPoint[] m_OPs = new OrientedPoint[4];
-
+        public Vector2 m_center;
+        public Vector2[] m_corners = new Vector2[4];
 
         public Cross Init(Connection _otherConn, bool _needID = false)
         {
@@ -20,6 +24,8 @@ namespace Gameplay.StreetComponents
             m_Connections[1] = new Connection(null, this, false);
             m_Connections[2] = new Connection(null, this, false);
             m_Connections[3] = new Connection(null, this, false);
+            m_MeshRenderer = GetComponent<MeshRenderer>();
+            if (m_MeshRenderer == null) Debug.LogError("No MeshRender found in Cross: " + ID);
 
             return this;
         }
@@ -105,6 +111,47 @@ namespace Gameplay.StreetComponents
         public override Connection GetStartConnection()
         {
             return m_Connections[0];
+        }
+
+        public void CheckGridCollision()
+        {
+            m_center = new Vector2(transform.position.x, transform.position.z);
+            m_corners[0] = m_center + new Vector2(1.2f, 1.2f);
+            m_corners[1] = m_center + new Vector2(-1.2f, 1.2f);
+            m_corners[2] = m_center + new Vector2(-1.2f, -1.2f);
+            m_corners[3] = m_center + new Vector2(1.2f, -1.2f);
+
+            HashSet<int> StreetsToRecreate = new HashSet<int>();
+            List<Cell> PolyPolyCheckList = new List<Cell>();
+            List<Cell> CellsToCheck = GridManager.m_AllCells;
+
+            //Sphere Sphere Coll
+            for (int i = 0; i < CellsToCheck.Count; i++)
+            {
+                if (MyCollision.SphereSphere(m_center, 1.7f, CellsToCheck[i].m_PosCenter, CellsToCheck[i].CellSquareSize))
+                {
+                    PolyPolyCheckList.Add(CellsToCheck[i]);
+                }
+            }
+
+            //Poly Poly Coll
+            for (int i = 0; i < PolyPolyCheckList.Count; i++)
+            {
+                if (MyCollision.PolyPoly(PolyPolyCheckList[i].m_Corner, m_corners))
+                {
+                    PolyPolyCheckList[i].Delete();
+                    int id = PolyPolyCheckList[i].m_Street.ID;
+                    StreetsToRecreate.Add(id);
+                }
+            }
+
+            //Recreate Grid
+            foreach (int i in StreetsToRecreate)
+            {
+                Street s = StreetComponentManager.GetStreetByID(i);
+                GridManager.RemoveGridMesh(s);
+                MeshGenerator.CreateGridMesh(s.m_StreetCells.Values.ToList(), s.m_GridObj.GetComponent<MeshFilter>());
+            }
         }
 
         private void OnDrawGizmosSelected()
