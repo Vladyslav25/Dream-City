@@ -56,9 +56,9 @@ namespace Grid
         private float m_TEnd;
         private float m_Radius;
         public bool isValid;
-        public Vector2 pos;
+        public Vector2Int pos;
 
-        public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide, Vector2 _pos)
+        public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide, Vector2Int _pos)
         {
             m_CellAssignment = 0;
             m_Street = _street;

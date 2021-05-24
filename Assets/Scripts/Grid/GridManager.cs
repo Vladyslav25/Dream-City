@@ -105,7 +105,8 @@ namespace Grid
                 }
             }
 
-            MeshGenerator.CreateGridMesh(_street.m_StreetCells.Values.ToList(), mf);
+            //MeshGenerator.CreateGridMesh(_street.m_StreetCells.Values.ToList(), mf);
+            MeshGenerator.CreateGrid(_street, mf);
             m_AllCells.AddRange(output);
             _street.m_GridObj = obj;
         }
