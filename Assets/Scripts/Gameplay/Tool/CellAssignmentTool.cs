@@ -49,6 +49,7 @@ namespace Gameplay.Tools
                             materialIndex += c.m_Street.m_RowAmount + 1;
 
                         ChanageMaterial(currendAssignment, materialIndex, c.m_Street.m_GridRenderer);
+                        c.m_Street.ChangeCellAssigtment(c.pos, currendAssignment);
                     }
                 }
             }

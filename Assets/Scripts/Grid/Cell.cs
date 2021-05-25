@@ -21,7 +21,7 @@ namespace Grid
         INDUSTRY
     }
 
-    public struct Cell
+    public class Cell
     {
         public Vector3 m_WorldPosCenter { get; private set; }
 
