@@ -86,14 +86,13 @@ namespace MeshGeneration
         //}
         #endregion
 
-        public static MeshFilter CreateGrid(Street _s, MeshFilter _mf, MeshRenderer _mr)
+        public static MeshFilter CreateGridMesh(Street _s, MeshFilter _mf, MeshRenderer _mr)
         {
             List<Cell> cells = _s.m_StreetCells.Values.ToList();
             Vector3[] vertices = new Vector3[cells.Count * 4];
             Mesh m = new Mesh();
-            int maxRow = (int)_s.m_StreetCells.Keys.Max(v => v.y);
+            int maxRow = _s.m_RowAmount;
             m.subMeshCount = (maxRow + 1) * 2;
-            Debug.Log(m.subMeshCount);
             for (int a = 0; a < cells.Count; a++)
             {
                 Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(cells[a].m_Orientation));
@@ -147,17 +146,21 @@ namespace MeshGeneration
 
             for (int i = 0; i < indiceDic.Keys.Count; i++) //foreach subMeshIndex, set Indices
             {
-                m.SetIndices(indiceDic[i], MeshTopology.Triangles, i);
+                if (indiceDic.ContainsKey(i))
+                    m.SetIndices(indiceDic[i], MeshTopology.Triangles, i);
             }
             _mf.sharedMesh = m;
 
-            //Create Material Default
-            Material[] materials = new Material[m.subMeshCount];
-            for (int i = 0; i < materials.Length; i++)
+            if (_mr.sharedMaterials.Length == 1)
             {
-                materials[i] = _mr.material;
+                //Create Material Default
+                Material[] materials = new Material[m.subMeshCount];
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    materials[i] = _mr.sharedMaterial;
+                }
+                _mr.materials = materials;
             }
-            _mr.materials = materials;
 
             return _mf;
         }

@@ -57,7 +57,11 @@ namespace Gameplay.StreetComponents
 
         public GameObject m_GridObj; //The Grid Parent Gameobject
 
+        public MeshRenderer m_GridRenderer;
+
         private Street m_collisionStreet; //Ref to the Collision Street GameObject
+
+        public int m_RowAmount;
 
         //Check if the Start can be connected to a new Street
         public bool m_StartIsConnectable
@@ -137,7 +141,6 @@ namespace Gameplay.StreetComponents
             }
 
             CreateSegments();
-
             return this;
         }
 
@@ -195,7 +198,7 @@ namespace Gameplay.StreetComponents
             {
                 Street s = StreetComponentManager.GetStreetByID(i);
                 GridManager.RemoveGridMesh(s);
-                MeshGenerator.CreateGrid(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridObj.GetComponent<MeshRenderer>());
+                MeshGenerator.CreateGridMesh(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridRenderer);
             }
         }
 
@@ -235,6 +238,12 @@ namespace Gameplay.StreetComponents
             Gizmos.color = Color.black;
             Gizmos.DrawWireSphere(m_Spline.Tangent1Pos, 0.5f);
             Gizmos.DrawWireSphere(m_Spline.Tangent2Pos, 0.5f);
+
+            Gizmos.color = Color.red;
+            foreach (Cell c in GridManager.m_FirstGenCells)
+            {
+                Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius);
+            }
 
             if (drawGridNormals)
             {

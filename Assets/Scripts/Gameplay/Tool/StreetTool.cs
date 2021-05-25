@@ -44,9 +44,8 @@ namespace Gameplay.Streets
         int m_widthIndex;
         #endregion
 
-        private new void Awake()
+        private void Awake()
         {
-            base.Awake();
             m_computeBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Structured);
             m_pixelCount = new int[1];
             m_kernelIndex = m_computeShader.FindKernel("CSMain");
@@ -60,12 +59,12 @@ namespace Gameplay.Streets
         {
             if (Input.GetKeyUp(KeyCode.C)) //Change to Curve Tool
             {
-                SetSphereColor(Color.blue);
+                Cursor.SetColor(Color.blue);
                 isCurrendToolLine = false;
             }
             if (Input.GetKeyUp(KeyCode.L)) //Change to Line Tool
             {
-                SetSphereColor(Color.red);
+                Cursor.SetColor(Color.red);
                 isCurrendToolLine = true;
             }
 
@@ -169,13 +168,14 @@ namespace Gameplay.Streets
         public override void ToolEnd()
         {
             ResetTool();
-            SetSphereActiv(false);
+            Cursor.SetActiv(false);
         }
 
         public override void ToolStart()
         {
-            base.ToolStart();
-            SetSphereActiv(true);
+            Cursor.SetActiv(true);
+            Cursor.SetColor(Color.blue);
+            isCurrendToolLine = false;
         }
 
         private void ResetTool()
@@ -190,7 +190,7 @@ namespace Gameplay.Streets
             isTangent1Locked = false;
             isTangent2Locked = false;
             Destroy(m_previewStreet?.gameObject); //Destroy PreviewStreet
-            Destroy(m_previewStreet?.GetCollisionStreet().gameObject); //Destroy CollStreet
+            Destroy(m_previewStreet?.GetCollisionStreet()?.gameObject); //Destroy CollStreet
             m_previewStreet = null;
         }
 
@@ -265,7 +265,7 @@ namespace Gameplay.Streets
             if (validCollider.Count == 0) return null; //return null if no valid Collider was found in the Range
 
             SphereCollider closestCollider = GetClosesetCollider(validCollider, _hitPoint); //Look for the closest GameObject of all valid GameObjects
-            SetSpherePos(closestCollider.transform.position + closestCollider.transform.rotation * closestCollider.center); //Set the Sphere to the Pos of the closest valid Street GameObject
+            Cursor.SetPosition(closestCollider.transform.position + closestCollider.transform.rotation * closestCollider.center); //Set the Sphere to the Pos of the closest valid Street GameObject
             tmpStreet = closestCollider.GetComponentInParent<Street>();
             tmpCross = closestCollider.GetComponentInParent<Cross>();
             Connection conn = null;

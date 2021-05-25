@@ -1,10 +1,7 @@
 ﻿using Grid;
 using MeshGeneration;
 using MyCustomCollsion;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Gameplay.StreetComponents
@@ -150,7 +147,7 @@ namespace Gameplay.StreetComponents
             {
                 Street s = StreetComponentManager.GetStreetByID(i);
                 GridManager.RemoveGridMesh(s);
-                MeshGenerator.CreateGrid(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridObj.GetComponent<MeshRenderer>());
+                MeshGenerator.CreateGridMesh(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridRenderer);
             }
         }
 

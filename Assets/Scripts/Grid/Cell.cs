@@ -54,7 +54,7 @@ namespace Grid
         private int m_generation;
         private float m_TStart;
         private float m_TEnd;
-        private float m_Radius;
+        public float m_Radius;
         public bool isValid;
         public Vector2Int pos;
 
@@ -115,7 +115,7 @@ namespace Grid
                     cellToCheck.Add(c);
 
             //Cell Segment
-            foreach (StreetComponent comp in StreetComponentManager.GetAllStreets())
+            foreach (StreetComponent comp in StreetComponentManager.GetAllStreetComponents())
             {
                 if (comp.ID == this.ID) continue;
                 if (comp is Street)
@@ -252,7 +252,6 @@ namespace Grid
 
             }
         }
-
     }
 }
 

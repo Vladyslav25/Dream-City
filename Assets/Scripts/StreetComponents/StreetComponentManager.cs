@@ -69,7 +69,7 @@ namespace Gameplay.StreetComponents
             return null;
         }
 
-        public static List<StreetComponent> GetAllStreets()
+        public static List<StreetComponent> GetAllStreetComponents()
         {
             return StreetComponentID_Dic.Values.ToList();
         }
