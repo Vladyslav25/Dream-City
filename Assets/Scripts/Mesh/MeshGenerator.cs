@@ -86,15 +86,14 @@ namespace MeshGeneration
         //}
         #endregion
 
-        public static MeshFilter CreateGrid(Street _s, MeshFilter _mf, MeshRenderer _mr = null)
+        public static MeshFilter CreateGrid(Street _s, MeshFilter _mf, MeshRenderer _mr)
         {
             List<Cell> cells = _s.m_StreetCells.Values.ToList();
             Vector3[] vertices = new Vector3[cells.Count * 4];
-            int[] indices = new int[cells.Count * 6];
             Mesh m = new Mesh();
             int maxRow = (int)_s.m_StreetCells.Keys.Max(v => v.y);
-            m.subMeshCount = maxRow + 1;
-            Debug.Log(maxRow);
+            m.subMeshCount = (maxRow + 1) * 2;
+            Debug.Log(m.subMeshCount);
             for (int a = 0; a < cells.Count; a++)
             {
                 Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(cells[a].m_Orientation));
@@ -105,46 +104,61 @@ namespace MeshGeneration
             }
             m.SetVertices(vertices);
 
+            Dictionary<int, List<int>> indiceDic = new Dictionary<int, List<int>>(); //subMeshIndex, indices
+
             for (int a = 0; a < cells.Count; a++)
             {
-                int ti = 0;
                 int offset = 4 * a;
+                int[] indices = new int[6];
                 if (cells[a].m_isLeft)
                 {
-                    indices[a * 6 + ti] = 0 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 3 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 1 + offset;
-                    ti++;
+                    indices[0] = 0 + offset;
+                    indices[1] = 3 + offset;
+                    indices[2] = 1 + offset;
 
-                    indices[a * 6 + ti] = 0 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 2 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 3 + offset;
+                    indices[3] = 0 + offset;
+                    indices[4] = 2 + offset;
+                    indices[5] = 3 + offset;
+
+                    //031 023
                 }
                 else
                 {
-                    indices[a * 6 + ti] = 0 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 3 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 2 + offset;
-                    ti++;
+                    indices[0] = 0 + offset;
+                    indices[1] = 3 + offset;
+                    indices[2] = 2 + offset;
 
-                    indices[a * 6 + ti] = 0 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 1 + offset;
-                    ti++;
-                    indices[a * 6 + ti] = 3 + offset;
+                    indices[3] = 0 + offset;
+                    indices[4] = 1 + offset;
+                    indices[5] = 3 + offset;
+
+                    //032   013
                 }
+
                 int subMeshIndex = cells[a].pos.y;
-                Debug.Log("Set SubMeshIndex: " + subMeshIndex);
-                m.SetIndices(indices, MeshTopology.Triangles, subMeshIndex);
+                if (cells[a].pos.x < 0)
+                    subMeshIndex += maxRow + 1;
+
+                if (!indiceDic.ContainsKey(subMeshIndex))
+                    indiceDic[subMeshIndex] = new List<int>();
+
+                indiceDic[subMeshIndex].AddRange(indices);
             }
-            //m.SetIndices(indices, MeshTopology.Triangles, 0); //TODO: Set Submesh Index
+
+            for (int i = 0; i < indiceDic.Keys.Count; i++) //foreach subMeshIndex, set Indices
+            {
+                m.SetIndices(indiceDic[i], MeshTopology.Triangles, i);
+            }
             _mf.sharedMesh = m;
+
+            //Create Material Default
+            Material[] materials = new Material[m.subMeshCount];
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = _mr.material;
+            }
+            _mr.materials = materials;
+
             return _mf;
         }
 

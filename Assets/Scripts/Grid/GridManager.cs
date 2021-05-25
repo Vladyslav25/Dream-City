@@ -42,7 +42,7 @@ namespace Grid
         static List<Task<Cell>> listTask = new List<Task<Cell>>();
         static List<Cell> output = new List<Cell>();
         public static List<Cell> m_AllCells = new List<Cell>();
-        public Material White;
+        public Material CellDefault;
 
         public static IEnumerator CheckForFinish(Street _street)
         {
@@ -62,14 +62,14 @@ namespace Grid
             GameObject obj = new GameObject("Grid");
             MeshFilter mf = obj.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.AddComponent<MeshRenderer>();
-            obj.transform.position = Vector3.zero;
+            obj.transform.position = new Vector3(0, 0.01f, 0);
             obj.transform.parent = _street.transform;
 
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
             mr.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-            mr.material = Instance.White;
+            mr.material = Instance.CellDefault;
 
             foreach (Cell c in output)
             {
@@ -105,8 +105,7 @@ namespace Grid
                 }
             }
 
-            //MeshGenerator.CreateGridMesh(_street.m_StreetCells.Values.ToList(), mf);
-            MeshGenerator.CreateGrid(_street, mf);
+            MeshGenerator.CreateGrid(_street, mf, mr);
             m_AllCells.AddRange(output);
             _street.m_GridObj = obj;
         }
