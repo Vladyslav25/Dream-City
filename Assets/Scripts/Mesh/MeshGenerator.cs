@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine;
 using Grid;
 using Gameplay.StreetComponents;
+using System.Linq;
 
 namespace MeshGeneration
 {
@@ -30,68 +31,146 @@ namespace MeshGeneration
         }
         #endregion
 
-        /// <summary>
-        /// Create the Mesh for the Grid
-        /// </summary>
-        /// <param name="_cellList">List of all Cells</param>
-        /// <param name="_mf">The MeshFilter of the GameObject where to put the Mesh in</param>
-        /// <returns>Return the MeshFilter with the Mesh</returns>
-        public static MeshFilter CreateGridMesh(List<Cell> _cellList, MeshFilter _mf)
-        {
-            List<Mesh> allMeshes = new List<Mesh>();
-            List<Matrix4x4> allTransform = new List<Matrix4x4>();
+        #region -Old-
+        ///// <summary>
+        ///// Create the Mesh for the Grid
+        ///// </summary>
+        ///// <param name="_cellList">List of all Cells</param>
+        ///// <param name="_mf">The MeshFilter of the GameObject where to put the Mesh in</param>
+        ///// <returns>Return the MeshFilter with the Mesh</returns>
+        //public static MeshFilter CreateGridMesh(List<Cell> _cellList, MeshFilter _mf)
+        //{
+        //    List<Mesh> allMeshes = new List<Mesh>();
+        //    List<Matrix4x4> allTransform = new List<Matrix4x4>();
+        //
+        //    for (int r = 0; r < _cellList.Count; r++)
+        //    {
+        //        Mesh newMesh = new Mesh();
+        //        Vector3[] verts = new Vector3[4];
+        //        Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cellList[r].m_Orientation));
+        //        for (int i = 0; i < 4; i++)
+        //        {
+        //            verts[i] = _cellList[r].m_WorldCorner[i] - _cellList[r].m_WorldPosCenter;
+        //            verts[i] = rotationMatrix * verts[i];
+        //        }
+        //
+        //        newMesh.vertices = verts;
+        //        if (_cellList[r].m_isLeft)
+        //            newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
+        //        else
+        //            newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
+        //
+        //        allMeshes.Add(newMesh);
+        //        Matrix4x4 mat = Matrix4x4.TRS(_cellList[r].m_WorldPosCenter, _cellList[r].m_Orientation, Vector3.one);
+        //        allTransform.Add(mat);
+        //    }
+        //
+        //    _mf.mesh = CombineMeshes(allMeshes, allTransform);
+        //    return _mf;
+        //}
+        //
+        //private static Mesh CombineMeshes(List<Mesh> _meshes, List<Matrix4x4> _transforms)
+        //{
+        //    CombineInstance[] combineArr = new CombineInstance[_meshes.Count];
+        //
+        //    for (int i = 0; i < _meshes.Count; i++)
+        //    {
+        //        combineArr[i].mesh = _meshes[i];
+        //        combineArr[i].transform = _transforms[i];
+        //        //combineArr[i].subMeshIndex = i; //TODO: Give Rows own SubMesh to change color / Material
+        //    }
+        //
+        //    Mesh mesh = new Mesh();
+        //    mesh.CombineMeshes(combineArr, true, true);
+        //    return mesh;
+        //}
+        #endregion
 
-            for (int r = 0; r < _cellList.Count; r++)
+        public static MeshFilter CreateGrid(Street _s, MeshFilter _mf, MeshRenderer _mr)
+        {
+            List<Cell> cells = _s.m_StreetCells.Values.ToList();
+            Vector3[] vertices = new Vector3[cells.Count * 4];
+            Mesh m = new Mesh();
+            int maxRow = (int)_s.m_StreetCells.Keys.Max(v => v.y);
+            m.subMeshCount = (maxRow + 1) * 2;
+            Debug.Log(m.subMeshCount);
+            for (int a = 0; a < cells.Count; a++)
             {
-                Mesh newMesh = new Mesh();
-                Vector3[] verts = new Vector3[4];
-                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cellList[r].m_Orientation));
+                Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(cells[a].m_Orientation));
                 for (int i = 0; i < 4; i++)
                 {
-                    verts[i] = _cellList[r].m_WorldCorner[i] - _cellList[r].m_WorldPosCenter;
-                    verts[i] = rotationMatrix * verts[i];
+                    vertices[i + a * 4] = cells[a].m_WorldCorner[i];
+                }
+            }
+            m.SetVertices(vertices);
+
+            Dictionary<int, List<int>> indiceDic = new Dictionary<int, List<int>>(); //subMeshIndex, indices
+
+            for (int a = 0; a < cells.Count; a++)
+            {
+                int offset = 4 * a;
+                int[] indices = new int[6];
+                if (cells[a].m_isLeft)
+                {
+                    indices[0] = 0 + offset;
+                    indices[1] = 3 + offset;
+                    indices[2] = 1 + offset;
+
+                    indices[3] = 0 + offset;
+                    indices[4] = 2 + offset;
+                    indices[5] = 3 + offset;
+
+                    //031 023
+                }
+                else
+                {
+                    indices[0] = 0 + offset;
+                    indices[1] = 3 + offset;
+                    indices[2] = 2 + offset;
+
+                    indices[3] = 0 + offset;
+                    indices[4] = 1 + offset;
+                    indices[5] = 3 + offset;
+
+                    //032   013
                 }
 
-                newMesh.vertices = verts;
-                if (_cellList[r].m_isLeft)
-                    newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
-                else
-                    newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
+                int subMeshIndex = cells[a].pos.y;
+                if (cells[a].pos.x < 0)
+                    subMeshIndex += maxRow + 1;
 
-                allMeshes.Add(newMesh);
-                Matrix4x4 mat = Matrix4x4.TRS(_cellList[r].m_WorldPosCenter, _cellList[r].m_Orientation, Vector3.one);
-                allTransform.Add(mat);
+                if (!indiceDic.ContainsKey(subMeshIndex))
+                    indiceDic[subMeshIndex] = new List<int>();
+
+                indiceDic[subMeshIndex].AddRange(indices);
             }
 
-            _mf.mesh = CombineMeshes(allMeshes, allTransform);
-            return _mf;
-        }
-
-        private static Mesh CombineMeshes(List<Mesh> _meshes, List<Matrix4x4> _transforms)
-        {
-            CombineInstance[] combineArr = new CombineInstance[_meshes.Count];
-
-            for (int i = 0; i < _meshes.Count; i++)
+            for (int i = 0; i < indiceDic.Keys.Count; i++) //foreach subMeshIndex, set Indices
             {
-                combineArr[i].mesh = _meshes[i];
-                combineArr[i].transform = _transforms[i];
-                //combineArr[i].subMeshIndex = i; //TODO: Give Rows own SubMesh to change color / Material
+                m.SetIndices(indiceDic[i], MeshTopology.Triangles, i);
             }
+            _mf.sharedMesh = m;
 
-            Mesh mesh = new Mesh();
-            mesh.CombineMeshes(combineArr, true, true);
-            return mesh;
+            //Create Material Default
+            Material[] materials = new Material[m.subMeshCount];
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = _mr.material;
+            }
+            _mr.materials = materials;
+
+            return _mf;
         }
 
 
         public static void Extrude(SplineStreetComonents _comp)
         {
             ExtrudeShapeBase Shape = _comp.m_Shape;
-            if(Shape == null)
+            if (Shape == null)
                 return;
 
             Spline Spline = _comp.m_Spline;
-            if (Spline == null) 
+            if (Spline == null)
                 return;
 
             int vertsInShape = Shape.verts.Length;

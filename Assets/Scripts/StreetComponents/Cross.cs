@@ -150,7 +150,7 @@ namespace Gameplay.StreetComponents
             {
                 Street s = StreetComponentManager.GetStreetByID(i);
                 GridManager.RemoveGridMesh(s);
-                MeshGenerator.CreateGridMesh(s.m_StreetCells.Values.ToList(), s.m_GridObj.GetComponent<MeshFilter>());
+                MeshGenerator.CreateGrid(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridObj.GetComponent<MeshRenderer>());
             }
         }
 
