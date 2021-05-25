@@ -42,6 +42,7 @@ namespace Grid
         static List<Task<Cell>> listTask = new List<Task<Cell>>();
         static List<Cell> output = new List<Cell>();
         public static List<Cell> m_AllCells = new List<Cell>();
+        public static List<Cell> m_FirstGenCells = new List<Cell>();
         public Material CellDefault;
 
         public static IEnumerator CheckForFinish(Street _street)
@@ -62,7 +63,7 @@ namespace Grid
             GameObject obj = new GameObject("Grid");
             MeshFilter mf = obj.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.AddComponent<MeshRenderer>();
-            obj.transform.position = new Vector3(0, 0.01f, 0);
+            obj.transform.position = new Vector3(0, 0.1f, 0);
             obj.transform.parent = _street.transform;
 
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -71,10 +72,6 @@ namespace Grid
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             mr.material = Instance.CellDefault;
 
-            foreach (Cell c in output)
-            {
-                _street.m_StreetCells.Add(c.pos, c);
-            }
 
             //Remove Cells if Generation before is missing
             for (int i = 0; i < output.Count; i++)
@@ -105,9 +102,17 @@ namespace Grid
                 }
             }
 
-            MeshGenerator.CreateGrid(_street, mf, mr);
+            foreach (Cell c in output)
+            {
+                _street.m_StreetCells.Add(c.pos, c);
+                if (c.pos.x == 1 || c.pos.x == -1)
+                    m_FirstGenCells.Add(c);
+            }
+            _street.m_RowAmount = (int)_street.m_StreetCells.Keys.Max(v => v.y);
+            MeshGenerator.CreateGridMesh(_street, mf, mr);
             m_AllCells.AddRange(output);
             _street.m_GridObj = obj;
+            _street.m_GridRenderer = mr;
         }
 
         public static List<Cell> CreateGrid(Street _street)

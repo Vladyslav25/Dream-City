@@ -57,6 +57,10 @@ namespace Gameplay.Tools
             {
                 ChangeTool(TOOLTYPE.CROSS);
             }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                ChangeTool(TOOLTYPE.ASSIGNMENT);
+            }
         }
 
         public void ChangeTool(TOOLTYPE _tool)

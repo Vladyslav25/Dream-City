@@ -31,9 +31,8 @@ public class CrossTool : Tool
     int m_widthIndex;
     #endregion
 
-    private new void Awake()
+    private void Awake()
     {
-        base.Awake();
         m_computeBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Structured);
         m_pixelCount = new int[1];
         m_kernelIndex = m_computeShader.FindKernel("CSMain");
@@ -44,7 +43,7 @@ public class CrossTool : Tool
 
     public override void ToolStart()
     {
-        SetSphereActiv(false);
+        Cursor.SetActiv(false);
         m_rotation = Quaternion.identity;
         SpawnCross();
     }

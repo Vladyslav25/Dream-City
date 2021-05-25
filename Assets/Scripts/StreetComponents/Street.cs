@@ -57,7 +57,11 @@ namespace Gameplay.StreetComponents
 
         public GameObject m_GridObj; //The Grid Parent Gameobject
 
+        public MeshRenderer m_GridRenderer;
+
         private Street m_collisionStreet; //Ref to the Collision Street GameObject
+
+        public int m_RowAmount;
 
         //Check if the Start can be connected to a new Street
         public bool m_StartIsConnectable
@@ -137,7 +141,6 @@ namespace Gameplay.StreetComponents
             }
 
             CreateSegments();
-
             return this;
         }
 
@@ -195,7 +198,7 @@ namespace Gameplay.StreetComponents
             {
                 Street s = StreetComponentManager.GetStreetByID(i);
                 GridManager.RemoveGridMesh(s);
-                MeshGenerator.CreateGrid(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridObj.GetComponent<MeshRenderer>());
+                MeshGenerator.CreateGridMesh(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridRenderer);
             }
         }
 
@@ -230,11 +233,40 @@ namespace Gameplay.StreetComponents
 
         }
 
+        public void ChangeCellAssigtment(Vector2Int _cellPosStart, CellAssignment _assignment)
+        {
+            Vector2Int pos = _cellPosStart;
+            while (m_StreetCells.ContainsKey(pos))
+            {
+                Debug.Log(pos);
+                m_StreetCells[pos].SetAssignment(_assignment);
+                pos.x += _cellPosStart.x;       //pos.x = -1 change to pos.x = -2 and pos.x = 1 change to pos.x = 2
+            }
+        }
+
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.black;
-            Gizmos.DrawWireSphere(m_Spline.Tangent1Pos, 0.5f);
-            Gizmos.DrawWireSphere(m_Spline.Tangent2Pos, 0.5f);
+            foreach (Cell c in m_StreetCells.Values)
+            {
+                switch (c.m_CellAssignment)
+                {
+                    case CellAssignment.NONE:
+                        Gizmos.color = Color.grey;
+                        break;
+                    case CellAssignment.LIVING:
+                        Gizmos.color = Color.green;
+                        break;
+                    case CellAssignment.BUSINESS:
+                        Gizmos.color = Color.blue;
+                        break;
+                    case CellAssignment.INDUSTRY:
+                        Gizmos.color = Color.yellow;
+                        break;
+                    default:
+                        break;
+                }
+                Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius);
+            }
 
             if (drawGridNormals)
             {

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay.Tools
@@ -13,16 +11,6 @@ namespace Gameplay.Tools
         [HideInInspector]
         protected bool m_validHit;
 
-        private GameObject m_sphere;
-
-        private MeshRenderer m_sphereRender;
-
-        public void Awake()
-        {
-            m_sphere = Instantiate(ToolManager.Instance.m_spherePrefab);
-            m_sphereRender = m_sphere.GetComponent<MeshRenderer>();
-        }
-
         public void Update()
         {
             //Raycast from Mouse to Playground
@@ -33,7 +21,7 @@ namespace Gameplay.Tools
             {
                 Vector3 hitPoint = hit.point;
                 hitPoint.y = 0; //Set the hitpoint to y = 0 so collider if the Street get ignored
-                m_sphere.transform.position = hitPoint; //Set the Sphere for Debug and see possible combinations
+                Cursor.SetPosition(hitPoint); //Set the Sphere for Debug and see possible combinations
                 m_hitPos = hitPoint;
                 m_validHit = true;
                 ToolUpdate();
@@ -44,23 +32,6 @@ namespace Gameplay.Tools
                 //Debug.LogError("Tool: " + m_Type + " faild Raycast: Mouse -> Screen -> Ground");
             }
 
-        }
-
-        public void SetSphereColor(Color _color)
-        {
-            if (m_sphereRender != null)
-                m_sphereRender.material.color = _color;
-        }
-
-        public void SetSphereActiv(bool _input)
-        {
-            if (m_sphereRender != null)
-                m_sphereRender.enabled = _input;
-        }
-
-        public void SetSpherePos(Vector3 _pos)
-        {
-            m_sphere.transform.position = _pos;
         }
 
         /// <summary>
@@ -119,6 +90,6 @@ namespace Gameplay.Tools
         NONE,
         STREET,
         CROSS,
-        AREA
+        ASSIGNMENT
     }
 }
