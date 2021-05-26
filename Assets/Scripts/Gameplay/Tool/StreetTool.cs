@@ -7,6 +7,7 @@ using System;
 using Gameplay.Tools;
 using Gameplay.StreetComponents;
 using UnityEditor.IMGUI.Controls;
+using UI;
 
 namespace Gameplay.Streets
 {
@@ -59,13 +60,11 @@ namespace Gameplay.Streets
         {
             if (Input.GetKeyUp(KeyCode.C)) //Change to Curve Tool
             {
-                Cursor.SetColor(Color.blue);
-                isCurrendToolLine = false;
+                SetCurveLineTool(false);
             }
-            if (Input.GetKeyUp(KeyCode.L)) //Change to Line Tool
+            else if (Input.GetKeyUp(KeyCode.L)) //Change to Line Tool
             {
-                Cursor.SetColor(Color.red);
-                isCurrendToolLine = true;
+                SetCurveLineTool(true);
             }
 
             if (m_validHit) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
@@ -192,6 +191,20 @@ namespace Gameplay.Streets
             Destroy(m_previewStreet?.gameObject); //Destroy PreviewStreet
             Destroy(m_previewStreet?.GetCollisionStreet()?.gameObject); //Destroy CollStreet
             m_previewStreet = null;
+        }
+
+        public void SetCurveLineTool(bool _setLine)
+        {
+            if (_setLine)
+            {
+                Cursor.SetColor(Color.red);
+                isCurrendToolLine = true;
+            }
+            else
+            {
+                Cursor.SetColor(Color.blue);
+                isCurrendToolLine = false;
+            }
         }
 
         /// <summary>
@@ -418,10 +431,8 @@ namespace Gameplay.Streets
 
                         //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
                         if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
-                        {
                             StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
-                            Debug.Log("Remove DeadEnd");
-                        }
+
                         CombinePreview(otherStreet, true, false);
 
                         return;

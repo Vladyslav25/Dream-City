@@ -1,4 +1,5 @@
-﻿using Gameplay.Tools;
+﻿using Gameplay.Streets;
+using Gameplay.Tools;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,19 +64,41 @@ namespace Gameplay.Tools
             }
         }
 
+        public StreetTool GetStreetTool()
+        {
+            return m_dic_TypeTool[TOOLTYPE.STREET] as StreetTool;
+        }
+
+        public CellAssignmentTool GetCellAssignmentTool()
+        {
+            return m_dic_TypeTool[TOOLTYPE.ASSIGNMENT] as CellAssignmentTool;
+        }
+
+        public CrossTool GetCrossTool()
+        {
+            return m_dic_TypeTool[TOOLTYPE.CROSS] as CrossTool;
+
+        }
+
         public void ChangeTool(TOOLTYPE _tool)
         {
-            if (m_dic_TypeTool.ContainsKey(_tool))
+
+
+            if (m_CurrendTool != null)
             {
-                if (m_CurrendTool != null)
-                {
-                    m_CurrendTool.ToolEnd();
-                    m_CurrendTool.enabled = false;
-                }
-                m_CurrendTool = m_dic_TypeTool[_tool];
-                m_CurrendTool.enabled = true;
-                m_CurrendTool.ToolStart();
+                m_CurrendTool.ToolEnd();
+                m_CurrendTool.enabled = false;
             }
+            if (m_dic_TypeTool.ContainsKey(_tool))
+                m_CurrendTool = m_dic_TypeTool[_tool];
+            else
+            {
+                m_CurrendTool = null;
+                return;
+            }
+            m_CurrendTool.enabled = true;
+            m_CurrendTool.ToolStart();
+
         }
     }
 }
