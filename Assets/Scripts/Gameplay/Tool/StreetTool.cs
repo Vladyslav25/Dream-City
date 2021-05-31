@@ -61,10 +61,12 @@ namespace Gameplay.Streets
             if (Input.GetKeyUp(KeyCode.C)) //Change to Curve Tool
             {
                 SetCurveLineTool(false);
+                UIManager.Instance.HighlightButton(UIManager.Instance.CurveButton);
             }
             else if (Input.GetKeyUp(KeyCode.L)) //Change to Line Tool
             {
                 SetCurveLineTool(true);
+                UIManager.Instance.HighlightButton(UIManager.Instance.LineButton);
             }
 
             if (m_validHit) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
@@ -106,7 +108,7 @@ namespace Gameplay.Streets
                     }
                 }
 
-                if (Input.GetKeyUp(KeyCode.Escape))
+                if (Input.GetMouseButtonDown(1))
                 {
                     if (m_previewStreet != null)
                     {
@@ -175,6 +177,7 @@ namespace Gameplay.Streets
             Cursor.SetActiv(true);
             Cursor.SetColor(Color.blue);
             isCurrendToolLine = false;
+            UIManager.Instance.SetActivStreetType();
         }
 
         private void ResetTool()

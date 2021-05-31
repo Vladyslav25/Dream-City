@@ -3,6 +3,7 @@ using Grid;
 using MyCustomCollsion;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -26,6 +27,8 @@ namespace Gameplay.Tools
             SetMaterialAlpha(m_IndustriegebietMat, 1f);
 
             m_CurrendAssignment = CellAssignment.LIVING;
+
+            UIManager.Instance.SetActivAssignment();
         }
 
         public override void ToolEnd()
@@ -55,11 +58,20 @@ namespace Gameplay.Tools
             }
 
             if (Input.GetKeyDown(KeyCode.W))
+            {
                 m_CurrendAssignment = CellAssignment.LIVING;
+                UIManager.Instance.HighlightButton(UIManager.Instance.LivingButton);
+            }
             if (Input.GetKeyDown(KeyCode.G))
+            {
                 m_CurrendAssignment = CellAssignment.BUSINESS;
+                UIManager.Instance.HighlightButton(UIManager.Instance.BusinessButton);
+            }
             if (Input.GetKeyDown(KeyCode.I))
+            {
                 m_CurrendAssignment = CellAssignment.INDUSTRY;
+                UIManager.Instance.HighlightButton(UIManager.Instance.IndustryButton);
+            }
         }
 
         public void ChanageMaterial(CellAssignment _assignment, int _index, MeshRenderer _mr)

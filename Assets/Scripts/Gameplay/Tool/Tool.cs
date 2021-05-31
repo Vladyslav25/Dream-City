@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Gameplay.Tools
 {
@@ -11,8 +12,19 @@ namespace Gameplay.Tools
         [HideInInspector]
         protected bool m_validHit;
 
+        private int pointerID = -1;
+
+        private void Awake()
+        {
+#if !UNITY_EDITOR
+            pointerID = 0;  // needs to be in a standalone version 0 to check if the mouse i shovering over UI
+#endif
+        }
+
         public void Update()
         {
+            if (EventSystem.current.IsPointerOverGameObject(pointerID) == true) return;
+
             //Raycast from Mouse to Playground
             Ray ray = UnityEngine.Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;

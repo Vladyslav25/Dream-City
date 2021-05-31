@@ -2,8 +2,10 @@
 using Gameplay.Tools;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+//using UnityEngine.UIElements;
 
 namespace UI
 {
@@ -19,6 +21,11 @@ namespace UI
         private StreetTool streetTool;
         private CellAssignmentTool cellTool;
         private Outline lastOutline;
+        private Image lastImage;
+        private Button lastButton;
+
+        //public Outline LineOutline, CurveOutline, LivingOutline, BusinessOutline, IndustryOutline;
+        public Button LineButton, CurveButton, LivingButton, BusinessButton, IndustryButton;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -52,7 +59,7 @@ namespace UI
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                ResetOutline(lastOutline);
+                ResetHighlightButton();
                 SetActivToolChoose();
                 ToolManager.Instance.ChangeTool(TOOLTYPE.NONE);
             }
@@ -104,37 +111,37 @@ namespace UI
             ToolManager.Instance.ChangeTool(TOOLTYPE.ASSIGNMENT);
         }
 
-        public void OnClickLine(Outline _o)
+        public void OnClickLine(Button sender)
         {
             streetTool.SetCurveLineTool(true);
-            IncreaseOutline(_o);
+            HighlightButton(sender);
         }
 
-        public void OnClickCurve(Outline _o)
+        public void OnClickCurve(Button sender)
         {
             streetTool.SetCurveLineTool(false);
-            IncreaseOutline(_o);
+            HighlightButton(sender);
         }
 
-        public void OnClickLiving(Outline _o)
+        public void OnClickLiving(Button sender)
         {
             cellTool.m_CurrendAssignment = Grid.CellAssignment.LIVING;
-            IncreaseOutline(_o);
+            HighlightButton(sender);
         }
 
-        public void OnClickBusiness(Outline _o)
+        public void OnClickBusiness(Button sender)
         {
             cellTool.m_CurrendAssignment = Grid.CellAssignment.BUSINESS;
-            IncreaseOutline(_o);
+            HighlightButton(sender);
         }
 
-        public void OnClickIndustry(Outline _o)
+        public void OnClickIndustry(Button sender)
         {
             cellTool.m_CurrendAssignment = Grid.CellAssignment.INDUSTRY;
-            IncreaseOutline(_o);
+            HighlightButton(sender);
         }
 
-        private void IncreaseOutline(Outline _o)
+        public void IncreaseOutline(Outline _o)
         {
             ResetOutline(lastOutline);
             _o.effectDistance = new Vector2(3, 3);
@@ -145,6 +152,31 @@ namespace UI
         {
             if (_o != null)
                 _o.effectDistance = new Vector2(1, 1);
+        }
+
+        /// <summary>
+        /// Highlight a Button with Color and Outline. Also remove the Highlight of the last Button
+        /// </summary>
+        /// <param name="_b">The Button to Highlight</param>
+        public void HighlightButton(Button _b)
+        {
+            if (_b == null) return;
+
+            ResetHighlightButton();
+            Image i = _b.GetComponent<Image>();
+            i.color = Color.white;
+
+            lastImage = i;
+
+            Outline o = _b.GetComponent<Outline>();
+            if (o != null)
+                IncreaseOutline(o);
+        }
+
+        public void ResetHighlightButton()
+        {
+            if (lastImage != null)
+                lastImage.color = new Color(0.77f, 0.77f, 0.77f, 1);
         }
     }
 }
