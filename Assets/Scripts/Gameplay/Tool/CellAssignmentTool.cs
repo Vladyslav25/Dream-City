@@ -3,6 +3,7 @@ using Grid;
 using MyCustomCollsion;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,8 +15,7 @@ namespace Gameplay.Tools
         public Material m_GewerbegebietMat;
         public Material m_IndustriegebietMat;
 
-        private CellAssignment currendAssignment;
-
+        public CellAssignment m_CurrendAssignment;
 
         public override void ToolStart()
         {
@@ -26,7 +26,9 @@ namespace Gameplay.Tools
             SetMaterialAlpha(m_GewerbegebietMat, 1f);
             SetMaterialAlpha(m_IndustriegebietMat, 1f);
 
-            currendAssignment = CellAssignment.LIVING;
+            m_CurrendAssignment = CellAssignment.LIVING;
+
+            UIManager.Instance.SetActivAssignment();
         }
 
         public override void ToolEnd()
@@ -34,6 +36,7 @@ namespace Gameplay.Tools
             SetMaterialAlpha(m_WohngebietMat);
             SetMaterialAlpha(m_GewerbegebietMat);
             SetMaterialAlpha(m_IndustriegebietMat);
+            Cursor.SetActiv(false);
         }
 
         public override void ToolUpdate()
@@ -48,18 +51,27 @@ namespace Gameplay.Tools
                         if (c.pos.x < 0)
                             materialIndex += c.m_Street.m_RowAmount + 1;
 
-                        ChanageMaterial(currendAssignment, materialIndex, c.m_Street.m_GridRenderer);
-                        c.m_Street.ChangeCellAssigtment(c.pos, currendAssignment);
+                        ChanageMaterial(m_CurrendAssignment, materialIndex, c.m_Street.m_GridRenderer);
+                        c.m_Street.ChangeCellAssigtment(c.pos, m_CurrendAssignment);
                     }
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.W))
-                currendAssignment = CellAssignment.LIVING;
+            {
+                m_CurrendAssignment = CellAssignment.LIVING;
+                UIManager.Instance.HighlightButton(UIManager.Instance.LivingButton);
+            }
             if (Input.GetKeyDown(KeyCode.G))
-                currendAssignment = CellAssignment.BUSINESS;
+            {
+                m_CurrendAssignment = CellAssignment.BUSINESS;
+                UIManager.Instance.HighlightButton(UIManager.Instance.BusinessButton);
+            }
             if (Input.GetKeyDown(KeyCode.I))
-                currendAssignment = CellAssignment.INDUSTRY;
+            {
+                m_CurrendAssignment = CellAssignment.INDUSTRY;
+                UIManager.Instance.HighlightButton(UIManager.Instance.IndustryButton);
+            }
         }
 
         public void ChanageMaterial(CellAssignment _assignment, int _index, MeshRenderer _mr)

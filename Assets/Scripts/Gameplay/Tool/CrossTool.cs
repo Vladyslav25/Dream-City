@@ -4,6 +4,7 @@ using Splines;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 
 public class CrossTool : Tool
@@ -46,6 +47,7 @@ public class CrossTool : Tool
         Cursor.SetActiv(false);
         m_rotation = Quaternion.identity;
         SpawnCross();
+        UIManager.Instance.DeactivateUI();
     }
 
     public override void ToolEnd()
