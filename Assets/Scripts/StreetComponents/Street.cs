@@ -149,41 +149,66 @@ namespace Gameplay.StreetComponents
             return this;
         }
 
-        public Area FindArea()
+        public bool FindArea()
         {
+            Area a;
             Vector2Int p = new Vector2Int(1, 0); //Pointer
             int height = 0;
             int width = 0;
+            a = new Area();
 
-            while (m_StreetCells.ContainsKey(new Vector2Int(p.x, p.y + 1)) && m_StreetCells[p].isBlocked || m_StreetCells[p].isInArea) //Move Pointer along Street to find a valid Start
+            if (m_StreetCells.Count == 0)
             {
-                p.y++;
+                return false;
             }
 
+            for (int y = 0; y < m_RowAmount; y++)
+            {
+                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment != EAssignment.NONE)
+                    break;
+                else
+                    p.y++;
+
+            }
+            if (!m_StreetCells.ContainsKey(p)) return false;
             EAssignment assi = m_StreetCells[p].m_CellAssignment;
-            Vector2Int 
+            if (assi == EAssignment.NONE) return false;
+            Vector2Int pStart = p;
 
             while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go up till up end
             {
                 p.x++;
                 height++;
             }
+            if (height == 0) return false;
             p.x--;
             while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go right till end
             {
                 p.y++;
-                if (!m_StreetCells.ContainsKey(new Vector2Int(p.x + 1, p.y))) //if up dont exist continue
-                {
-                    width++;
-                }
-                else
+                width++;
+                if (m_StreetCells.ContainsKey(new Vector2Int(p.x + 1, p.y)))
                 {
                     break; // if up exist break because fin
                 }
             }
-            Debug.Log("Size: X: " + height + " Y: " + width);
-            Area a = new Area(new Vector2Int(width, height), null, this, null);
-            return a;
+            if (width == 0) return false;
+
+            List<Cell> areaCells = new List<Cell>();
+            Debug.Log("Size: X: " + height + " Y: " + width + " Assigmnet: " + assi);
+            for (int x = 0; x < height; x++)
+            {
+                for (int y = 0; y < width; y++)
+                {
+                    Vector2Int v = pStart + new Vector2Int(x, y);
+                    if (m_StreetCells.ContainsKey(v))
+                    {
+                        areaCells.Add(m_StreetCells[v]);
+                        m_StreetCells[v].isInArea = true;
+                    }
+                }
+            }
+            a = new Area(new Vector2Int(width, height), areaCells, this, null);
+            return true;
         }
 
         private void CreateSegments()
@@ -272,6 +297,11 @@ namespace Gameplay.StreetComponents
             }
 
             lastSegmentCount = segments;
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                FindArea(/*out Area a*/);
+            }
 
         }
 

@@ -113,25 +113,12 @@ namespace Grid
                 if (c.pos.x == 1 || c.pos.x == -1)
                     m_FirstGenCells.Add(c);
             }
-            _street.m_RowAmount = (int)_street.m_StreetCells.Keys.Max(v => v.y);
+            _street.m_RowAmount = _street.m_StreetCells.Keys.Max(v => v.y) + 1;
             MeshGenerator.CreateGridMesh(_street, mf, mr);
             m_AllCells.AddRange(output);
             _street.m_GridObj = obj;
             _street.m_GridRenderer = mr;
-            Area a = new Area();
-            do
-                a = _street.FindArea();
-            while (a.m_Size != new Vector2Int(0, 0));
-
         }
-
-        //public static IEnumerator PlaceBuilings(List<Street> _allStreets)
-        //{
-        //    foreach (Street s in _allStreets)
-        //    {
-        //
-        //    }
-        //}
 
         public static List<Cell> CreateGrid(Street _street)
         {

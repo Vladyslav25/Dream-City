@@ -92,7 +92,7 @@ namespace MeshGeneration
             Vector3[] vertices = new Vector3[cells.Count * 4];
             Mesh m = new Mesh();
             int maxRow = _s.m_RowAmount;
-            m.subMeshCount = (maxRow + 1) * 2;
+            m.subMeshCount = maxRow * 2;
             for (int a = 0; a < cells.Count; a++)
             {
                 Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(cells[a].m_Orientation));
@@ -136,7 +136,7 @@ namespace MeshGeneration
 
                 int subMeshIndex = cells[a].pos.y;
                 if (cells[a].pos.x < 0)
-                    subMeshIndex += maxRow + 1;
+                    subMeshIndex += maxRow;
 
                 if (!indiceDic.ContainsKey(subMeshIndex))
                     indiceDic[subMeshIndex] = new List<int>();
@@ -144,7 +144,7 @@ namespace MeshGeneration
                 indiceDic[subMeshIndex].AddRange(indices);
             }
 
-            for (int i = 0; i < indiceDic.Keys.Count; i++) //foreach subMeshIndex, set Indices
+            for (int i = 0; i < m.subMeshCount; i++) //foreach subMesh, set Indices
             {
                 if (indiceDic.ContainsKey(i))
                     m.SetIndices(indiceDic[i], MeshTopology.Triangles, i);
