@@ -15,7 +15,7 @@ namespace Gameplay.Tools
         public Material m_GewerbegebietMat;
         public Material m_IndustriegebietMat;
 
-        public CellAssignment m_CurrendAssignment;
+        public EAssignment m_CurrendAssignment;
 
         public override void ToolStart()
         {
@@ -26,7 +26,7 @@ namespace Gameplay.Tools
             SetMaterialAlpha(m_GewerbegebietMat, 1f);
             SetMaterialAlpha(m_IndustriegebietMat, 1f);
 
-            m_CurrendAssignment = CellAssignment.LIVING;
+            m_CurrendAssignment = EAssignment.LIVING;
 
             UIManager.Instance.SetActivAssignment();
         }
@@ -59,35 +59,35 @@ namespace Gameplay.Tools
 
             if (Input.GetKeyDown(KeyCode.W))
             {
-                m_CurrendAssignment = CellAssignment.LIVING;
+                m_CurrendAssignment = EAssignment.LIVING;
                 UIManager.Instance.HighlightButton(UIManager.Instance.LivingButton);
             }
             if (Input.GetKeyDown(KeyCode.G))
             {
-                m_CurrendAssignment = CellAssignment.BUSINESS;
+                m_CurrendAssignment = EAssignment.BUSINESS;
                 UIManager.Instance.HighlightButton(UIManager.Instance.BusinessButton);
             }
             if (Input.GetKeyDown(KeyCode.I))
             {
-                m_CurrendAssignment = CellAssignment.INDUSTRY;
+                m_CurrendAssignment = EAssignment.INDUSTRY;
                 UIManager.Instance.HighlightButton(UIManager.Instance.IndustryButton);
             }
         }
 
-        public void ChanageMaterial(CellAssignment _assignment, int _index, MeshRenderer _mr)
+        public void ChanageMaterial(EAssignment _assignment, int _index, MeshRenderer _mr)
         {
             Material mat = null;
             switch (_assignment)
             {
-                case CellAssignment.NONE:
+                case EAssignment.NONE:
                     break;
-                case CellAssignment.LIVING:
+                case EAssignment.LIVING:
                     mat = m_WohngebietMat;
                     break;
-                case CellAssignment.BUSINESS:
+                case EAssignment.BUSINESS:
                     mat = m_GewerbegebietMat;
                     break;
-                case CellAssignment.INDUSTRY:
+                case EAssignment.INDUSTRY:
                     mat = m_IndustriegebietMat;
                     break;
                 default:

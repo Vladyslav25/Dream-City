@@ -1,4 +1,5 @@
-﻿using Grid;
+﻿using Gameplay.Building;
+using Grid;
 using MeshGeneration;
 using MyCustomCollsion;
 using Splines;
@@ -53,7 +54,7 @@ namespace Gameplay.StreetComponents
         #endregion
 
         [HideInInspector]
-        public Dictionary<Vector2, Cell> m_StreetCells = new Dictionary<Vector2, Cell>(); //Dictionaray of the Cells as Value and there Position in the Grid as Key
+        public Dictionary<Vector2Int, Cell> m_StreetCells = new Dictionary<Vector2Int, Cell>(); //Dictionaray of the Cells as Value and there Position in the Grid as Key
 
         public GameObject m_GridObj; //The Grid Parent Gameobject
 
@@ -93,6 +94,10 @@ namespace Gameplay.StreetComponents
         //List of segment Corners (Street - Cell Collision Test)
         private List<Vector3> m_segmentsCorner = new List<Vector3>();
         public List<StreetSegment> m_Segments = new List<StreetSegment>();
+
+        public List<Area> m_LivingAreas = new List<Area>();
+        public List<Area> m_BusinessAreas = new List<Area>();
+        public List<Area> m_IndustryAreas = new List<Area>();
 
         /// <summary>
         /// Initialize the Street
@@ -142,6 +147,43 @@ namespace Gameplay.StreetComponents
 
             CreateSegments();
             return this;
+        }
+
+        public Area FindArea()
+        {
+            Vector2Int p = new Vector2Int(1, 0); //Pointer
+            int height = 0;
+            int width = 0;
+
+            while (m_StreetCells.ContainsKey(new Vector2Int(p.x, p.y + 1)) && m_StreetCells[p].isBlocked || m_StreetCells[p].isInArea) //Move Pointer along Street to find a valid Start
+            {
+                p.y++;
+            }
+
+            EAssignment assi = m_StreetCells[p].m_CellAssignment;
+            Vector2Int 
+
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go up till up end
+            {
+                p.x++;
+                height++;
+            }
+            p.x--;
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go right till end
+            {
+                p.y++;
+                if (!m_StreetCells.ContainsKey(new Vector2Int(p.x + 1, p.y))) //if up dont exist continue
+                {
+                    width++;
+                }
+                else
+                {
+                    break; // if up exist break because fin
+                }
+            }
+            Debug.Log("Size: X: " + height + " Y: " + width);
+            Area a = new Area(new Vector2Int(width, height), null, this, null);
+            return a;
         }
 
         private void CreateSegments()
@@ -233,12 +275,11 @@ namespace Gameplay.StreetComponents
 
         }
 
-        public void ChangeCellAssigtment(Vector2Int _cellPosStart, CellAssignment _assignment)
+        public void ChangeCellAssigtment(Vector2Int _cellPosStart, EAssignment _assignment)
         {
             Vector2Int pos = _cellPosStart;
             while (m_StreetCells.ContainsKey(pos))
             {
-                Debug.Log(pos);
                 m_StreetCells[pos].SetAssignment(_assignment);
                 pos.x += _cellPosStart.x;       //pos.x = -1 change to pos.x = -2 and pos.x = 1 change to pos.x = 2
             }
@@ -250,16 +291,16 @@ namespace Gameplay.StreetComponents
             {
                 switch (c.m_CellAssignment)
                 {
-                    case CellAssignment.NONE:
+                    case EAssignment.NONE:
                         Gizmos.color = Color.grey;
                         break;
-                    case CellAssignment.LIVING:
+                    case EAssignment.LIVING:
                         Gizmos.color = Color.green;
                         break;
-                    case CellAssignment.BUSINESS:
+                    case EAssignment.BUSINESS:
                         Gizmos.color = Color.blue;
                         break;
-                    case CellAssignment.INDUSTRY:
+                    case EAssignment.INDUSTRY:
                         Gizmos.color = Color.yellow;
                         break;
                     default:

@@ -47,6 +47,8 @@ namespace Gameplay.StreetComponents
 
         private static Dictionary<int, StreetComponent> StreetComponentID_Dic = new Dictionary<int, StreetComponent>(); //Contains all Streets by ID
 
+        private static List<Street> allStreets;
+
         private static int setComponentId;
 
         public static Street GetStreetByID(int _id)
@@ -57,6 +59,11 @@ namespace Gameplay.StreetComponents
         public static Cross GetCrossByID(int _id)
         {
             return GetComponentByID(_id) as Cross;
+        }
+
+        public static List<Street> GetAllStreet()
+        {
+            return allStreets;
         }
 
         public static StreetComponent GetComponentByID(int _id)
@@ -393,6 +400,7 @@ namespace Gameplay.StreetComponents
             GridManager.CreateGrid(s);
 
             StreetComponentID_Dic.Add(s.ID, s);
+            //allStreets.Add(s);
             return s;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Gameplay.StreetComponents;
+﻿using Gameplay.Building;
+using Gameplay.StreetComponents;
 using MeshGeneration;
 using System;
 using System.Collections;
@@ -45,6 +46,10 @@ namespace Grid
         public static List<Cell> m_FirstGenCells = new List<Cell>();
         public Material CellDefault;
 
+        public static List<Cell> m_AllLivingCells = new List<Cell>();
+        public static List<Cell> m_AllBuisnessCells = new List<Cell>();
+        public static List<Cell> m_AllIndustryCells = new List<Cell>();
+
         public static IEnumerator CheckForFinish(Street _street)
         {
             while (listTask.Count > 0)
@@ -79,24 +84,24 @@ namespace Grid
                 Cell c = output[i];
                 if (_street.m_StreetCells.ContainsKey(c.pos))
                 {
-                    if (c.m_isLeft && c.pos.x - 1 > 0 && !_street.m_StreetCells.ContainsKey(new Vector2(c.pos.x - 1, c.pos.y)))
+                    if (c.m_isLeft && c.pos.x - 1 > 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.pos.x - 1, c.pos.y)))
                     {
-                        Vector2 nextPose = c.pos;
+                        Vector2Int nextPose = c.pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
                             output.Remove(_street.m_StreetCells[nextPose]);
                             _street.m_StreetCells.Remove(nextPose);
-                            nextPose = new Vector2(nextPose.x + 1, nextPose.y);
+                            nextPose = new Vector2Int(nextPose.x + 1, nextPose.y);
                         }
                     }
-                    if (!c.m_isLeft && c.pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2(c.pos.x + 1, c.pos.y)))
+                    if (!c.m_isLeft && c.pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.pos.x + 1, c.pos.y)))
                     {
-                        Vector2 nextPose = c.pos;
+                        Vector2Int nextPose = c.pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
                             output.Remove(_street.m_StreetCells[nextPose]);
                             _street.m_StreetCells.Remove(nextPose);
-                            nextPose = new Vector2(nextPose.x - 1, nextPose.y);
+                            nextPose = new Vector2Int(nextPose.x - 1, nextPose.y);
                         }
                     }
                 }
@@ -113,7 +118,20 @@ namespace Grid
             m_AllCells.AddRange(output);
             _street.m_GridObj = obj;
             _street.m_GridRenderer = mr;
+            Area a = new Area();
+            do
+                a = _street.FindArea();
+            while (a.m_Size != new Vector2Int(0, 0));
+
         }
+
+        //public static IEnumerator PlaceBuilings(List<Street> _allStreets)
+        //{
+        //    foreach (Street s in _allStreets)
+        //    {
+        //
+        //    }
+        //}
 
         public static List<Cell> CreateGrid(Street _street)
         {
