@@ -274,11 +274,11 @@ namespace Grid
 
                     if (m_isLeft)
                     {
-                        nextPos = new Vector2Int(nextPos.x + 1, nextPos.y);
+                        nextPos.x++;
                     }
                     else
                     {
-                        nextPos = new Vector2Int(nextPos.x - 1, nextPos.y);
+                        nextPos.x--;
                     }
                 }
 

@@ -77,6 +77,12 @@ namespace Grid
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             mr.material = Instance.CellDefault;
 
+            foreach (Cell c in output)
+            {
+                _street.m_StreetCells.Add(c.pos, c);
+                if (c.pos.x == 1 || c.pos.x == -1)
+                    m_FirstGenCells.Add(c);
+            }
 
             //Remove Cells if Generation before is missing
             for (int i = 0; i < output.Count; i++)
@@ -89,9 +95,9 @@ namespace Grid
                         Vector2Int nextPose = c.pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
-                            output.Remove(_street.m_StreetCells[nextPose]);
-                            _street.m_StreetCells.Remove(nextPose);
-                            nextPose = new Vector2Int(nextPose.x + 1, nextPose.y);
+                            output.Remove(c);
+                            c.Delete();
+                            nextPose.x++;
                         }
                     }
                     if (!c.m_isLeft && c.pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.pos.x + 1, c.pos.y)))
@@ -99,20 +105,14 @@ namespace Grid
                         Vector2Int nextPose = c.pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
-                            output.Remove(_street.m_StreetCells[nextPose]);
-                            _street.m_StreetCells.Remove(nextPose);
-                            nextPose = new Vector2Int(nextPose.x - 1, nextPose.y);
+                            c.Delete();
+                            output.Remove(c);
+                            nextPose.x--;
                         }
                     }
                 }
             }
 
-            foreach (Cell c in output)
-            {
-                _street.m_StreetCells.Add(c.pos, c);
-                if (c.pos.x == 1 || c.pos.x == -1)
-                    m_FirstGenCells.Add(c);
-            }
             _street.m_RowAmount = _street.m_StreetCells.Keys.Max(v => v.y) + 1;
             MeshGenerator.CreateGridMesh(_street, mf, mr);
             m_AllCells.AddRange(output);
