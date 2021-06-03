@@ -303,7 +303,7 @@ namespace Gameplay.StreetComponents
                 p.y = pStart.y;
 
                 //move right as long as the size.y
-                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment)) //if to the right all cells are valid
+                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, true)) //if to the right all cells are valid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, true);
                     a = new Area(_size, cells, this, null);
@@ -359,7 +359,7 @@ namespace Gameplay.StreetComponents
                 p.y = pStart.y;
 
                 //move right as long as the size.y
-                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment)) //if to the right all cells are valid
+                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, false)) //if to the right all cells are valid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, false);
                     a = new Area(_size, cells, this, null);
@@ -377,7 +377,7 @@ namespace Gameplay.StreetComponents
         /// <param name="p">The Pointer to move</param>
         /// <param name="_assignment">The needed assignment to check</param>
         /// <returns>Can the pointer move by this amount along the street</returns>
-        private bool MoveCellPointerRight(int _sizeY, ref Vector2Int pStart, ref Vector2Int p, EAssignment _assignment)
+        private bool MoveCellPointerRight(int _sizeY, ref Vector2Int pStart, ref Vector2Int p, EAssignment _assignment, bool _isLeft)
         {
             for (int i = 0; i < _sizeY - 1; i++) //move to the right and look if the cell is valid
             {
@@ -385,6 +385,9 @@ namespace Gameplay.StreetComponents
                 if (!m_StreetCells.ContainsKey(p) || m_StreetCells[p].m_CellAssignment != _assignment) //if the cell exist and the assigment is valid
                 {
                     pStart = new Vector2Int(1, p.y + 1); //set pStart to right generation
+                    if (!_isLeft)
+                        pStart.x *= -1;
+                    p = pStart;
                     return false;
                 }
             }
