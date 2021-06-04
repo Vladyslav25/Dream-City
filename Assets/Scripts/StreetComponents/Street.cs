@@ -1,4 +1,5 @@
-﻿using Grid;
+﻿using Gameplay.Building;
+using Grid;
 using MeshGeneration;
 using MyCustomCollsion;
 using Splines;
@@ -53,7 +54,7 @@ namespace Gameplay.StreetComponents
         #endregion
 
         [HideInInspector]
-        public Dictionary<Vector2, Cell> m_StreetCells = new Dictionary<Vector2, Cell>(); //Dictionaray of the Cells as Value and there Position in the Grid as Key
+        public Dictionary<Vector2Int, Cell> m_StreetCells = new Dictionary<Vector2Int, Cell>(); //Dictionaray of the Cells as Value and there Position in the Grid as Key
 
         public GameObject m_GridObj; //The Grid Parent Gameobject
 
@@ -93,6 +94,10 @@ namespace Gameplay.StreetComponents
         //List of segment Corners (Street - Cell Collision Test)
         private List<Vector3> m_segmentsCorner = new List<Vector3>();
         public List<StreetSegment> m_Segments = new List<StreetSegment>();
+
+        public List<Area> m_LivingAreas = new List<Area>();
+        public List<Area> m_BusinessAreas = new List<Area>();
+        public List<Area> m_IndustryAreas = new List<Area>();
 
         /// <summary>
         /// Initialize the Street
@@ -142,6 +147,275 @@ namespace Gameplay.StreetComponents
 
             CreateSegments();
             return this;
+        }
+
+        /// <summary>
+        /// Find the next biggest Area on the left Side of the Road
+        /// </summary>
+        /// <param name="a">The new Area</param>
+        /// <returns>Can there be a new Area</returns>
+        public bool FindAreaLeftSide(out Area a)
+        {
+            Vector2Int p = new Vector2Int(1, 0); //Pointer
+            int height = 0;
+            int width = 0;
+            a = new Area();
+
+            if (m_StreetCells.Count == 0)
+            {
+                return false;
+            }
+
+            for (int y = 0; y < m_RowAmount; y++) //Find StartPoint
+            {
+                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment != EAssignment.NONE)
+                    break;
+                else
+                    p.y++;
+
+            }
+            if (!m_StreetCells.ContainsKey(p)) return false;
+            EAssignment assi = m_StreetCells[p].m_CellAssignment;
+            if (assi == EAssignment.NONE) return false;
+            Vector2Int pStart = p;
+
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go up till up end
+            {
+                p.x++;
+                height++;
+            }
+            if (height == 0) return false;
+            p.x--;
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go right till end
+            {
+                p.y++;
+                width++;
+                if (m_StreetCells.ContainsKey(new Vector2Int(p.x + 1, p.y)))
+                {
+                    break; // if up exist break because fin
+                }
+            }
+            if (width == 0) return false;
+
+            List<Cell> areaCells = SetCellsInArea(pStart, new Vector2Int(height, width), true);
+            Debug.Log("Size: X: " + height + " Y: " + width + " Assigmnet: " + assi);
+            a = new Area(new Vector2Int(width, height), areaCells, this, null);
+            return true;
+        }
+
+        /// <summary>
+        /// Find the next biggest Area on the right Side of the Road
+        /// </summary>
+        /// <param name="a">The new Area</param>
+        /// <returns>Can there be a new Area</returns>
+        public bool FindAreaRightSide(out Area a)
+        {
+            Vector2Int p = new Vector2Int(-1, 0); //Pointer
+            int height = 0;
+            int width = 0;
+            a = new Area();
+
+            if (m_StreetCells.Count == 0)
+            {
+                return false;
+            }
+
+            for (int y = 0; y < m_RowAmount; y++) //Find valid StartPoint
+            {
+                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment != EAssignment.NONE)
+                    break;
+                else
+                    p.y++;
+
+            }
+            if (!m_StreetCells.ContainsKey(p)) return false;
+            EAssignment assi = m_StreetCells[p].m_CellAssignment;
+            if (assi == EAssignment.NONE) return false;
+            Vector2Int pStart = p;
+
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go up till up end
+            {
+                p.x--;
+                height++;
+            }
+            if (height == 0) return false;
+            p.x++;
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go right till end
+            {
+                p.y++;
+                width++;
+                if (m_StreetCells.ContainsKey(new Vector2Int(p.x - 1, p.y)))
+                {
+                    break; // if up exist break because fin
+                }
+            }
+            if (width == 0) return false;
+
+            List<Cell> areaCells = SetCellsInArea(pStart, new Vector2Int(height, width), false);
+            Debug.Log("Size: X: " + height + " Y: " + width + " Assigmnet: " + assi);
+            a = new Area(new Vector2Int(width, height), areaCells, this, null);
+            return true;
+        }
+
+        /// <summary>
+        /// Find a Area with the given settings on the left side of the Road
+        /// </summary>
+        /// <param name="_size">The size of the Area</param>
+        /// <param name="_assignment">The Assignment of the Cells</param>
+        /// <param name="a">The new Area</param>
+        /// <returns>Can there be such an Area</returns>
+        public bool FindAreaLeftSide(Vector2Int _size, EAssignment _assignment, out Area a)
+        {
+            //Look Left Side
+            Vector2Int p = new Vector2Int(1, 0); //Pointer
+            a = new Area();
+
+            if (m_StreetCells.Count == 0)
+            {
+                return false;
+            }
+
+            for (int y = 0; y < m_RowAmount; y++) //Find StartPoint
+            {
+                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment == _assignment)
+                    break;
+                else
+                    p.y++;
+            }
+            if (!m_StreetCells.ContainsKey(p)) return false;
+
+            Vector2Int pStart = p;
+
+            while (m_StreetCells.ContainsKey(pStart))
+            {
+                //move right as long as this generation dont have the need depht
+                while (!m_StreetCells.ContainsKey(new Vector2Int(p.x + _size.x - 1, pStart.y)))
+                {
+                    if (pStart.y > m_RowAmount) return false;
+                    if (m_StreetCells.ContainsKey(new Vector2Int(p.x + _size.x - 1, pStart.y))) //if this generation reached this depth
+                    {
+                        break;
+                    }
+                    pStart.y++; //if this geneartion dont reached this depth move to the right
+                }
+
+                p.x = _size.x; //move p to the needed depth
+                p.y = pStart.y;
+
+                //move right as long as the size.y
+                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, true)) //if to the right all cells are valid
+                {
+                    List<Cell> cells = SetCellsInArea(pStart, _size, true);
+                    a = new Area(_size, cells, this, null);
+                    return true;
+                }
+            }
+            return false; //if the while ends because the pointer is on an invalid pos, then return false
+        }
+
+        /// <summary>
+        /// Find a Area with the given settings on the right side of the Road
+        /// </summary>
+        /// <param name="_size">The size of the Area</param>
+        /// <param name="_assignment">The Assignment of the Cells</param>
+        /// <param name="a">The new Area</param>
+        /// <returns>Can there be such an Area</returns>
+        public bool FindAreaRightSide(Vector2Int _size, EAssignment _assignment, out Area a)
+        {
+            //Look Left Side
+            Vector2Int p = new Vector2Int(-1, 0); //Pointer
+            a = new Area();
+
+            if (m_StreetCells.Count == 0)
+            {
+                return false;
+            }
+
+            for (int y = 0; y < m_RowAmount; y++) //Find StartPoint
+            {
+                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment == _assignment)
+                    break;
+                else
+                    p.y++;
+            }
+            if (!m_StreetCells.ContainsKey(p)) return false;
+
+            Vector2Int pStart = p;
+
+            while (m_StreetCells.ContainsKey(pStart))
+            {
+                //move right as long as this generation dont have the need depht
+                while (!m_StreetCells.ContainsKey(new Vector2Int(p.x - _size.x + 1, pStart.y)))
+                {
+                    if (pStart.y > m_RowAmount) return false;
+                    if (m_StreetCells.ContainsKey(new Vector2Int(p.x - _size.x + 1, pStart.y))) //if this generation reached this depth
+                    {
+                        break;
+                    }
+                    pStart.y++; //if this geneartion dont reached this depth move to the right
+                }
+
+                p.x = -_size.x; //move p to the needed depth
+                p.y = pStart.y;
+
+                //move right as long as the size.y
+                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, false)) //if to the right all cells are valid
+                {
+                    List<Cell> cells = SetCellsInArea(pStart, _size, false);
+                    a = new Area(_size, cells, this, null);
+                    return true;
+                }
+            }
+            return false; //if the while ends because the pointer is on an invalid pos, then return false
+        }
+
+        /// <summary>
+        /// Moves the pointer a specified amount along the street
+        /// </summary>
+        /// <param name="_sizeY">The amount by which the pointer should be moved</param>
+        /// <param name="pStart">The start pointer, to reset this if the move fails</param>
+        /// <param name="p">The Pointer to move</param>
+        /// <param name="_assignment">The needed assignment to check</param>
+        /// <returns>Can the pointer move by this amount along the street</returns>
+        private bool MoveCellPointerRight(int _sizeY, ref Vector2Int pStart, ref Vector2Int p, EAssignment _assignment, bool _isLeft)
+        {
+            for (int i = 0; i < _sizeY - 1; i++) //move to the right and look if the cell is valid
+            {
+                p.y++;
+                if (!m_StreetCells.ContainsKey(p) || m_StreetCells[p].m_CellAssignment != _assignment) //if the cell exist and the assigment is valid
+                {
+                    pStart = new Vector2Int(1, p.y + 1); //set pStart to right generation
+                    if (!_isLeft)
+                        pStart.x *= -1;
+                    p = pStart;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private List<Cell> SetCellsInArea(Vector2Int _start, Vector2Int _size, bool _isLeft)
+        {
+            List<Cell> output = new List<Cell>();
+            for (int x = 0; x < _size.x; x++)
+            {
+                for (int y = 0; y < _size.y; y++)
+                {
+                    Vector2Int v;
+
+                    if (_isLeft)
+                        v = _start + new Vector2Int(x, y);
+                    else
+                        v = _start + new Vector2Int(-x, y);
+
+                    if (m_StreetCells.ContainsKey(v))
+                    {
+                        output.Add(m_StreetCells[v]);
+                        m_StreetCells[v].isInArea = true;
+                    }
+                }
+            }
+            return output;
         }
 
         private void CreateSegments()
@@ -231,14 +505,28 @@ namespace Gameplay.StreetComponents
 
             lastSegmentCount = segments;
 
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                //FindAreaLeftSide(out Area a);
+                //FindAreaRightSide(out a);
+
+                if (FindAreaRightSide(new Vector2Int(4, 9), EAssignment.LIVING, out Area a))
+                {
+                    Debug.Log("Found Area");
+                }
+                else
+                {
+                    Debug.Log("DONT Found Area");
+                }
+            }
+
         }
 
-        public void ChangeCellAssigtment(Vector2Int _cellPosStart, CellAssignment _assignment)
+        public void ChangeCellAssigtment(Vector2Int _cellPosStart, EAssignment _assignment)
         {
             Vector2Int pos = _cellPosStart;
             while (m_StreetCells.ContainsKey(pos))
             {
-                Debug.Log(pos);
                 m_StreetCells[pos].SetAssignment(_assignment);
                 pos.x += _cellPosStart.x;       //pos.x = -1 change to pos.x = -2 and pos.x = 1 change to pos.x = 2
             }
@@ -250,22 +538,24 @@ namespace Gameplay.StreetComponents
             {
                 switch (c.m_CellAssignment)
                 {
-                    case CellAssignment.NONE:
+                    case EAssignment.NONE:
                         Gizmos.color = Color.grey;
                         break;
-                    case CellAssignment.LIVING:
+                    case EAssignment.LIVING:
                         Gizmos.color = Color.green;
                         break;
-                    case CellAssignment.BUSINESS:
+                    case EAssignment.BUSINESS:
                         Gizmos.color = Color.blue;
                         break;
-                    case CellAssignment.INDUSTRY:
+                    case EAssignment.INDUSTRY:
                         Gizmos.color = Color.yellow;
                         break;
                     default:
                         break;
                 }
                 Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius);
+                if (c.isInArea)
+                    Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius * 0.5f);
             }
 
             if (drawGridNormals)

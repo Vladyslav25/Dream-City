@@ -125,19 +125,19 @@ namespace UI
 
         public void OnClickLiving(Button sender)
         {
-            cellTool.m_CurrendAssignment = Grid.CellAssignment.LIVING;
+            cellTool.m_CurrendAssignment = Grid.EAssignment.LIVING;
             HighlightButton(sender);
         }
 
         public void OnClickBusiness(Button sender)
         {
-            cellTool.m_CurrendAssignment = Grid.CellAssignment.BUSINESS;
+            cellTool.m_CurrendAssignment = Grid.EAssignment.BUSINESS;
             HighlightButton(sender);
         }
 
         public void OnClickIndustry(Button sender)
         {
-            cellTool.m_CurrendAssignment = Grid.CellAssignment.INDUSTRY;
+            cellTool.m_CurrendAssignment = Grid.EAssignment.INDUSTRY;
             HighlightButton(sender);
         }
 
