@@ -47,12 +47,12 @@ namespace Gameplay.Tools
                 {
                     if (MyCollision.SphereSphere(new Vector2(m_hitPos.x, m_hitPos.z), 0.8f, c.m_PosCenter, c.m_Radius))
                     {
-                        int materialIndex = c.pos.y;
-                        if (c.pos.x < 0)
+                        int materialIndex = c.Pos.y;
+                        if (c.Pos.x < 0)
                             materialIndex += c.m_Street.m_RowAmount;
 
                         ChanageMaterial(m_CurrendAssignment, materialIndex, c.m_Street.m_GridRenderer);
-                        c.m_Street.ChangeCellAssigtment(c.pos, m_CurrendAssignment);
+                        c.m_Street.ChangeCellAssigtment(c.Pos, m_CurrendAssignment);
                     }
                 }
             }

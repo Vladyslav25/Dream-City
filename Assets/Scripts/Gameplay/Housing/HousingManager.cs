@@ -47,9 +47,24 @@ namespace Gameplay.Building
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
         }
 
-        private GameObject PlaceAt(EAssignment _assignment, Vector2Int _size, OrientedPoint _op, Street _s)
+        public GameObject PlaceBuilding(Area _a, EAssignment _assigment)
         {
-            return Instantiate(GetRandomPrefab(_assignment, _size),_op.Position, _op.Rotation, _s.transform);
+            GameObject prefab = GetRandomPrefab(_assigment, _a.m_Size);
+            if (prefab == null) return null;
+
+            foreach (Cell c in _a.m_Cells)
+            {
+                c.IsBlocked = true;
+            }
+
+            if (prefab.GetComponent<ABuilding>().InverseRotation)
+            {
+                return Instantiate(prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
+            }
+            else
+            {
+                return Instantiate(prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
+            }
         }
 
         private GameObject GetRandomPrefab(EAssignment _assignment, Vector2Int _size)
@@ -68,6 +83,11 @@ namespace Gameplay.Building
                 case EAssignment.INDUSTRY:
                     validPrefabs = industryPrefabs_Dic[_size];
                     break;
+            }
+            if (validPrefabs.Count == 0)
+            {
+                Debug.LogError("No Building withz Size: " + _size + " and assignment: " + _assignment + " found");
+                return null;
             }
 
             System.Random rng = new System.Random();

@@ -55,10 +55,10 @@ namespace Grid
         private float m_TStart;
         private float m_TEnd;
         public float m_Radius;
-        public bool isValid;
-        public Vector2Int pos;
-        public bool isBlocked; //if Builing is build on it -> true
-        public bool isInArea; //is this Cell assigned to a Area?
+        public bool IsValid;
+        public Vector2Int Pos;
+        public bool IsBlocked; //if Builing is build on it -> true
+        public bool IsInArea; //is this Cell assigned to a Area?
 
         public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide, Vector2Int _pos)
         {
@@ -72,13 +72,13 @@ namespace Grid
             ID = m_Street.ID;
             if (!_isLeftSide)
                 _pos.x = -_pos.x;
-            pos = _pos;
+            Pos = _pos;
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
             CalculateOrientation();
             CalculateSquarRadius();
-            isValid = !CheckForCollision() && CheckValidSize();
-            return isValid;
+            IsValid = !CheckForCollision() && CheckValidSize();
+            return IsValid;
         }
 
         private void CalculateSquarRadius()
@@ -264,9 +264,9 @@ namespace Grid
 
         public void Delete()
         {
-            if (m_Street.m_StreetCells.ContainsKey(pos))
+            if (m_Street.m_StreetCells.ContainsKey(Pos))
             {
-                Vector2Int nextPos = pos;
+                Vector2Int nextPos = Pos;
                 while (m_Street.m_StreetCells.ContainsKey(nextPos))
                 {
                     GridManager.m_AllCells.Remove(m_Street.m_StreetCells[nextPos]);

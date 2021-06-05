@@ -21,6 +21,8 @@ namespace Gameplay.Building
 
         public int Inflow { get { return inflow; } }
         public Vector2Int Size { get { return new Vector2Int(width, depth); } }
+
+        public bool InverseRotation;
     }
 
     public struct Area
