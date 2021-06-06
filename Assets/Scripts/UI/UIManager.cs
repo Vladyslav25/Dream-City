@@ -66,22 +66,25 @@ namespace UI
             }
         }
 
-        public void SetDemand(EAssignment _assignment, float _value)
+        public void SetDemandRatio(EAssignment _assignment, float _value)
         {
+            Image img = null;
             switch (_assignment)
             {
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    LivingDemand.fillAmount = _value;
+                    img = LivingDemand;
                     break;
                 case EAssignment.BUSINESS:
-                    BusinessDemand.fillAmount = _value;
+                    img = BusinessDemand;
                     break;
                 case EAssignment.INDUSTRY:
-                    IndustryDemand.fillAmount = _value;
+                    img = IndustryDemand;
                     break;
             }
+            if (img == null) return;
+            img.fillAmount = _value;
         }
 
         public void SetActivToolChoose()

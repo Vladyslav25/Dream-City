@@ -10,19 +10,25 @@ namespace Gameplay.Building
     {
         [Header("Settings")]
         public EAssignment m_Assigment;
+        public EDensity m_Density;
         [SerializeField]
         private int depth;
         [SerializeField]
         private int width;
         public bool InverseRotation;
-        [SerializeField]
-        private int inflow; //Living: Residents, Business: Jobs, Industry: Jobs
 
         [Header("Impacts")]
         [SerializeField]
+        [Tooltip("The Amount of Impact of the Currend Demand")]
+        private int inflow; //Living: Residents, Business: Jobs, Industry: Jobs
+        [Space]
+        [Tooltip("The Amount of Impact of the Needed Demand")]
+        [SerializeField]
         private int impactOnLiving;
+        [Tooltip("The Amount of Impact of the Needed Demand")]
         [SerializeField]
         private int impactOnBusiness;
+        [Tooltip("The Amount of Impact of the Needed Demand")]
         [SerializeField]
         private int impactOnIndustry;
 

@@ -93,6 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Assigment: 3
+  m_Density: 3
   depth: 4
   width: 3
   InverseRotation: 0

@@ -93,10 +93,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Assigment: 1
+  m_Density: 3
   depth: 4
   width: 4
   InverseRotation: 1
-  inflow: 5
-  impactOnLiving: -4
+  inflow: 8
+  impactOnLiving: 0
   impactOnBusiness: 2
-  impactOnIndustry: 1
+  impactOnIndustry: 3

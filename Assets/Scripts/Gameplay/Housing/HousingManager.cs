@@ -22,53 +22,110 @@ namespace Gameplay.Building
         // 0 no Demand
         // 1 max Demand
 
-        private float livingDemandAmount;
-        private float businessDemandAmount;
-        private float industryDemandAmount;
+        private float living_NeedAmount;
+        private float business_NeedAmount;
+        private float industry_NeedAmount;
 
-        public float LivingDemandAmount
+        public float m_Living_NeedAmount
         {
-            get
-            {
-                return livingDemandAmount;
-            }
+            get { return living_NeedAmount; }
             set
             {
-                m_LivingDemand = SetDemand(ref livingDemandAmount, value);
-                UIManager.Instance.SetDemand(EAssignment.LIVING, livingDemandAmount);
+                living_NeedAmount = value;
+                m_Living_Ratio = GetRatio(living_CurrAmount, living_NeedAmount);
+            }
+        }
+        public float m_Business_NeedAmount
+        {
+            get { return business_NeedAmount; }
+            set
+            {
+                business_NeedAmount = value;
+                m_Business_Ratio = GetRatio(business_CurrAmount, business_NeedAmount);
+            }
+        }
+        public float m_Industry_NeedAmount
+        {
+            get { return industry_NeedAmount; }
+            set
+            {
+                industry_NeedAmount = value;
+                m_Industry_Ratio = GetRatio(industry_CurrAmount, industry_NeedAmount);
             }
         }
 
-        public float BusinessDemandAmount
+        private float living_CurrAmount;
+        private float business_CurrAmount;
+        private float industry_CurrAmount;
+
+        public float m_Living_CurrAmount
         {
-            get
-            {
-                return businessDemandAmount;
-            }
+            get { return living_CurrAmount; }
             set
             {
-                m_BusinnesDemand = SetDemand(ref businessDemandAmount, value);
-                UIManager.Instance.SetDemand(EAssignment.BUSINESS, businessDemandAmount);
+                living_CurrAmount = value;
+                m_Living_Ratio = GetRatio(living_CurrAmount, living_NeedAmount);
+            }
+        }
+        public float m_Business_CurrAmount
+        {
+            get { return business_CurrAmount; }
+            set
+            {
+                business_CurrAmount = value;
+                m_Business_Ratio = GetRatio(business_CurrAmount, business_NeedAmount);
+            }
+        }
+        public float m_Industry_CurrAmount
+        {
+            get { return industry_CurrAmount; }
+            set
+            {
+                industry_CurrAmount = value;
+                m_Industry_Ratio = GetRatio(industry_CurrAmount, industry_NeedAmount);
             }
         }
 
-        public float IndustryDemandAmount
+        private float living_Ratio;
+        private float business_Ratio;
+        private float industry_Ratio;
+
+        private float m_Living_Ratio
         {
-            get
-            {
-                return industryDemandAmount;
-            }
+            get { return living_Ratio; }
             set
             {
-                m_IndustryDemand = SetDemand(ref industryDemandAmount, value);
-                UIManager.Instance.SetDemand(EAssignment.INDUSTRY, industryDemandAmount);
+                living_Ratio = value;
+                m_LivingDemand = GetDemand(living_Ratio);
+                Debug.Log(m_LivingDemand);
+                UIManager.Instance.SetDemandRatio(EAssignment.LIVING, living_Ratio);
+            }
+        }
+        private float m_Business_Ratio
+        {
+            get { return business_Ratio; }
+            set
+            {
+                business_Ratio = value;
+                m_BusinessDemand = GetDemand(business_Ratio);
+                UIManager.Instance.SetDemandRatio(EAssignment.BUSINESS, business_Ratio);
+            }
+        }
+        private float m_Industry_Ratio
+        {
+            get { return industry_Ratio; }
+            set
+            {
+                industry_Ratio = value;
+                m_IndustryDemand = GetDemand(industry_Ratio);
+                UIManager.Instance.SetDemandRatio(EAssignment.INDUSTRY, industry_Ratio);
             }
         }
 
         [HideInInspector]
         public EDemand m_LivingDemand = 0;
         [HideInInspector]
-        public EDemand m_BusinnesDemand = 0;
+        public EDemand m_BusinessDemand = 0;
         [HideInInspector]
         public EDemand m_IndustryDemand = 0;
 
@@ -98,9 +155,9 @@ namespace Gameplay.Building
             InitDictionary(m_BusinessPrefabs, buisnessPrefabs_Dic);
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
 
-            LivingDemandAmount = 0.2f;
-            BusinessDemandAmount = 0;
-            IndustryDemandAmount = 0;
+            m_Living_NeedAmount = 5;
+            m_Business_NeedAmount = 0;
+            m_Industry_NeedAmount = 0;
         }
 
         public GameObject PlaceBuilding(Area _a)
@@ -113,11 +170,28 @@ namespace Gameplay.Building
                 c.IsBlocked = true;
             }
 
-            float[] impacts = prefab.GetComponent<Building>().Impacts;
+            Building newBuild = prefab.GetComponent<Building>();
+            float[] impacts = newBuild.Impacts;
+            float inflow = newBuild.Inflow;
 
-            LivingDemandAmount += impacts[0];
-            BusinessDemandAmount += impacts[1];
-            IndustryDemandAmount += impacts[2];
+            switch (_a.m_Assignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    m_Living_CurrAmount += inflow;
+                    break;
+                case EAssignment.BUSINESS:
+                    m_Business_CurrAmount += inflow;
+                    break;
+                case EAssignment.INDUSTRY:
+                    m_Industry_CurrAmount += inflow;
+                    break;
+            }
+
+            m_Living_NeedAmount += impacts[0];
+            m_Business_NeedAmount += impacts[1];
+            m_Industry_NeedAmount += impacts[2];
 
             if (prefab.GetComponent<Building>().InverseRotation)
             {
@@ -146,14 +220,49 @@ namespace Gameplay.Building
                     validPrefabs = industryPrefabs_Dic[_size];
                     break;
             }
+
             if (validPrefabs.Count == 0)
             {
-                Debug.LogError("No Building withz Size: " + _size + " and assignment: " + _assignment + " found");
+                Debug.LogError("No Building with Size: " + _size + " and Assignment: " + _assignment + " found.");
                 return null;
             }
 
-            int index = Random.Range(0, validPrefabs.Count);
-            return validPrefabs[index];
+            //Removes buildings whose density does not match the demand
+            int DemandToCheck = 0;
+            switch (_assignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    DemandToCheck = (int)m_LivingDemand;
+                    break;
+                case EAssignment.BUSINESS:
+                    DemandToCheck = (int)m_BusinessDemand;
+                    break;
+                case EAssignment.INDUSTRY:
+                    DemandToCheck = (int)m_IndustryDemand;
+                    break;
+                default:
+                    break;
+            }
+
+            List<GameObject> output = new List<GameObject>();
+
+            for (int i = 0; i < validPrefabs.Count; i++)
+            {
+                Building b = validPrefabs[i].GetComponent<Building>();
+                if (DemandToCheck == (int)b.m_Density)
+                    output.Add(validPrefabs[i]);
+            }
+
+            if (output.Count == 0)
+            {
+                Debug.LogError($"No Building with Density: {(EDensity)DemandToCheck} and Assignment: {_assignment} found.");
+                return null;
+            }
+
+            int index = Random.Range(0, output.Count);
+            return output[index];
         }
 
         private void InitDictionary(List<GameObject> _prefList, Dictionary<Vector2Int, List<GameObject>> _dic)
@@ -174,12 +283,17 @@ namespace Gameplay.Building
             }
         }
 
-        private EDemand SetDemand(ref float _demandAmount, float _value)
+        private float GetRatio(float _input, float _max)
         {
-            _demandAmount = Mathf.Clamp(_value, 0f, 1f);
-            if (_demandAmount < 0.21f)
+            float min = _max * 0.7f - 15;
+            return Mathf.Clamp(1 - ((_input - min) / (_max - min)), 0f, 1f);
+        }
+
+        private EDemand GetDemand(float _ratio)
+        {
+            if (_ratio < 0.21f)
                 return EDemand.LOW;
-            else if (_demandAmount < 0.5f)
+            else if (_ratio < 0.5f)
                 return EDemand.MID;
             else
                 return EDemand.HIGH;
@@ -187,6 +301,14 @@ namespace Gameplay.Building
     }
 
     public enum EDemand
+    {
+        NONE,
+        LOW,
+        MID,
+        HIGH
+    }
+
+    public enum EDensity
     {
         NONE,
         LOW,
