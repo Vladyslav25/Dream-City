@@ -1,5 +1,6 @@
 ﻿using Gameplay.Streets;
 using Gameplay.Tools;
+using Grid;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -24,8 +25,8 @@ namespace UI
         private Image lastImage;
         private Button lastButton;
 
-        //public Outline LineOutline, CurveOutline, LivingOutline, BusinessOutline, IndustryOutline;
         public Button LineButton, CurveButton, LivingButton, BusinessButton, IndustryButton;
+        public Image LivingDemand, BusinessDemand, IndustryDemand;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -62,6 +63,24 @@ namespace UI
                 ResetHighlightButton();
                 SetActivToolChoose();
                 ToolManager.Instance.ChangeTool(TOOLTYPE.NONE);
+            }
+        }
+
+        public void SetDemand(EAssignment _assignment, float _value)
+        {
+            switch (_assignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    LivingDemand.fillAmount = _value;
+                    break;
+                case EAssignment.BUSINESS:
+                    BusinessDemand.fillAmount = _value;
+                    break;
+                case EAssignment.INDUSTRY:
+                    IndustryDemand.fillAmount = _value;
+                    break;
             }
         }
 

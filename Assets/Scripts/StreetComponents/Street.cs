@@ -453,6 +453,13 @@ namespace Gameplay.StreetComponents
             Quaternion rotation = Quaternion.Lerp(cTopRight.m_Orientation, cDownLeft.m_Orientation, .5f);
             return new OrientedPoint(center, rotation);
         }
+
+        private IEnumerator PlaceBuilding()
+        {
+            
+
+            yield return null;
+        }
         #endregion
 
         #region Collision
@@ -548,11 +555,7 @@ namespace Gameplay.StreetComponents
             {
                 if (FindAreaRightSide(new Vector2Int(4, 4), EAssignment.LIVING, out Area a))
                 {
-                    HousingManager.Instance.PlaceBuilding(a, EAssignment.LIVING);
-                }
-                else
-                {
-                    Debug.Log("DONT Found Area");
+                    HousingManager.Instance.PlaceBuilding(a);
                 }
             }
 

@@ -1,8 +1,6 @@
-﻿using Gameplay.StreetComponents;
-using Grid;
-using System;
-using System.Collections;
+﻿using Grid;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 
 namespace Gameplay.Building
@@ -19,6 +17,57 @@ namespace Gameplay.Building
         private Dictionary<Vector2Int, List<GameObject>> livingPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> buisnessPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> industryPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
+
+        // between 0 - 1
+        // 0 no Demand
+        // 1 max Demand
+
+        private float livingDemandAmount;
+        private float businessDemandAmount;
+        private float industryDemandAmount;
+
+        public float LivingDemandAmount
+        {
+            get
+            {
+                return livingDemandAmount;
+            }
+            set
+            {
+                m_LivingDemand = SetDemand(ref livingDemandAmount, value);
+                UIManager.Instance.SetDemand(EAssignment.LIVING, livingDemandAmount);
+            }
+        }
+
+        public float BusinessDemandAmount
+        {
+            get
+            {
+                return businessDemandAmount;
+            }
+            set
+            {
+                m_BusinnesDemand = SetDemand(ref businessDemandAmount, value);
+                UIManager.Instance.SetDemand(EAssignment.BUSINESS, businessDemandAmount);
+            }
+        }
+
+        public float IndustryDemandAmount
+        {
+            get
+            {
+                return industryDemandAmount;
+            }
+            set
+            {
+                m_IndustryDemand = SetDemand(ref industryDemandAmount, value);
+                UIManager.Instance.SetDemand(EAssignment.INDUSTRY, industryDemandAmount);
+            }
+        }
+
+        public EDemand m_LivingDemand = 0;
+        public EDemand m_BusinnesDemand = 0;
+        public EDemand m_IndustryDemand = 0;
 
         #region -SingeltonPattern-
         private static HousingManager _instance;
@@ -45,17 +94,27 @@ namespace Gameplay.Building
             InitDictionary(m_LivingPrefabs, livingPrefabs_Dic);
             InitDictionary(m_BusinessPrefabs, buisnessPrefabs_Dic);
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
+
+            LivingDemandAmount = 0.2f;
+            BusinessDemandAmount = 0;
+            IndustryDemandAmount = 0;
         }
 
-        public GameObject PlaceBuilding(Area _a, EAssignment _assigment)
+        public GameObject PlaceBuilding(Area _a)
         {
-            GameObject prefab = GetRandomPrefab(_assigment, _a.m_Size);
+            GameObject prefab = GetRandomPrefab(_a.m_Assignment, _a.m_Size);
             if (prefab == null) return null;
 
             foreach (Cell c in _a.m_Cells)
             {
                 c.IsBlocked = true;
             }
+
+            float[] impacts = prefab.GetComponent<ABuilding>().Impacts;
+
+            LivingDemandAmount += impacts[0];
+            BusinessDemandAmount += impacts[1];
+            IndustryDemandAmount += impacts[2];
 
             if (prefab.GetComponent<ABuilding>().InverseRotation)
             {
@@ -90,8 +149,7 @@ namespace Gameplay.Building
                 return null;
             }
 
-            System.Random rng = new System.Random();
-            int index = rng.Next(0, validPrefabs.Count);
+            int index = Random.Range(0, validPrefabs.Count);
             return validPrefabs[index];
         }
 
@@ -112,5 +170,24 @@ namespace Gameplay.Building
                 _dic[building.Size].Add(obj);
             }
         }
+
+        private EDemand SetDemand(ref float _demandAmount, float _value)
+        {
+            _demandAmount = Mathf.Clamp(_value, 0f, 1f);
+            if (_demandAmount < 0.21f)
+                return EDemand.LOW;
+            else if (_demandAmount < 0.5f)
+                return EDemand.MID;
+            else
+                return EDemand.HIGH;
+        }
+    }
+
+    public enum EDemand
+    {
+        NONE,
+        LOW,
+        MID,
+        HIGH
     }
 }

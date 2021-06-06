@@ -178,6 +178,7 @@ namespace Gameplay.Streets
             Cursor.SetColor(Color.blue);
             isCurrendToolLine = false;
             UIManager.Instance.SetActivStreetType();
+            UIManager.Instance.HighlightButton(UIManager.Instance.CurveButton);
         }
 
         private void ResetTool()
