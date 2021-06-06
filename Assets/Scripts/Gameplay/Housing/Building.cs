@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Gameplay.Building
 {
-    public abstract class ABuilding : MonoBehaviour
+    public class Building : MonoBehaviour
     {
         [Header("Settings")]
         public EAssignment m_Assigment;

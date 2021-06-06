@@ -2899,8 +2899,12 @@ MonoBehaviour:
   - {fileID: 100000, guid: 74978b6b36516b04b92f6ec6b3b0898d, type: 3}
   - {fileID: 100000, guid: 2d94dc6eeb30a8b4da06c6ac961039d0, type: 3}
   - {fileID: 100000, guid: 7170f1a798cad8241b24ac62c357fb16, type: 3}
-  m_BusinessPrefabs: []
-  m_IndustryPrefabs: []
+  m_BusinessPrefabs:
+  - {fileID: 100000, guid: a4c5669ce7e9fed44bcf7e1ba43e98da, type: 3}
+  - {fileID: 100000, guid: c0afbc328a3df694da18927a90d8f021, type: 3}
+  - {fileID: 100000, guid: ad3e97d6ac163ba469c986d2a73341fd, type: 3}
+  m_IndustryPrefabs:
+  - {fileID: 100000, guid: 17eaf550a6ba1134ea6c13421a26cb08, type: 3}
   m_LivingDemand: 0
   m_BusinnesDemand: 0
   m_IndustryDemand: 0

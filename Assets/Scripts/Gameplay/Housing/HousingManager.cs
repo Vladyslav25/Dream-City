@@ -65,8 +65,11 @@ namespace Gameplay.Building
             }
         }
 
+        [HideInInspector]
         public EDemand m_LivingDemand = 0;
+        [HideInInspector]
         public EDemand m_BusinnesDemand = 0;
+        [HideInInspector]
         public EDemand m_IndustryDemand = 0;
 
         #region -SingeltonPattern-
@@ -110,13 +113,13 @@ namespace Gameplay.Building
                 c.IsBlocked = true;
             }
 
-            float[] impacts = prefab.GetComponent<ABuilding>().Impacts;
+            float[] impacts = prefab.GetComponent<Building>().Impacts;
 
             LivingDemandAmount += impacts[0];
             BusinessDemandAmount += impacts[1];
             IndustryDemandAmount += impacts[2];
 
-            if (prefab.GetComponent<ABuilding>().InverseRotation)
+            if (prefab.GetComponent<Building>().InverseRotation)
             {
                 return Instantiate(prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
             }
@@ -157,10 +160,10 @@ namespace Gameplay.Building
         {
             foreach (GameObject obj in _prefList)
             {
-                ABuilding building = obj.GetComponent<ABuilding>();
+                Building building = obj.GetComponent<Building>();
                 if (building == null)
                 {
-                    Debug.LogError(obj + " have no ABuilding Component");
+                    Debug.LogError(obj + " have no Building Component");
                     continue;
                 }
                 if (!_dic.ContainsKey(building.Size))
