@@ -97,7 +97,10 @@ namespace Grid
 
         private void CalculateOrientation()
         {
-            m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
+            if (m_isLeft)
+                m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f)) * Quaternion.Euler(0, 180, 0);
+            else
+                m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
         }
 
         /// <summary>

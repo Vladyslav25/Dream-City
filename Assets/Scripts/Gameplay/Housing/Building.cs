@@ -43,7 +43,7 @@ namespace Gameplay.Building
                 return new float[] { impactOnLiving * 0.001f, impactOnBusiness * 0.001f, impactOnIndustry * 0.001f };
             }
         }
-        public Vector2Int Size { get { return new Vector2Int(width, depth); } }
+        public Vector2Int Size { get { return new Vector2Int(depth, width); } }
 
     }
 

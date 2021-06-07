@@ -1,5 +1,7 @@
-﻿using Grid;
+﻿using Gameplay.StreetComponents;
+using Grid;
 using System.Collections.Generic;
+using System.Linq;
 using UI;
 using UnityEngine;
 
@@ -7,6 +9,11 @@ namespace Gameplay.Building
 {
     public class HousingManager : MonoBehaviour
     {
+        [Header("For Testing")]
+        [SerializeField]
+        bool CheckDensity = true;
+
+        [Header("Prefabs")]
         [SerializeField]
         private List<GameObject> m_LivingPrefabs;
         [SerializeField]
@@ -15,7 +22,7 @@ namespace Gameplay.Building
         private List<GameObject> m_IndustryPrefabs;
 
         private Dictionary<Vector2Int, List<GameObject>> livingPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
-        private Dictionary<Vector2Int, List<GameObject>> buisnessPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
+        private Dictionary<Vector2Int, List<GameObject>> businessPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> industryPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
 
         // between 0 - 1
@@ -152,7 +159,7 @@ namespace Gameplay.Building
         private void Awake()
         {
             InitDictionary(m_LivingPrefabs, livingPrefabs_Dic);
-            InitDictionary(m_BusinessPrefabs, buisnessPrefabs_Dic);
+            InitDictionary(m_BusinessPrefabs, businessPrefabs_Dic);
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
 
             m_Living_NeedAmount = 5;
@@ -160,19 +167,15 @@ namespace Gameplay.Building
             m_Industry_NeedAmount = 0;
         }
 
-        public GameObject PlaceBuilding(Area _a)
+        private GameObject SpawnPrefab(Area _a, Building _b, GameObject _prefab)
         {
-            GameObject prefab = GetRandomPrefab(_a.m_Assignment, _a.m_Size);
-            if (prefab == null) return null;
-
             foreach (Cell c in _a.m_Cells)
             {
                 c.IsBlocked = true;
             }
 
-            Building newBuild = prefab.GetComponent<Building>();
-            float[] impacts = newBuild.Impacts;
-            float inflow = newBuild.Inflow;
+            float[] impacts = _b.Impacts;
+            float inflow = _b.Inflow;
 
             switch (_a.m_Assignment)
             {
@@ -193,14 +196,111 @@ namespace Gameplay.Building
             m_Business_NeedAmount += impacts[1];
             m_Industry_NeedAmount += impacts[2];
 
-            if (prefab.GetComponent<Building>().InverseRotation)
+            if (_prefab.GetComponent<Building>().InverseRotation)
             {
-                return Instantiate(prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
+                return Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
             }
             else
             {
-                return Instantiate(prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
+                return Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 0, 0), _a.m_Street.transform);
             }
+        }
+
+        public GameObject PlaceBuilding(EAssignment _assignment, EDensity _density, Street _s, bool _leftSide)
+        {
+            GameObject prefab = GetRandomPrefab(_assignment, _density);
+            Building b = prefab.GetComponent<Building>();
+
+            if (_leftSide)
+            {
+                if (_s.FindAreaLeftSide(b.Size, _assignment, out Area a))
+                    return SpawnPrefab(a, b, prefab);
+                else
+                    return null;
+            }
+            else
+            {
+                if (_s.FindAreaRightSide(b.Size, _assignment, out Area a))
+                    return SpawnPrefab(a, b, prefab);
+                else
+                    return null;
+            }
+        }
+
+        public GameObject PlaceBuilding(Area _a)
+        {
+            GameObject prefab = GetRandomPrefab(_a.m_Assignment, _a.m_Size);
+            if (prefab == null) return null;
+            Building newBuild = prefab.GetComponent<Building>();
+
+            return SpawnPrefab(_a, newBuild, prefab);
+        }
+
+        private GameObject GetRandomPrefab(EAssignment _assignment, EDensity _density)
+        {
+            List<GameObject> validPrefabs = new List<GameObject>();
+            switch (_assignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    foreach (List<GameObject> objList in livingPrefabs_Dic.Values)
+                    {
+                        foreach (GameObject obj in objList)
+                        {
+                            if (CheckDensity)
+                            {
+                                Building b = obj.GetComponent<Building>();
+                                if (b.m_Density == _density)
+                                    validPrefabs.Add(obj);
+                            }
+                            else
+                            {
+                                validPrefabs.Add(obj);
+                            }
+                        }
+                    }
+                    break;
+                case EAssignment.BUSINESS:
+                    foreach (List<GameObject> objList in businessPrefabs_Dic.Values)
+                    {
+                        foreach (GameObject obj in objList)
+                        {
+                            if (CheckDensity)
+                            {
+                                Building b = obj.GetComponent<Building>();
+                                if (b.m_Density == _density)
+                                    validPrefabs.Add(obj);
+                            }
+                            else
+                            {
+                                validPrefabs.Add(obj);
+                            }
+                        }
+                    }
+                    break;
+                case EAssignment.INDUSTRY:
+                    foreach (List<GameObject> objList in industryPrefabs_Dic.Values)
+                    {
+                        foreach (GameObject obj in objList)
+                        {
+                            if (CheckDensity)
+                            {
+                                Building b = obj.GetComponent<Building>();
+                                if (b.m_Density == _density)
+                                    validPrefabs.Add(obj);
+                            }
+                            else
+                            {
+                                validPrefabs.Add(obj);
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            int index = Random.Range(0, validPrefabs.Count);
+            return validPrefabs[index];
         }
 
         private GameObject GetRandomPrefab(EAssignment _assignment, Vector2Int _size)
@@ -211,13 +311,16 @@ namespace Gameplay.Building
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    validPrefabs = livingPrefabs_Dic[_size];
+                    if (livingPrefabs_Dic.ContainsKey(_size))
+                        validPrefabs = livingPrefabs_Dic[_size];
                     break;
                 case EAssignment.BUSINESS:
-                    validPrefabs = buisnessPrefabs_Dic[_size];
+                    if (businessPrefabs_Dic.ContainsKey(_size))
+                        validPrefabs = businessPrefabs_Dic[_size];
                     break;
                 case EAssignment.INDUSTRY:
-                    validPrefabs = industryPrefabs_Dic[_size];
+                    if (industryPrefabs_Dic.ContainsKey(_size))
+                        validPrefabs = industryPrefabs_Dic[_size];
                     break;
             }
 
@@ -250,8 +353,13 @@ namespace Gameplay.Building
 
             for (int i = 0; i < validPrefabs.Count; i++)
             {
-                Building b = validPrefabs[i].GetComponent<Building>();
-                if (DemandToCheck == (int)b.m_Density)
+                if (CheckDensity)
+                {
+                    Building b = validPrefabs[i].GetComponent<Building>();
+                    if (DemandToCheck == (int)b.m_Density)
+                        output.Add(validPrefabs[i]);
+                }
+                else
                     output.Add(validPrefabs[i]);
             }
 

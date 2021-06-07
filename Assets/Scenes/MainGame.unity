@@ -2957,16 +2957,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baea1a42d49077d43897cb34b441f637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CheckDensity: 0
   m_LivingPrefabs:
+  - {fileID: 6774908804330550808, guid: 1a8a633a1c405ef4793cd15841ff14b3, type: 3}
+  - {fileID: 1809486165625626064, guid: 3cbea4530d588834c9c20129813b16a2, type: 3}
+  - {fileID: 1614915057730207192, guid: f177184042385f142ba02457b221cac6, type: 3}
+  - {fileID: 3918706243095443272, guid: 53ed43fe1d377334787901852c339e8b, type: 3}
+  - {fileID: 7257523903535463866, guid: 0ceb67a31a3b2ad428c319afbc7d2642, type: 3}
+  - {fileID: 8543807622931601883, guid: 5b63da376b6be084ba967e076b5bc975, type: 3}
   - {fileID: 100000, guid: 74978b6b36516b04b92f6ec6b3b0898d, type: 3}
   - {fileID: 100000, guid: 2d94dc6eeb30a8b4da06c6ac961039d0, type: 3}
   - {fileID: 100000, guid: 7170f1a798cad8241b24ac62c357fb16, type: 3}
+  - {fileID: 3406674507587545781, guid: f6407defa4d16ed4a82149ff70c33f01, type: 3}
+  - {fileID: 7347699644648676101, guid: 04e0de3b612f9a248af186cf6ece9515, type: 3}
+  - {fileID: 6462469446635870249, guid: 5744c5a41616ec745b5c79ef4fdddbf9, type: 3}
+  - {fileID: 100000, guid: 52af65d65c7b1fe46bdee95d780157ac, type: 3}
+  - {fileID: 100000, guid: 4da0d0ffaf9076f40a1d00fc7552f70c, type: 3}
+  - {fileID: 100000, guid: 17aee72cfed4c9f4f9ef75fc4cb7d155, type: 3}
+  - {fileID: 100000, guid: 5370f88a07aca8a4da7f42470d54c2c7, type: 3}
+  - {fileID: 100000, guid: c2bc3c07e48b6234b8f21751ead01420, type: 3}
+  - {fileID: 100000, guid: 2ef0797da60407348b9b34c8739ce696, type: 3}
+  - {fileID: 100000, guid: 9c7ae3da5a21607439c5b7b1b677f734, type: 3}
+  - {fileID: 100000, guid: 8ccd238123648c94f98a6b61b908ac34, type: 3}
+  - {fileID: 100000, guid: 3e562f66870da7849a59d194175db8e7, type: 3}
+  - {fileID: 100000, guid: f3dfcd08b2af5f94da73865a2d68e630, type: 3}
+  - {fileID: 100000, guid: bb67634706e19034db5b3a269c6155e7, type: 3}
   m_BusinessPrefabs:
   - {fileID: 100000, guid: a4c5669ce7e9fed44bcf7e1ba43e98da, type: 3}
   - {fileID: 100000, guid: c0afbc328a3df694da18927a90d8f021, type: 3}
   - {fileID: 100000, guid: ad3e97d6ac163ba469c986d2a73341fd, type: 3}
   m_IndustryPrefabs:
+  - {fileID: 799697719549360281, guid: 91abf2b0b6134b945a51820557b2ffbe, type: 3}
   - {fileID: 100000, guid: 17eaf550a6ba1134ea6c13421a26cb08, type: 3}
+  - {fileID: 100000, guid: 9ff88184627ab2043bf0ab1bea0babb7, type: 3}
+  - {fileID: 100000, guid: ebdba3422ff652a4ab5bb1590e90eb2e, type: 3}
+  - {fileID: 100000, guid: 12426ce8d5b548b4aab8f5f65268e320, type: 3}
   m_LivingDemand: 0
   m_BusinessDemand: 0
   m_IndustryDemand: 0

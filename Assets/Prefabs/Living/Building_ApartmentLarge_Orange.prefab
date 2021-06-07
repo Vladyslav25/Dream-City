@@ -97,7 +97,7 @@ MonoBehaviour:
   depth: 4
   width: 4
   InverseRotation: 1
-  inflow: 8
+  inflow: 10
   impactOnLiving: 0
-  impactOnBusiness: 2
-  impactOnIndustry: 3
+  impactOnBusiness: 4
+  impactOnIndustry: 6

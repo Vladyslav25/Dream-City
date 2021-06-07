@@ -456,7 +456,7 @@ namespace Gameplay.StreetComponents
 
         private IEnumerator PlaceBuilding()
         {
-            
+
 
             yield return null;
         }
@@ -553,10 +553,8 @@ namespace Gameplay.StreetComponents
 
             if (Input.GetKeyDown(KeyCode.F) && m_StreetCells.Count > 1)
             {
-                if (FindAreaRightSide(new Vector2Int(4, 4), EAssignment.LIVING, out Area a))
-                {
-                    HousingManager.Instance.PlaceBuilding(a);
-                }
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, EDensity.HIGH, this, true);
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, EDensity.HIGH, this, false);
             }
 
         }
