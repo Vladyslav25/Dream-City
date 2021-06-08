@@ -36,7 +36,7 @@ namespace Grid
 
         public float CellSize { get; } = 1f;
 
-        public int MaxGeneration { get; } = 4;
+        public int MaxGeneration { get; } = 18;
         public float GridMaxSquareArea { get; } = 5f;
         public float GridMinSquareArea { get; } = 0.7f;
 
