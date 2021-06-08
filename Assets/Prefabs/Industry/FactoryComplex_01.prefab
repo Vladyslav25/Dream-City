@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Assigment: 3
-  m_Density: 3
+  m_Density: 4
   depth: 18
   width: 17
   InverseRotation: 1

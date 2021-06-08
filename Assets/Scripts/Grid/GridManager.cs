@@ -65,6 +65,8 @@ namespace Grid
                 }
                 yield return null;
             }
+
+            //Create Normal Grid
             GameObject obj = new GameObject("Grid");
             MeshFilter mf = obj.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.AddComponent<MeshRenderer>();
@@ -76,6 +78,21 @@ namespace Grid
             mr.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             mr.material = Instance.CellDefault;
+
+            //Create Collsion Grid 
+            GameObject obj2 = new GameObject("Grid_Coll");
+            MeshFilter mf2 = obj2.AddComponent<MeshFilter>();
+            MeshRenderer mr2 = obj2.AddComponent<MeshRenderer>();
+
+            obj2.transform.position = new Vector3(0, 0.1f, 0);
+            obj2.transform.parent = obj.transform;
+            obj2.layer = 8;
+
+            mr2.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            mr2.receiveShadows = false;
+            mr2.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+            mr2.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+            mr2.material = Instance.CellDefault;
 
             foreach (Cell c in output)
             {
@@ -115,9 +132,11 @@ namespace Grid
 
             _street.m_RowAmount = _street.m_StreetCells.Keys.Max(v => v.y) + 1;
             MeshGenerator.CreateGridMesh(_street, mf, mr);
+            //MeshGenerator.Create_CollisionGridMesh(_street, mf2, mr2);
             m_AllCells.AddRange(output);
             _street.m_GridObj = obj;
             _street.m_GridRenderer = mr;
+            //_street.m_Coll_GridRenderer = mr2;
         }
 
         public static List<Cell> CreateGrid(Street _street)

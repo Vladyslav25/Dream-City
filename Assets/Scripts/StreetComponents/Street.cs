@@ -59,6 +59,7 @@ namespace Gameplay.StreetComponents
         public GameObject m_GridObj; //The Grid Parent Gameobject
 
         public MeshRenderer m_GridRenderer;
+        public MeshRenderer m_Coll_GridRenderer;
 
         private Street m_collisionStreet; //Ref to the Collision Street GameObject
 
@@ -507,15 +508,13 @@ namespace Gameplay.StreetComponents
             HashSet<int> StreetsToRecreate = new HashSet<int>(); //Create an HashSet of int (StreetComponent IDs) to save the Streets Grid thats needs to be recreated
             foreach (StreetSegment segment in m_Segments)
             {
-                List<int> IDs = segment.CheckCollision(GridManager.m_AllCells); //Saves the IDs of Streets which the segment collide with
-                foreach (int i in IDs)
-                    StreetsToRecreate.Add(i); //Saves the Id in the HashSet (no duplicates) 
+                StreetsToRecreate = segment.CheckCollision(GridManager.m_AllCells); //Saves the IDs of Streets which the segment collide with
             }
 
             //Recreate the Streets Grid Mesh
-            foreach (int i in StreetsToRecreate)
+            foreach (int id in StreetsToRecreate)
             {
-                Street s = StreetComponentManager.GetStreetByID(i);
+                Street s = StreetComponentManager.GetStreetByID(id);
                 GridManager.RemoveGridMesh(s);
                 MeshGenerator.CreateGridMesh(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridRenderer);
             }
@@ -567,6 +566,20 @@ namespace Gameplay.StreetComponents
                 m_StreetCells[pos].SetAssignment(_assignment);
                 pos.x += _cellPosStart.x;       //pos.x = -1 change to pos.x = -2 and pos.x = 1 change to pos.x = 2
             }
+        }
+
+        public void SetCellBlocked(Cell c)
+        {
+            c.IsBlocked = true;
+            if (m_Coll_GridRenderer == null) return;
+            Vector2Int pos = c.Pos;
+            int index = Mathf.Abs(pos.x) + pos.y * GridManager.Instance.MaxGeneration - 1;
+            if (pos.x < 0) //if right Side
+                index += GridManager.Instance.MaxGeneration * m_RowAmount;
+
+            Material[] mats = m_Coll_GridRenderer.sharedMaterials;
+            mats[index] = StreetComponentManager.Instance.streetMatColl;
+            m_Coll_GridRenderer.materials = mats;
         }
 
         private void OnDrawGizmosSelected()
@@ -695,29 +708,28 @@ namespace Gameplay.StreetComponents
         /// </summary>
         /// <param name="_cellsToCheck">The List of Cells to Check the Collision with</param>
         /// <returns></returns>
-        public List<int> CheckCollision(List<Cell> _cellsToCheck)
+        public HashSet<int> CheckCollision(List<Cell> _cellsToCheck)
         {
             List<Cell> PolyPolyCheckList = new List<Cell>();
-            List<int> StreetIDsToRecreate = new List<int>();
+            HashSet<int> StreetIDsToRecreate = new HashSet<int>();
 
             //Sphere Sphere Collsion | fast but not precies | Save the Cells that can possible collide for a more precies check 
             for (int i = 0; i < _cellsToCheck.Count; i++)
             {
-                if (MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].CellSquareSize))
+                if (!_cellsToCheck[i].IsBlocked && MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].CellSquareSize))
                 {
-                    PolyPolyCheckList.Add(GridManager.m_AllCells[i]);
+                    PolyPolyCheckList.Add(_cellsToCheck[i]);
                 }
             }
 
             //Poly Poly Collision | slow but more precies 
             for (int i = 0; i < PolyPolyCheckList.Count; i++)
             {
-                if (MyCollision.PolyPoly(PolyPolyCheckList[i].m_Corner, m_CornerPos))
+                if (!PolyPolyCheckList[i].IsBlocked && MyCollision.PolyPoly(PolyPolyCheckList[i].m_Corner, m_CornerPos))
                 {
                     PolyPolyCheckList[i].Delete(); //Delete the Colliding Cell and the later Generations
                     int id = PolyPolyCheckList[i].m_Street.ID;
-                    if (!StreetIDsToRecreate.Contains(id))
-                        StreetIDsToRecreate.Add(id); //Saves the Street ID to recreate the Grid Mesh
+                    StreetIDsToRecreate.Add(id); //Saves the Street ID to recreate the Grid Mesh
                 }
             }
 

@@ -14,6 +14,7 @@ namespace Gameplay.Tools
         public Material m_WohngebietMat;
         public Material m_GewerbegebietMat;
         public Material m_IndustriegebietMat;
+        public Material m_CollRed;
 
         public EAssignment m_CurrendAssignment;
 
@@ -51,7 +52,7 @@ namespace Gameplay.Tools
                         if (c.Pos.x < 0)
                             materialIndex += c.m_Street.m_RowAmount;
 
-                        ChanageMaterial(m_CurrendAssignment, materialIndex, c.m_Street.m_GridRenderer);
+                        ChanageMaterial(m_CurrendAssignment, materialIndex, c.m_Street.m_GridRenderer, c.m_Street.m_Coll_GridRenderer);
                         c.m_Street.ChangeCellAssigtment(c.Pos, m_CurrendAssignment);
                     }
                 }
@@ -74,7 +75,7 @@ namespace Gameplay.Tools
             }
         }
 
-        public void ChanageMaterial(EAssignment _assignment, int _index, MeshRenderer _mr)
+        public void ChanageMaterial(EAssignment _assignment, int _index, MeshRenderer _mr, MeshRenderer _collMr)
         {
             Material mat = null;
             switch (_assignment)

@@ -170,9 +170,7 @@ namespace Gameplay.Building
         private GameObject SpawnPrefab(Area _a, Building _b, GameObject _prefab)
         {
             foreach (Cell c in _a.m_Cells)
-            {
-                c.IsBlocked = true;
-            }
+                _a.m_Street.SetCellBlocked(c);
 
             float[] impacts = _b.Impacts;
             float inflow = _b.Inflow;
@@ -402,7 +400,9 @@ namespace Gameplay.Building
             if (_ratio < 0.21f)
                 return EDemand.LOW;
             else if (_ratio < 0.5f)
-                return EDemand.MID;
+                return EDemand.LOWMID;
+            else if (_ratio < 0.75f)
+                return EDemand.HIGHMID;
             else
                 return EDemand.HIGH;
         }
@@ -412,7 +412,8 @@ namespace Gameplay.Building
     {
         NONE,
         LOW,
-        MID,
+        LOWMID,
+        HIGHMID,
         HIGH
     }
 
@@ -420,7 +421,8 @@ namespace Gameplay.Building
     {
         NONE,
         LOW,
-        MID,
+        LOWMID,
+        HIGHMID,
         HIGH
     }
 }
