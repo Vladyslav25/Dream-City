@@ -32,7 +32,7 @@ namespace Gameplay.Building
         [SerializeField]
         private int impactOnIndustry;
 
-        private Area m_area;
+        public Area m_Area;
 
         public int Inflow { get { return inflow; } }
 
@@ -45,10 +45,49 @@ namespace Gameplay.Building
         }
         public Vector2Int Size { get { return new Vector2Int(depth, width); } }
 
+        public void OnDrawGizmosSelected()
+        {
+            if (m_Area == null)
+            {
+                Debug.LogError("Area is null");
+                return;
+            }
+            if (m_Area.m_Cells == null)
+            {
+                Debug.LogError("Area Cells is null");
+                return;
+            }
+
+            switch (m_Area.m_Assignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    Gizmos.color = Color.green;
+                    break;
+                case EAssignment.BUSINESS:
+                    Gizmos.color = Color.blue;
+                    break;
+                case EAssignment.INDUSTRY:
+                    Gizmos.color = Color.yellow;
+                    break;
+            }
+
+            foreach (Cell c in m_Area.m_Cells)
+            {
+                Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius * 0.8f);
+            }
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(m_Area.m_OP.Position, m_Area.m_OP.Position + Vector3.up * 3f);
+            Gizmos.DrawLine(m_Area.m_OP.Position + Vector3.up * 3f, m_Area.m_OP.Rotation * (Vector3.forward * 2f) + m_Area.m_OP.Position + Vector3.up * 3f);
+        }
+
     }
 
-    public struct Area
+    public class Area
     {
+        public Area() { }
         public Area(Vector2Int _size, List<Cell> _cells, Street _s, OrientedPoint _center)
         {
             m_Size = _size;
