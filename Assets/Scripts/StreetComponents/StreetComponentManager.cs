@@ -1,10 +1,6 @@
-﻿using MeshGeneration;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Grid;
-using Unity.Jobs;
-using TMPro;
 using System.Linq;
 
 namespace Gameplay.StreetComponents
