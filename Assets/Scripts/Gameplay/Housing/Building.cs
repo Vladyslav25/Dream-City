@@ -47,16 +47,7 @@ namespace Gameplay.Building
 
         public void OnDrawGizmosSelected()
         {
-            if (m_Area == null)
-            {
-                Debug.LogError("Area is null");
-                return;
-            }
-            if (m_Area.m_Cells == null)
-            {
-                Debug.LogError("Area Cells is null");
-                return;
-            }
+            if (m_Area == null) return;
 
             switch (m_Area.m_Assignment)
             {
