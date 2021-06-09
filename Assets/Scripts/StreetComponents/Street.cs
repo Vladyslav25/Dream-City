@@ -552,8 +552,8 @@ namespace Gameplay.StreetComponents
 
             if (Input.GetKeyDown(KeyCode.F) && m_StreetCells.Count > 1)
             {
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, EDensity.HIGH, this, true);
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, EDensity.HIGH, this, false);
+                HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, EDensity.HIGH, this, true);
+                HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, EDensity.HIGH, this, false);
             }
 
         }

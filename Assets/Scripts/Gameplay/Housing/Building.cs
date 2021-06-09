@@ -12,9 +12,9 @@ namespace Gameplay.Building
         public EAssignment m_Assigment;
         public EDensity m_Density;
         [SerializeField]
-        private int depth;
-        [SerializeField]
         private int width;
+        [SerializeField]
+        private int depth;
         public bool InverseRotation;
 
         [Header("Impacts")]
