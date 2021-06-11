@@ -2957,7 +2957,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baea1a42d49077d43897cb34b441f637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CheckDensity: 0
+  CheckDensity: 1
   m_LivingPrefabs:
   - {fileID: 6774908804330550808, guid: 1a8a633a1c405ef4793cd15841ff14b3, type: 3}
   - {fileID: 1809486165625626064, guid: 3cbea4530d588834c9c20129813b16a2, type: 3}
@@ -3004,6 +3004,7 @@ MonoBehaviour:
   - {fileID: 3011260557889838954, guid: 4a0bfaaee32d7dd40b14193edf808820, type: 3}
   - {fileID: 3317681010310937666, guid: d46f6b7f096d00c4dbdfa8cf739ccf40, type: 3}
   - {fileID: 2998530882954049521, guid: c79e02605ecee6f429d6303de4af33c3, type: 3}
+  - {fileID: 4493847180813749429, guid: 36ec0f9aa4bae37458c350d62cdbc838, type: 3}
   m_IndustryPrefabs:
   - {fileID: 9052314646305177967, guid: 57810140391ee014a802c3d744e21a2f, type: 3}
   - {fileID: 4303940323448154633, guid: 67c5253cf4591f444bcd63fe74216821, type: 3}
@@ -3016,6 +3017,14 @@ MonoBehaviour:
   - {fileID: 582287223692051657, guid: 2be0903dd1755bd40b7c0b73e9f0385d, type: 3}
   - {fileID: 2616454542540254661, guid: 9f55d40995593b14fb6d599f69ffdeb6, type: 3}
   - {fileID: 6947602288289172429, guid: da1e50d70fe8aec4cb246f23404093ed, type: 3}
+  - {fileID: 181524705088412201, guid: 0d57375aaa2bc484da7520c42329015d, type: 3}
+  - {fileID: 6319964923118467400, guid: dabcfff8325de2c4eb9b0f2a55931d24, type: 3}
+  - {fileID: 7328249025185135736, guid: 83464e25ef38de4429bc93dd62988e94, type: 3}
+  - {fileID: 3658128880710262519, guid: 6fd085c75cd10474d8339518df5253e5, type: 3}
+  - {fileID: 6845532567316942843, guid: 247e9646d8afa5040b5880413be6730c, type: 3}
+  - {fileID: 7718411449041721168, guid: 87c9844a9899c7943a4a1ad5eb4d5186, type: 3}
+  - {fileID: 809702392215473960, guid: f62459ceccfea1b4da98aefe1b788c46, type: 3}
+  - {fileID: 8045101996520508090, guid: 5bc09bf2355bd18408729ee7d4f15b54, type: 3}
   m_LivingDemand: 0
   m_BusinessDemand: 0
   m_IndustryDemand: 0
@@ -3680,6 +3689,7 @@ GameObject:
   - component: {fileID: 1802645329}
   - component: {fileID: 1802645327}
   - component: {fileID: 1802645330}
+  - component: {fileID: 1802645332}
   - component: {fileID: 1802645331}
   m_Layer: 0
   m_Name: ToolManager
@@ -3786,6 +3796,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CursorPrefab: {fileID: 2188559368387382291, guid: 57495c74642e4b04cbd5ce86eb971ff8,
     type: 3}
+--- !u!114 &1802645332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802645325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d3df0517596ef49b940c7c28dc4d67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Type: 4
 --- !u!1 &1807324187
 GameObject:
   m_ObjectHideFlags: 0
