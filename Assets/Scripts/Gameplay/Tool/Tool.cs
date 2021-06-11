@@ -102,6 +102,7 @@ namespace Gameplay.Tools
         NONE,
         STREET,
         CROSS,
-        ASSIGNMENT
+        ASSIGNMENT,
+        TEARDOWN
     }
 }

@@ -25,6 +25,8 @@ namespace Gameplay.Building
         private Dictionary<Vector2Int, List<GameObject>> businessPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> industryPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
 
+        public static List<Area> m_AllAreas = new List<Area>();
+
         // between 0 - 1
         // 0 no Demand
         // 1 max Demand
@@ -104,7 +106,6 @@ namespace Gameplay.Building
             {
                 living_Ratio = value;
                 m_LivingDemand = GetDemand(living_Ratio);
-                Debug.Log(m_LivingDemand);
                 UIManager.Instance.SetDemandRatio(EAssignment.LIVING, living_Ratio);
             }
         }
@@ -204,11 +205,12 @@ namespace Gameplay.Building
                 obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 0, 0), _a.m_Street.transform);
             }
 
-            obj.GetComponent<Building>().m_Area = _a;
+            _a.Init(obj.GetComponent<Building>());
+            m_AllAreas.Add(_a);
             return obj;
         }
 
-        public GameObject PlaceBuilding(EAssignment _assignment, EDensity _density, Street _s, bool _leftSide)
+        public GameObject PlaceBuilding(EAssignment _assignment, EDemand _density, Street _s, bool _leftSide)
         {
             GameObject prefab = GetRandomPrefab(_assignment, _density);
             Building b = prefab.GetComponent<Building>();
@@ -238,7 +240,7 @@ namespace Gameplay.Building
             return SpawnPrefab(_a, newBuild, prefab);
         }
 
-        private GameObject GetRandomPrefab(EAssignment _assignment, EDensity _density)
+        private GameObject GetRandomPrefab(EAssignment _assignment, EDemand _density)
         {
             List<GameObject> validPrefabs = new List<GameObject>();
             switch (_assignment)
@@ -300,7 +302,7 @@ namespace Gameplay.Building
                     }
                     break;
             }
-
+            if (validPrefabs.Count == 0) return null;
             int index = Random.Range(0, validPrefabs.Count);
             return validPrefabs[index];
         }
@@ -367,7 +369,7 @@ namespace Gameplay.Building
 
             if (output.Count == 0)
             {
-                Debug.LogError($"No Building with Density: {(EDensity)DemandToCheck} and Assignment: {_assignment} found.");
+                Debug.LogError($"No Building with Density: {(EDemand)DemandToCheck} and Assignment: {_assignment} found.");
                 return null;
             }
 
@@ -413,15 +415,6 @@ namespace Gameplay.Building
     }
 
     public enum EDemand
-    {
-        NONE,
-        LOW,
-        LOWMID,
-        HIGHMID,
-        HIGH
-    }
-
-    public enum EDensity
     {
         NONE,
         LOW,

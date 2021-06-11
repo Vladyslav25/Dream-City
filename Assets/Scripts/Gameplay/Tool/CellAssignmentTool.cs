@@ -11,11 +11,16 @@ namespace Gameplay.Tools
 {
     public class CellAssignmentTool : Tool
     {
-        public Material m_WohngebietMat;
-        public Material m_GewerbegebietMat;
-        public Material m_IndustriegebietMat;
-        public Material m_CollRed;
+        [SerializeField]
+        private Material m_WohngebietMat;
+        [SerializeField]
+        private Material m_GewerbegebietMat;
+        [SerializeField]
+        private Material m_IndustriegebietMat;
+        [SerializeField]
+        private Material m_CollRed;
 
+        [HideInInspector]
         public EAssignment m_CurrendAssignment;
 
         public override void ToolStart()
@@ -34,9 +39,9 @@ namespace Gameplay.Tools
 
         public override void ToolEnd()
         {
-            SetMaterialAlpha(m_WohngebietMat);
-            SetMaterialAlpha(m_GewerbegebietMat);
-            SetMaterialAlpha(m_IndustriegebietMat);
+            SetMaterialAlpha(m_WohngebietMat, 0f);
+            SetMaterialAlpha(m_GewerbegebietMat, 0f);
+            SetMaterialAlpha(m_IndustriegebietMat, 0f);
             Cursor.SetActiv(false);
         }
 

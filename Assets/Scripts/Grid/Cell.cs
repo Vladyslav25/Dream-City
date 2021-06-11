@@ -76,18 +76,18 @@ namespace Grid
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
             CalculateOrientation();
-            CalculateSquarRadius();
+            CalculateRadius();
             IsValid = !CheckForCollision() && CheckValidSize();
             return IsValid;
         }
 
-        private void CalculateSquarRadius()
+        private void CalculateRadius()
         {
             float rSquar = 0;
 
             for (int i = 0; i < 4; i++)
             {
-                float tmp = Vector2.Distance(m_WorldCorner[i], m_WorldPosCenter);
+                float tmp = Vector3.Distance(m_WorldCorner[i], m_WorldPosCenter);
                 if (tmp > rSquar)
                     rSquar = tmp;
             }
@@ -284,7 +284,10 @@ namespace Grid
                         nextPos.x--;
                     }
                 }
-
+            }
+            else
+            {
+                Debug.LogError("Cant Delete Cell At: " + Pos);
             }
         }
     }

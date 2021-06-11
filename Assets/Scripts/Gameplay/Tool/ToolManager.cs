@@ -62,6 +62,10 @@ namespace Gameplay.Tools
             {
                 ChangeTool(TOOLTYPE.ASSIGNMENT);
             }
+            if(Input.GetKeyDown(KeyCode.T))
+            {
+                ChangeTool(TOOLTYPE.TEARDOWN);
+            }
         }
 
         public StreetTool GetStreetTool()
