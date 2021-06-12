@@ -1,4 +1,4 @@
-﻿using Gameplay.Building;
+﻿using Gameplay.Buildings;
 using Grid;
 using MeshGeneration;
 using MyCustomCollsion;
@@ -542,8 +542,8 @@ namespace Gameplay.StreetComponents
 
             if (Input.GetKeyDown(KeyCode.F) && m_StreetCells.Count > 1)
             {
-                HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, HousingManager.Instance.m_IndustryDemand, this, true);
-                HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, HousingManager.Instance.m_IndustryDemand, this, false);
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, HousingManager.Instance.m_IndustryDemand, this, true);
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, HousingManager.Instance.m_IndustryDemand, this, false);
             }
         }
 

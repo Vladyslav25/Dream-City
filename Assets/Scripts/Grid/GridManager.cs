@@ -1,4 +1,4 @@
-﻿using Gameplay.Building;
+﻿using Gameplay.Buildings;
 using Gameplay.StreetComponents;
 using MeshGeneration;
 using System;

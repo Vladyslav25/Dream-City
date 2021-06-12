@@ -103,6 +103,7 @@ namespace Gameplay.Tools
         STREET,
         CROSS,
         ASSIGNMENT,
-        TEARDOWN
+        TEARDOWN,
+        BUILDINGCLICK
     }
 }

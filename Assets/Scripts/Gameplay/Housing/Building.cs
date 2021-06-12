@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Gameplay.Building
+namespace Gameplay.Buildings
 {
     public class Building : MonoBehaviour
     {
@@ -39,11 +39,11 @@ namespace Gameplay.Building
 
         public int Inflow { get { return inflow; } }
 
-        public float[] Impacts
+        public int[] Impacts
         {
             get
             {
-                return new float[] { impactOnLiving, impactOnBusiness, impactOnIndustry };
+                return new int[] { impactOnLiving, impactOnBusiness, impactOnIndustry };
             }
         }
         public Vector2Int Size { get { return new Vector2Int(depth, width); } }

@@ -2,6 +2,7 @@
 using Gameplay.Tools;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 
 namespace Gameplay.Tools
@@ -46,6 +47,7 @@ namespace Gameplay.Tools
                 t.enabled = false;
                 m_dic_TypeTool.Add(t.m_Type, t);
             }
+            ChangeTool(TOOLTYPE.BUILDINGCLICK);
         }
 
         public void Update()
@@ -65,6 +67,16 @@ namespace Gameplay.Tools
             if(Input.GetKeyDown(KeyCode.T))
             {
                 ChangeTool(TOOLTYPE.TEARDOWN);
+            }
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                ChangeTool(TOOLTYPE.BUILDINGCLICK);
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UIManager.Instance.ResetHighlightButton();
+                UIManager.Instance.SetActivToolChoose();
+                ChangeTool(TOOLTYPE.BUILDINGCLICK);
             }
         }
 

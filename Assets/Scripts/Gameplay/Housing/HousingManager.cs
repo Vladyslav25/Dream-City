@@ -5,7 +5,7 @@ using System.Linq;
 using UI;
 using UnityEngine;
 
-namespace Gameplay.Building
+namespace Gameplay.Buildings
 {
     public class HousingManager : MonoBehaviour
     {
@@ -63,11 +63,11 @@ namespace Gameplay.Building
             }
         }
 
-        private float living_CurrAmount;
-        private float business_CurrAmount;
-        private float industry_CurrAmount;
+        private int living_CurrAmount;
+        private int business_CurrAmount;
+        private int industry_CurrAmount;
 
-        public float m_Living_CurrAmount
+        public int m_Living_CurrAmount
         {
             get { return living_CurrAmount; }
             set
@@ -76,7 +76,7 @@ namespace Gameplay.Building
                 m_Living_Ratio = GetRatio(living_CurrAmount, living_NeedAmount);
             }
         }
-        public float m_Business_CurrAmount
+        public int m_Business_CurrAmount
         {
             get { return business_CurrAmount; }
             set
@@ -85,7 +85,7 @@ namespace Gameplay.Building
                 m_Business_Ratio = GetRatio(business_CurrAmount, business_NeedAmount);
             }
         }
-        public float m_Industry_CurrAmount
+        public int m_Industry_CurrAmount
         {
             get { return industry_CurrAmount; }
             set
@@ -173,8 +173,8 @@ namespace Gameplay.Building
             foreach (Cell c in _a.m_Cells)
                 _a.m_Street.SetCellBlocked(c);
 
-            float[] impacts = _b.Impacts;
-            float inflow = _b.Inflow;
+            int[] impacts = _b.Impacts;
+            int inflow = _b.Inflow;
 
             switch (_a.m_Assignment)
             {

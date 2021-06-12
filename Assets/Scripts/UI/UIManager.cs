@@ -1,4 +1,5 @@
-﻿using Gameplay.Streets;
+﻿using Gameplay.Buildings;
+using Gameplay.Streets;
 using Gameplay.Tools;
 using Grid;
 using UnityEngine;
@@ -21,8 +22,25 @@ namespace UI
         private Image lastImage;
         private Button lastButton;
 
-        public Button LineButton, CurveButton, LivingButton, BusinessButton, IndustryButton;
-        public Image LivingDemand, BusinessDemand, IndustryDemand;
+        [Header("Buttons")]
+        public Button LineButton;
+        public Button CurveButton;
+        public Button LivingButton;
+        public Button BusinessButton;
+        public Button IndustryButton;
+        [Header("Images")]
+        public Image LivingDemand;
+        public Image BusinessDemand;
+        public Image IndustryDemand;
+        [Header("Texts")]
+        public Text AssignmentText;
+        public Text DensityText;
+        public Text InflowText;
+        public Text Impact01Text;
+        public Text Impact02Text;
+        [Space]
+        [SerializeField]
+        private GameObject BuilingInfoObj;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -49,16 +67,84 @@ namespace UI
             streetTool = ToolManager.Instance.GetStreetTool();
             cellTool = ToolManager.Instance.GetCellAssignmentTool();
             SetActivToolChoose();
-            ToolManager.Instance.ChangeTool(TOOLTYPE.NONE);
         }
 
-        private void Update()
+        public void SetBuildingInfoActiv(bool _active)
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            BuilingInfoObj.SetActive(_active);
+        }
+
+        public void SetBuildingStats(Building _b)
+        {
+            string assigment = "";
+            string density = "";
+            string inflowType = "";
+            string impact01Type = "";
+            string impact02Type = "";
+
+            switch (_b.m_Assigment)
             {
-                ResetHighlightButton();
-                SetActivToolChoose();
-                ToolManager.Instance.ChangeTool(TOOLTYPE.NONE);
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    assigment = " Wohngebiet";
+                    inflowType = " Wohnplätze";
+                    impact01Type = " Verkaufsstände";
+                    impact02Type = " Arbeitsplätze";
+                    break;
+                case EAssignment.BUSINESS:
+                    assigment = " Gewerbegebiet";
+                    inflowType = " Verkaufsstände";
+                    impact01Type = " Einwohner";
+                    impact02Type = " Arbeitsplätze";
+                    break;
+                case EAssignment.INDUSTRY:
+                    assigment = " Industriegebiet";
+                    inflowType = " Arbeitsplätze";
+                    impact01Type = " Einwohner";
+                    impact02Type = " Verkaufsstände";
+                    break;
+                default:
+                    break;
+            }
+
+            switch (_b.m_Density)
+            {
+                case EDemand.NONE:
+                    break;
+                case EDemand.LOW:
+                    density = "Gering";
+                    break;
+                case EDemand.LOWMID:
+                    density = "Niedrig";
+                    break;
+                case EDemand.HIGHMID:
+                    density = "Hoch";
+                    break;
+                case EDemand.HIGH:
+                    density = "Sehr Hoch";
+                    break;
+                default:
+                    break;
+            }
+
+            AssignmentText.text = assigment;
+            DensityText.text = density;
+            InflowText.text = _b.Inflow + inflowType;
+            if (_b.Impacts[0] == 0)
+            {
+                Impact01Text.text = _b.Impacts[1].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[2].ToString() + impact02Type;
+            }
+            else if (_b.Impacts[1] == 0)
+            {
+                Impact01Text.text = _b.Impacts[0].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[2].ToString() + impact02Type;
+            }
+            else if (_b.Impacts[2] == 0)
+            {
+                Impact01Text.text = _b.Impacts[0].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[1].ToString() + impact02Type;
             }
         }
 

@@ -25,12 +25,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1860237462742161237}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 0.02, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1.8}
+  m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.02, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1126679826589327708}
-  m_RootOrder: 0
+  m_Father: {fileID: 3611977211210181161}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5372618348804758691
 MeshFilter:
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 3611977211210181161}
   - component: {fileID: 3611977211210181160}
   m_Layer: 8
-  m_Name: LivingComplex_03 1
+  m_Name: LivingComplex_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,6 +108,7 @@ Transform:
   m_LocalScale: {x: -1, y: 1, z: 1.8}
   m_Children:
   - {fileID: 1126679826589327708}
+  - {fileID: 5537797635400436701}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -125,13 +126,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Assigment: 1
   m_Density: 4
-  depth: 18
   width: 10
+  depth: 18
   InverseRotation: 1
-  inflow: 0
+  inflow: 24
   impactOnLiving: 0
-  impactOnBusiness: 0
-  impactOnIndustry: 0
+  impactOnBusiness: 14
+  impactOnIndustry: 10
 --- !u!1 &6167889374352480930
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,8 +161,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0.5555556}
-  m_Children:
-  - {fileID: 5537797635400436701}
+  m_Children: []
   m_Father: {fileID: 3611977211210181161}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
