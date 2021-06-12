@@ -14,7 +14,6 @@ namespace Gameplay.Buildings
         public EDemand m_Density;
         [SerializeField]
         private int width;
-
         [SerializeField]
         private int depth;
         public bool InverseRotation;
@@ -132,14 +131,22 @@ namespace Gameplay.Buildings
             m_Cells = _cells;
             m_Street = _s;
             m_OP = _center;
-            m_Assignment = _cells[0].m_CellAssignment;
         }
 
         public Vector2Int m_Size;
         public List<Cell> m_Cells;
         public Street m_Street;
         public OrientedPoint m_OP;
-        public EAssignment m_Assignment;
+        public EAssignment m_Assignment
+        {
+            get
+            {
+                if (m_Building != null)
+                    return m_Building.m_Assigment;
+                else
+                    return m_Cells[0].m_CellAssignment;
+            }
+        }
         public Vector3[] m_Corners = new Vector3[4];
         public Building m_Building;
         public float m_Radius;

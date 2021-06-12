@@ -12,11 +12,13 @@ namespace Gameplay.Tools
     public class CellAssignmentTool : Tool
     {
         [SerializeField]
-        private Material m_WohngebietMat;
+        private Material m_LivingMat;
         [SerializeField]
-        private Material m_GewerbegebietMat;
+        private Material m_BusinessMat;
         [SerializeField]
-        private Material m_IndustriegebietMat;
+        private Material m_IndustryMat;
+        [SerializeField]
+        private Material m_ClearMat;
         [SerializeField]
         private Material m_CollRed;
 
@@ -28,9 +30,9 @@ namespace Gameplay.Tools
             Cursor.SetActiv(true);
             Cursor.SetColor(Color.white);
 
-            SetMaterialAlpha(m_WohngebietMat, 1f);
-            SetMaterialAlpha(m_GewerbegebietMat, 1f);
-            SetMaterialAlpha(m_IndustriegebietMat, 1f);
+            SetMaterialAlpha(m_LivingMat, 1f);
+            SetMaterialAlpha(m_BusinessMat, 1f);
+            SetMaterialAlpha(m_IndustryMat, 1f);
 
             m_CurrendAssignment = EAssignment.LIVING;
             UIManager.Instance.HighlightButton(UIManager.Instance.LivingButton);
@@ -40,9 +42,9 @@ namespace Gameplay.Tools
 
         public override void ToolEnd()
         {
-            SetMaterialAlpha(m_WohngebietMat, 0f);
-            SetMaterialAlpha(m_GewerbegebietMat, 0f);
-            SetMaterialAlpha(m_IndustriegebietMat, 0f);
+            SetMaterialAlpha(m_LivingMat, 0f);
+            SetMaterialAlpha(m_BusinessMat, 0f);
+            SetMaterialAlpha(m_IndustryMat, 0f);
             UIManager.Instance.SetActivToolChoose();
             Cursor.SetActiv(false);
         }
@@ -89,15 +91,16 @@ namespace Gameplay.Tools
             switch (_assignment)
             {
                 case EAssignment.NONE:
+                    mat = m_ClearMat;
                     break;
                 case EAssignment.LIVING:
-                    mat = m_WohngebietMat;
+                    mat = m_LivingMat;
                     break;
                 case EAssignment.BUSINESS:
-                    mat = m_GewerbegebietMat;
+                    mat = m_BusinessMat;
                     break;
                 case EAssignment.INDUSTRY:
-                    mat = m_IndustriegebietMat;
+                    mat = m_IndustryMat;
                     break;
                 default:
                     break;

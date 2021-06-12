@@ -229,19 +229,25 @@ namespace UI
 
         public void OnClickLiving(Button sender)
         {
-            cellTool.m_CurrendAssignment = Grid.EAssignment.LIVING;
+            cellTool.m_CurrendAssignment = EAssignment.LIVING;
             HighlightButton(sender);
         }
 
         public void OnClickBusiness(Button sender)
         {
-            cellTool.m_CurrendAssignment = Grid.EAssignment.BUSINESS;
+            cellTool.m_CurrendAssignment = EAssignment.BUSINESS;
             HighlightButton(sender);
         }
 
         public void OnClickIndustry(Button sender)
         {
-            cellTool.m_CurrendAssignment = Grid.EAssignment.INDUSTRY;
+            cellTool.m_CurrendAssignment = EAssignment.INDUSTRY;
+            HighlightButton(sender);
+        }
+
+        public void OnClickClear(Button sender)
+        {
+            cellTool.m_CurrendAssignment = EAssignment.NONE;
             HighlightButton(sender);
         }
 

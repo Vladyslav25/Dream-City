@@ -133,8 +133,8 @@ namespace Grid
                 else if (comp is Cross)
                 {
                     Cross c = (Cross)comp;
-                    if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_center, 1.7f)) ;
-                    crossToCheck.Add(c);
+                    if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_center, 1.7f))
+                        crossToCheck.Add(c);
                 }
             }
 

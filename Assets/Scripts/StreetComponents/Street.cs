@@ -708,7 +708,8 @@ namespace Gameplay.StreetComponents
             //Sphere Sphere Collsion | fast but not precies | Save the Cells that can possible collide for a more precies check 
             for (int i = 0; i < _cellsToCheck.Count; i++)
             {
-                if (!_cellsToCheck[i].IsBlocked && MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].m_Radius))
+                if (!_cellsToCheck[i].IsBlocked 
+                    && MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].m_Radius))
                 {
                     PolyPolyCheckList.Add(_cellsToCheck[i]);
                 }

@@ -167,6 +167,11 @@ namespace Gameplay.Streets
 
         public override void ToolEnd()
         {
+            if (m_previewStreet != null)
+            {
+                DecombinePreview(true);
+                DecombinePreview(false);
+            }
             ResetTool();
             Cursor.SetActiv(false);
         }
@@ -183,8 +188,7 @@ namespace Gameplay.Streets
         private void ResetTool()
         {
             //Reset
-            DecombinePreview(true);
-            DecombinePreview(false);
+
             pos1 = Vector3.zero;
             pos2 = Vector3.zero;
             pos3 = Vector3.zero;
@@ -415,7 +419,6 @@ namespace Gameplay.Streets
                         if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
                         {
                             StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
-                            Debug.Log("Remove DeadEnd");
                         }
                         CombinePreview(otherStreet, true, true);
 

@@ -52,6 +52,7 @@ namespace Grid
 
         public static IEnumerator CheckForFinish(Street _street)
         {
+            List<Cell> cellsToDelete = new List<Cell>();
             while (listTask.Count > 0)
             {
                 for (int i = listTask.Count - 1; i >= 0; i--)
@@ -60,6 +61,8 @@ namespace Grid
                     {
                         if (listTask[i].Result.IsValid)
                             output.Add(listTask[i].Result);
+                        else
+                            cellsToDelete.Add(listTask[i].Result);
                         listTask.RemoveAt(i);
                     }
                 }
@@ -84,6 +87,11 @@ namespace Grid
                 _street.m_StreetCells.Add(c.Pos, c);
                 if (c.Pos.x == 1 || c.Pos.x == -1)
                     m_FirstGenCells.Add(c);
+            }
+
+            foreach (Cell c in cellsToDelete)
+            {
+                c.Delete();
             }
 
             //Remove Cells if Generation before is missing
