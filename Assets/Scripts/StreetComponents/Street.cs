@@ -282,7 +282,7 @@ namespace Gameplay.StreetComponents
             //move the StartPointer along the Grid to the Start if the grid
             for (int i = 0; i < m_RowAmount; i++)
             {
-                if (m_StreetCells.ContainsKey(pStart))
+                if (m_StreetCells.ContainsKey(pStart) && m_StreetCells[pStart].m_CellAssignment == _assignment)
                     break;
                 else
                     pStart.y++;
@@ -348,7 +348,7 @@ namespace Gameplay.StreetComponents
             //move the StartPointer along the Grid to the Start if the grid
             for (int i = 0; i < m_RowAmount; i++)
             {
-                if (m_StreetCells.ContainsKey(pStart))
+                if (m_StreetCells.ContainsKey(pStart) && m_StreetCells[pStart].m_CellAssignment == _assignment)
                     break;
                 else
                     pStart.y++;
@@ -498,7 +498,11 @@ namespace Gameplay.StreetComponents
             HashSet<int> StreetsToRecreate = new HashSet<int>(); //Create an HashSet of int (StreetComponent IDs) to save the Streets Grid thats needs to be recreated
             foreach (StreetSegment segment in m_Segments)
             {
-                StreetsToRecreate = segment.CheckCollision(GridManager.m_AllCells); //Saves the IDs of Streets which the segment collide with
+                foreach (int id in segment.CheckCollision(GridManager.m_AllCells))
+                {
+                    //Saves the IDs of Streets which the segment collide with
+                    StreetsToRecreate.Add(id);
+                }
             }
 
             //Recreate the Streets Grid Mesh
@@ -542,8 +546,8 @@ namespace Gameplay.StreetComponents
 
             if (Input.GetKeyDown(KeyCode.F) && m_StreetCells.Count > 1)
             {
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, HousingManager.Instance.m_IndustryDemand, this, true);
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, HousingManager.Instance.m_IndustryDemand, this, false);
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
             }
         }
 
@@ -688,7 +692,7 @@ namespace Gameplay.StreetComponents
                 m_CollisionRadius = c1;
             else
                 m_CollisionRadius = c2;
-            
+
         }
 
         /// <summary>

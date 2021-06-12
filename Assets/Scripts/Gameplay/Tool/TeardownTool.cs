@@ -3,6 +3,7 @@ using Gameplay.Tools;
 using MyCustomCollsion;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 
 public class TeardownTool : AClickTool
@@ -11,6 +12,7 @@ public class TeardownTool : AClickTool
     {
         Cursor.SetActiv(true);
         Cursor.SetColor(Color.black);
+        UIManager.Instance.DeactivateUI();
     }
 
     public override void ToolUpdate()

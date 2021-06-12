@@ -95,8 +95,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Assigment: 2
   m_Density: 2
-  depth: 4
   width: 4
+  depth: 4
   InverseRotation: 1
   inflow: 6
   impactOnLiving: 3
@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 5146873742300706725}
   - component: {fileID: 7217561264304455162}
   - component: {fileID: 7660505445662385326}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coll
   m_TagString: Untagged
   m_Icon: {fileID: 0}

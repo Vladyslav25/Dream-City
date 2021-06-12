@@ -1,5 +1,6 @@
 ﻿using Gameplay.StreetComponents;
 using Grid;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UI;
@@ -168,6 +169,61 @@ namespace Gameplay.Buildings
             m_Industry_NeedAmount = 0;
         }
 
+        private void Start()
+        {
+            StartCoroutine(BuildingPlacement_Living());
+            StartCoroutine(BuildingPlacement_Business());
+            StartCoroutine(BuildingPlacement_Industry());
+        }
+
+        private IEnumerator BuildingPlacement_Living()
+        {
+            while (true)
+            {
+                List<Street> streets = StreetComponentManager.GetAllStreets();
+                for (int i = 0; i < StreetComponentManager.GetAllStreets().Count; i++)
+                {
+                    PlaceBuilding(EAssignment.LIVING, streets[i], true);
+                    yield return new WaitForSeconds(0.1f);
+                    PlaceBuilding(EAssignment.LIVING, streets[i], false);
+                    yield return new WaitForSeconds(0.1f);
+                }
+                yield return new WaitForSeconds(5);
+            }
+        }
+
+        private IEnumerator BuildingPlacement_Business()
+        {
+            while (true)
+            {
+                List<Street> streets = StreetComponentManager.GetAllStreets();
+                for (int i = 0; i < StreetComponentManager.GetAllStreets().Count; i++)
+                {
+                    PlaceBuilding(EAssignment.BUSINESS, streets[i], true);
+                    yield return new WaitForSeconds(0.1f);
+                    PlaceBuilding(EAssignment.BUSINESS, streets[i], false);
+                    yield return new WaitForSeconds(0.1f);
+                }
+                yield return new WaitForSeconds(5);
+            }
+        }
+
+        private IEnumerator BuildingPlacement_Industry()
+        {
+            while (true)
+            {
+                List<Street> streets = StreetComponentManager.GetAllStreets();
+                for (int i = 0; i < StreetComponentManager.GetAllStreets().Count; i++)
+                {
+                    PlaceBuilding(EAssignment.INDUSTRY, streets[i], true);
+                    yield return new WaitForSeconds(0.1f);
+                    PlaceBuilding(EAssignment.INDUSTRY, streets[i], false);
+                    yield return new WaitForSeconds(0.1f);
+                }
+                yield return new WaitForSeconds(5);
+            }
+        }
+
         private GameObject SpawnPrefab(Area _a, Building _b, GameObject _prefab)
         {
             foreach (Cell c in _a.m_Cells)
@@ -210,9 +266,26 @@ namespace Gameplay.Buildings
             return obj;
         }
 
-        public GameObject PlaceBuilding(EAssignment _assignment, EDemand _density, Street _s, bool _leftSide)
+        public GameObject PlaceBuilding(EAssignment _assignment, Street _s, bool _leftSide)
         {
-            GameObject prefab = GetRandomPrefab(_assignment, _density);
+            EDemand density = EDemand.NONE;
+            switch (_assignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    density = m_LivingDemand;
+                    break;
+                case EAssignment.BUSINESS:
+                    density = m_BusinessDemand;
+                    break;
+                case EAssignment.INDUSTRY:
+                    density = m_IndustryDemand;
+                    break;
+            }
+            if (density == EDemand.NONE) Debug.LogError("DEMAND is NONE");
+
+            GameObject prefab = GetRandomPrefab(_assignment, density);
             Building b = prefab.GetComponent<Building>();
 
             if (_leftSide)

@@ -33,6 +33,7 @@ namespace Gameplay.Tools
             SetMaterialAlpha(m_IndustriegebietMat, 1f);
 
             m_CurrendAssignment = EAssignment.LIVING;
+            UIManager.Instance.HighlightButton(UIManager.Instance.LivingButton);
 
             UIManager.Instance.SetActivAssignment();
         }
@@ -42,6 +43,7 @@ namespace Gameplay.Tools
             SetMaterialAlpha(m_WohngebietMat, 0f);
             SetMaterialAlpha(m_GewerbegebietMat, 0f);
             SetMaterialAlpha(m_IndustriegebietMat, 0f);
+            UIManager.Instance.SetActivToolChoose();
             Cursor.SetActiv(false);
         }
 
@@ -51,6 +53,7 @@ namespace Gameplay.Tools
             {
                 foreach (Cell c in GridManager.m_FirstGenCells)
                 {
+                    if (c.IsBlocked) continue;
                     if (MyCollision.SphereSphere(new Vector2(m_hitPos.x, m_hitPos.z), 0.8f, c.m_PosCenter, c.m_Radius))
                     {
                         int materialIndex = c.Pos.y;

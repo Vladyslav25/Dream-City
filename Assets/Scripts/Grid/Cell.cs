@@ -285,10 +285,6 @@ namespace Grid
                     }
                 }
             }
-            else
-            {
-                Debug.LogError("Cant Delete Cell At: " + Pos);
-            }
         }
     }
 }

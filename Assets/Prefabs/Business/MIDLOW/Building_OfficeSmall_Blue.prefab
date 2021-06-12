@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7088365585670307188}
   - component: {fileID: 3498931815073477828}
   - component: {fileID: 1150713735052063837}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,8 +174,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Assigment: 2
   m_Density: 2
-  depth: 4
   width: 4
+  depth: 4
   InverseRotation: 1
   inflow: 6
   impactOnLiving: 3
