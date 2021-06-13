@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5f82b2f901407e46a5d4ab2e6d76f73, type: 3}
+  m_Name: CircuitBoard_Production
+  m_EditorClassIdentifier: 
+  m_Input:
+  - m_Amount: 2
+    m_Product: {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}
+  - m_Amount: 1
+    m_Product: {fileID: 11400000, guid: 2935c734365b41248a9d3ae5565fc651, type: 2}
+  - m_Amount: 1
+    m_Product: {fileID: 11400000, guid: 0d49f899eebd47047a62d2cce286aa56, type: 2}
+  m_Output:
+  - m_Amount: 1
+    m_Product: {fileID: 11400000, guid: aa382187ceb251a4e96a0845d9978d38, type: 2}

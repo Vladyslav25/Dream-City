@@ -7,16 +7,12 @@ using UnityEngine;
 
 namespace Gameplay.Buildings
 {
-    public class Building : MonoBehaviour
+    public class Building : ABuilding
     {
         [Header("Settings")]
         public EAssignment m_Assigment;
         public EDemand m_Density;
-        [SerializeField]
-        private int width;
-        [SerializeField]
-        private int depth;
-        public bool InverseRotation;
+
 
         [Header("Impacts")]
         [SerializeField]
@@ -32,9 +28,6 @@ namespace Gameplay.Buildings
         [Tooltip("The Amount of Impact of the Needed Demand")]
         [SerializeField]
         private int impactOnIndustry;
-
-        public Area m_Area;
-        private GameObject m_ColliderPlane;
 
         public int Inflow { get { return inflow; } }
 
