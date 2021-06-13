@@ -55,10 +55,10 @@ namespace Grid
         private float m_TStart;
         private float m_TEnd;
         public float m_Radius;
-        public bool isValid;
-        public Vector2Int pos;
-        public bool isBlocked; //if Builing is build on it -> true
-        public bool isInArea; //is this Cell assigned to a Area?
+        public bool IsValid;
+        public Vector2Int Pos;
+        public bool IsBlocked; //if Builing is build on it -> true
+        public bool IsInArea; //is this Cell assigned to a Area?
 
         public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide, Vector2Int _pos)
         {
@@ -72,22 +72,22 @@ namespace Grid
             ID = m_Street.ID;
             if (!_isLeftSide)
                 _pos.x = -_pos.x;
-            pos = _pos;
+            Pos = _pos;
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
             CalculateOrientation();
-            CalculateSquarRadius();
-            isValid = !CheckForCollision() && CheckValidSize();
-            return isValid;
+            CalculateRadius();
+            IsValid = !CheckForCollision() && CheckValidSize();
+            return IsValid;
         }
 
-        private void CalculateSquarRadius()
+        private void CalculateRadius()
         {
             float rSquar = 0;
 
             for (int i = 0; i < 4; i++)
             {
-                float tmp = Vector2.Distance(m_WorldCorner[i], m_WorldPosCenter);
+                float tmp = Vector3.Distance(m_WorldCorner[i], m_WorldPosCenter);
                 if (tmp > rSquar)
                     rSquar = tmp;
             }
@@ -97,7 +97,10 @@ namespace Grid
 
         private void CalculateOrientation()
         {
-            m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
+            if (m_isLeft)
+                m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f)) * Quaternion.Euler(0, 180, 0);
+            else
+                m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
         }
 
         /// <summary>
@@ -130,8 +133,8 @@ namespace Grid
                 else if (comp is Cross)
                 {
                     Cross c = (Cross)comp;
-                    if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_center, 1.7f)) ;
-                    crossToCheck.Add(c);
+                    if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_center, 1.7f))
+                        crossToCheck.Add(c);
                 }
             }
 
@@ -264,9 +267,9 @@ namespace Grid
 
         public void Delete()
         {
-            if (m_Street.m_StreetCells.ContainsKey(pos))
+            if (m_Street.m_StreetCells.ContainsKey(Pos))
             {
-                Vector2Int nextPos = pos;
+                Vector2Int nextPos = Pos;
                 while (m_Street.m_StreetCells.ContainsKey(nextPos))
                 {
                     GridManager.m_AllCells.Remove(m_Street.m_StreetCells[nextPos]);
@@ -281,7 +284,6 @@ namespace Grid
                         nextPos.x--;
                     }
                 }
-
             }
         }
     }

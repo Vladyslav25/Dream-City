@@ -1,4 +1,4 @@
-﻿using Gameplay.Building;
+﻿using Gameplay.Buildings;
 using Grid;
 using MeshGeneration;
 using MyCustomCollsion;
@@ -59,6 +59,7 @@ namespace Gameplay.StreetComponents
         public GameObject m_GridObj; //The Grid Parent Gameobject
 
         public MeshRenderer m_GridRenderer;
+        public MeshRenderer m_Coll_GridRenderer;
 
         private Street m_collisionStreet; //Ref to the Collision Street GameObject
 
@@ -149,6 +150,7 @@ namespace Gameplay.StreetComponents
             return this;
         }
 
+        #region AreaHandling/-Creation
         /// <summary>
         /// Find the next biggest Area on the left Side of the Road
         /// </summary>
@@ -159,7 +161,7 @@ namespace Gameplay.StreetComponents
             Vector2Int p = new Vector2Int(1, 0); //Pointer
             int height = 0;
             int width = 0;
-            a = new Area();
+            a = null;
 
             if (m_StreetCells.Count == 0)
             {
@@ -168,7 +170,7 @@ namespace Gameplay.StreetComponents
 
             for (int y = 0; y < m_RowAmount; y++) //Find StartPoint
             {
-                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment != EAssignment.NONE)
+                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].IsInArea && m_StreetCells[p].m_CellAssignment != EAssignment.NONE)
                     break;
                 else
                     p.y++;
@@ -179,14 +181,14 @@ namespace Gameplay.StreetComponents
             if (assi == EAssignment.NONE) return false;
             Vector2Int pStart = p;
 
-            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go up till up end
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].IsBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].IsInArea) //Go up till up end
             {
                 p.x++;
                 height++;
             }
             if (height == 0) return false;
             p.x--;
-            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go right till end
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].IsBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].IsInArea) //Go right till end
             {
                 p.y++;
                 width++;
@@ -213,7 +215,7 @@ namespace Gameplay.StreetComponents
             Vector2Int p = new Vector2Int(-1, 0); //Pointer
             int height = 0;
             int width = 0;
-            a = new Area();
+            a = null;
 
             if (m_StreetCells.Count == 0)
             {
@@ -222,7 +224,7 @@ namespace Gameplay.StreetComponents
 
             for (int y = 0; y < m_RowAmount; y++) //Find valid StartPoint
             {
-                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment != EAssignment.NONE)
+                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].IsInArea && m_StreetCells[p].m_CellAssignment != EAssignment.NONE)
                     break;
                 else
                     p.y++;
@@ -233,14 +235,14 @@ namespace Gameplay.StreetComponents
             if (assi == EAssignment.NONE) return false;
             Vector2Int pStart = p;
 
-            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go up till up end
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].IsBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].IsInArea) //Go up till up end
             {
                 p.x--;
                 height++;
             }
             if (height == 0) return false;
             p.x++;
-            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].isInArea) //Go right till end
+            while (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].IsBlocked && m_StreetCells[p].m_CellAssignment == assi && !m_StreetCells[p].IsInArea) //Go right till end
             {
                 p.y++;
                 width++;
@@ -268,45 +270,55 @@ namespace Gameplay.StreetComponents
         {
             //Look Left Side
             Vector2Int p = new Vector2Int(1, 0); //Pointer
-            a = new Area();
+            a = null;
 
             if (m_StreetCells.Count == 0)
             {
                 return false;
             }
 
-            for (int y = 0; y < m_RowAmount; y++) //Find StartPoint
+            Vector2Int pStart = p;
+
+            //move the StartPointer along the Grid to the Start if the grid
+            for (int i = 0; i < m_RowAmount; i++)
             {
-                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment == _assignment)
+                if (m_StreetCells.ContainsKey(pStart) && m_StreetCells[pStart].m_CellAssignment == _assignment)
                     break;
                 else
-                    p.y++;
+                    pStart.y++;
             }
-            if (!m_StreetCells.ContainsKey(p)) return false;
-
-            Vector2Int pStart = p;
 
             while (m_StreetCells.ContainsKey(pStart))
             {
-                //move right as long as this generation dont have the need depht
-                while (!m_StreetCells.ContainsKey(new Vector2Int(p.x + _size.x - 1, pStart.y)))
+                //move right as long as this generation dont have the needed depth
+                while ((m_StreetCells.ContainsKey(pStart) && m_StreetCells[pStart].IsInArea) || !m_StreetCells.ContainsKey(new Vector2Int(pStart.x + _size.x - 1, pStart.y)))
                 {
                     if (pStart.y > m_RowAmount) return false;
-                    if (m_StreetCells.ContainsKey(new Vector2Int(p.x + _size.x - 1, pStart.y))) //if this generation reached this depth
-                    {
-                        break;
-                    }
-                    pStart.y++; //if this geneartion dont reached this depth move to the right
+                    pStart.y++; //if this geneartion dont reached this depth, move to the right
                 }
 
                 p.x = _size.x; //move p to the needed depth
                 p.y = pStart.y;
 
                 //move right as long as the size.y
-                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, true)) //if to the right all cells are valid
+                if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, true)) //if to the right all cells are valid + reset pStart if invalid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, true);
-                    a = new Area(_size, cells, this, null);
+                    a = new Area(_size, cells, this, GetOrientenPointFromCells(m_StreetCells[pStart], m_StreetCells[p]));
+                    switch (_assignment)
+                    {
+                        case EAssignment.NONE:
+                            break;
+                        case EAssignment.LIVING:
+                            m_LivingAreas.Add(a);
+                            break;
+                        case EAssignment.BUSINESS:
+                            m_BusinessAreas.Add(a);
+                            break;
+                        case EAssignment.INDUSTRY:
+                            m_IndustryAreas.Add(a);
+                            break;
+                    }
                     return true;
                 }
             }
@@ -324,34 +336,30 @@ namespace Gameplay.StreetComponents
         {
             //Look Left Side
             Vector2Int p = new Vector2Int(-1, 0); //Pointer
-            a = new Area();
+            a = null;
 
             if (m_StreetCells.Count == 0)
             {
                 return false;
             }
 
-            for (int y = 0; y < m_RowAmount; y++) //Find StartPoint
+            Vector2Int pStart = p;
+
+            //move the StartPointer along the Grid to the Start if the grid
+            for (int i = 0; i < m_RowAmount; i++)
             {
-                if (m_StreetCells.ContainsKey(p) && !m_StreetCells[p].isInArea && m_StreetCells[p].m_CellAssignment == _assignment)
+                if (m_StreetCells.ContainsKey(pStart) && m_StreetCells[pStart].m_CellAssignment == _assignment)
                     break;
                 else
-                    p.y++;
+                    pStart.y++;
             }
-            if (!m_StreetCells.ContainsKey(p)) return false;
-
-            Vector2Int pStart = p;
 
             while (m_StreetCells.ContainsKey(pStart))
             {
                 //move right as long as this generation dont have the need depht
-                while (!m_StreetCells.ContainsKey(new Vector2Int(p.x - _size.x + 1, pStart.y)))
+                while ((m_StreetCells.ContainsKey(pStart) && m_StreetCells[pStart].IsInArea) || !m_StreetCells.ContainsKey(new Vector2Int(pStart.x - _size.x + 1, pStart.y)))
                 {
                     if (pStart.y > m_RowAmount) return false;
-                    if (m_StreetCells.ContainsKey(new Vector2Int(p.x - _size.x + 1, pStart.y))) //if this generation reached this depth
-                    {
-                        break;
-                    }
                     pStart.y++; //if this geneartion dont reached this depth move to the right
                 }
 
@@ -362,7 +370,21 @@ namespace Gameplay.StreetComponents
                 if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, false)) //if to the right all cells are valid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, false);
-                    a = new Area(_size, cells, this, null);
+                    a = new Area(_size, cells, this, GetOrientenPointFromCells(m_StreetCells[pStart], m_StreetCells[p]));
+                    switch (_assignment)
+                    {
+                        case EAssignment.NONE:
+                            break;
+                        case EAssignment.LIVING:
+                            m_LivingAreas.Add(a);
+                            break;
+                        case EAssignment.BUSINESS:
+                            m_BusinessAreas.Add(a);
+                            break;
+                        case EAssignment.INDUSTRY:
+                            m_IndustryAreas.Add(a);
+                            break;
+                    }
                     return true;
                 }
             }
@@ -382,9 +404,9 @@ namespace Gameplay.StreetComponents
             for (int i = 0; i < _sizeY - 1; i++) //move to the right and look if the cell is valid
             {
                 p.y++;
-                if (!m_StreetCells.ContainsKey(p) || m_StreetCells[p].m_CellAssignment != _assignment) //if the cell exist and the assigment is valid
+                if (!m_StreetCells.ContainsKey(p) || m_StreetCells[p].m_CellAssignment != _assignment || m_StreetCells[p].IsInArea) //if the cell exist and the assigment is valid
                 {
-                    pStart = new Vector2Int(1, p.y + 1); //set pStart to right generation
+                    pStart = new Vector2Int(1, p.y + 1); //set pStart to right generation and move it back down
                     if (!_isLeft)
                         pStart.x *= -1;
                     p = pStart;
@@ -411,13 +433,27 @@ namespace Gameplay.StreetComponents
                     if (m_StreetCells.ContainsKey(v))
                     {
                         output.Add(m_StreetCells[v]);
-                        m_StreetCells[v].isInArea = true;
+                        m_StreetCells[v].IsInArea = true;
                     }
                 }
             }
             return output;
         }
 
+        private OrientedPoint GetOrientenPointFromCells(Cell cDownLeft, Cell cTopRight)
+        {
+            Vector3 center = (cTopRight.m_WorldPosCenter - cDownLeft.m_WorldPosCenter) * .5f + cDownLeft.m_WorldPosCenter;
+            Quaternion rotation = Quaternion.Lerp(cTopRight.m_Orientation, cDownLeft.m_Orientation, .5f);
+            return new OrientedPoint(center, rotation);
+        }
+
+        private IEnumerator PlaceBuilding()
+        {
+            yield return null;
+        }
+        #endregion
+
+        #region Collision
         private void CreateSegments()
         {
             m_Spline.UpdateOPs(this);
@@ -462,15 +498,17 @@ namespace Gameplay.StreetComponents
             HashSet<int> StreetsToRecreate = new HashSet<int>(); //Create an HashSet of int (StreetComponent IDs) to save the Streets Grid thats needs to be recreated
             foreach (StreetSegment segment in m_Segments)
             {
-                List<int> IDs = segment.CheckCollision(GridManager.m_AllCells); //Saves the IDs of Streets which the segment collide with
-                foreach (int i in IDs)
-                    StreetsToRecreate.Add(i); //Saves the Id in the HashSet (no duplicates) 
+                foreach (int id in segment.CheckCollision(GridManager.m_AllCells))
+                {
+                    //Saves the IDs of Streets which the segment collide with
+                    StreetsToRecreate.Add(id);
+                }
             }
 
             //Recreate the Streets Grid Mesh
-            foreach (int i in StreetsToRecreate)
+            foreach (int id in StreetsToRecreate)
             {
-                Street s = StreetComponentManager.GetStreetByID(i);
+                Street s = StreetComponentManager.GetStreetByID(id);
                 GridManager.RemoveGridMesh(s);
                 MeshGenerator.CreateGridMesh(s, s.m_GridObj.GetComponent<MeshFilter>(), s.m_GridRenderer);
             }
@@ -480,6 +518,7 @@ namespace Gameplay.StreetComponents
         {
             m_segmentsCorner.Clear();
         }
+        #endregion
 
         private void Update()
         {
@@ -505,21 +544,11 @@ namespace Gameplay.StreetComponents
 
             lastSegmentCount = segments;
 
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F) && m_StreetCells.Count > 1)
             {
-                //FindAreaLeftSide(out Area a);
-                //FindAreaRightSide(out a);
-
-                if (FindAreaRightSide(new Vector2Int(4, 9), EAssignment.LIVING, out Area a))
-                {
-                    Debug.Log("Found Area");
-                }
-                else
-                {
-                    Debug.Log("DONT Found Area");
-                }
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
+                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
             }
-
         }
 
         public void ChangeCellAssigtment(Vector2Int _cellPosStart, EAssignment _assignment)
@@ -532,10 +561,17 @@ namespace Gameplay.StreetComponents
             }
         }
 
+        public void SetCellBlocked(Cell c)
+        {
+            if (c.IsBlocked) Debug.LogError("Cell at: " + c.Pos + " is already blocked");
+            c.IsBlocked = true;
+        }
+
         private void OnDrawGizmosSelected()
         {
             foreach (Cell c in m_StreetCells.Values)
             {
+                if (!c.IsInArea) continue;
                 switch (c.m_CellAssignment)
                 {
                     case EAssignment.NONE:
@@ -550,12 +586,35 @@ namespace Gameplay.StreetComponents
                     case EAssignment.INDUSTRY:
                         Gizmos.color = Color.yellow;
                         break;
-                    default:
-                        break;
                 }
                 Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius);
-                if (c.isInArea)
-                    Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius * 0.5f);
+            }
+
+            foreach (StreetSegment segment in m_Segments)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(new Vector3(segment.m_Center.x, 0, segment.m_Center.y), segment.m_CollisionRadius);
+            }
+
+            foreach (Area a in m_LivingAreas)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(a.m_OP.Position, a.m_OP.Position + Vector3.up * 3f);
+                Gizmos.DrawLine(a.m_OP.Position, a.m_OP.Rotation * (Vector3.forward * 3f) + a.m_OP.Position);
+            }
+
+            foreach (Area a in m_BusinessAreas)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawLine(a.m_OP.Position, a.m_OP.Position + Vector3.up * 3f);
+                Gizmos.DrawLine(a.m_OP.Position, a.m_OP.Rotation * (Vector3.forward * 3f) + a.m_OP.Position);
+            }
+
+            foreach (Area a in m_IndustryAreas)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(a.m_OP.Position, a.m_OP.Position + Vector3.up * 3f);
+                Gizmos.DrawLine(a.m_OP.Position, a.m_OP.Rotation * (Vector3.forward * 3f) + a.m_OP.Position);
             }
 
             if (drawGridNormals)
@@ -611,6 +670,11 @@ namespace Gameplay.StreetComponents
 
         public StreetSegment(Street _steet, Vector3[] _corner)
         {
+            // 0 -- 2
+            // |    |
+            // 1 -- 3
+            // -> Street Direction ->
+
             m_Street = _steet;
             m_CornerPos = new Vector2[4];
             for (int i = 0; i < m_CornerPos.Length; i++)
@@ -618,21 +682,17 @@ namespace Gameplay.StreetComponents
                 m_CornerPos[i] = new Vector2(_corner[i].x, _corner[i].z);
             }
 
-            //Calculate Collision Radius
-            float dis02 = Vector3.Distance(_corner[0], _corner[2]);
-            float dis01 = Vector3.Distance(_corner[0], _corner[1]);
-            if (dis02 > dis01)
-            {
-                m_CollisionRadius = dis02 * 0.5f;
-                Vector3 v = _corner[0] + (_corner[2] - _corner[0]) * 0.5f;
-                m_Center = new Vector2(v.x, v.z);
-            }
+            Vector3 worldCenter = (_corner[3] - _corner[0]) * 0.5f + _corner[0];
+            m_Center = new Vector2(worldCenter.x, worldCenter.z);
+
+            float c1 = Vector3.Distance(worldCenter, _corner[1]);
+            float c2 = Vector3.Distance(worldCenter, _corner[2]);
+
+            if (c1 > c2)
+                m_CollisionRadius = c1;
             else
-            {
-                m_CollisionRadius = dis01 * 0.5f;
-                Vector3 v = _corner[0] + (_corner[1] - _corner[0]) * 0.5f;
-                m_Center = new Vector2(v.x, v.z);
-            }
+                m_CollisionRadius = c2;
+
         }
 
         /// <summary>
@@ -640,29 +700,29 @@ namespace Gameplay.StreetComponents
         /// </summary>
         /// <param name="_cellsToCheck">The List of Cells to Check the Collision with</param>
         /// <returns></returns>
-        public List<int> CheckCollision(List<Cell> _cellsToCheck)
+        public HashSet<int> CheckCollision(List<Cell> _cellsToCheck)
         {
             List<Cell> PolyPolyCheckList = new List<Cell>();
-            List<int> StreetIDsToRecreate = new List<int>();
+            HashSet<int> StreetIDsToRecreate = new HashSet<int>();
 
             //Sphere Sphere Collsion | fast but not precies | Save the Cells that can possible collide for a more precies check 
             for (int i = 0; i < _cellsToCheck.Count; i++)
             {
-                if (MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].CellSquareSize))
+                if (!_cellsToCheck[i].IsBlocked 
+                    && MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].m_Radius))
                 {
-                    PolyPolyCheckList.Add(GridManager.m_AllCells[i]);
+                    PolyPolyCheckList.Add(_cellsToCheck[i]);
                 }
             }
 
             //Poly Poly Collision | slow but more precies 
             for (int i = 0; i < PolyPolyCheckList.Count; i++)
             {
-                if (MyCollision.PolyPoly(PolyPolyCheckList[i].m_Corner, m_CornerPos))
+                if (!PolyPolyCheckList[i].IsBlocked && MyCollision.PolyPoly(PolyPolyCheckList[i].m_Corner, m_CornerPos))
                 {
                     PolyPolyCheckList[i].Delete(); //Delete the Colliding Cell and the later Generations
                     int id = PolyPolyCheckList[i].m_Street.ID;
-                    if (!StreetIDsToRecreate.Contains(id))
-                        StreetIDsToRecreate.Add(id); //Saves the Street ID to recreate the Grid Mesh
+                    StreetIDsToRecreate.Add(id); //Saves the Street ID to recreate the Grid Mesh
                 }
             }
 

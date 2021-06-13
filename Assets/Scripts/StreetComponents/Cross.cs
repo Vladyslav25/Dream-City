@@ -125,7 +125,7 @@ namespace Gameplay.StreetComponents
             //Sphere Sphere Coll
             for (int i = 0; i < CellsToCheck.Count; i++)
             {
-                if (MyCollision.SphereSphere(m_center, 1.7f, CellsToCheck[i].m_PosCenter, CellsToCheck[i].CellSquareSize))
+                if (MyCollision.SphereSphere(m_center, 1.7f, CellsToCheck[i].m_PosCenter, CellsToCheck[i].m_Radius))
                 {
                     PolyPolyCheckList.Add(CellsToCheck[i]);
                 }

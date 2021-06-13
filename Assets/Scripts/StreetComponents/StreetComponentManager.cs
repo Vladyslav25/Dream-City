@@ -1,10 +1,6 @@
-﻿using MeshGeneration;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Grid;
-using Unity.Jobs;
-using TMPro;
 using System.Linq;
 
 namespace Gameplay.StreetComponents
@@ -47,7 +43,7 @@ namespace Gameplay.StreetComponents
 
         private static Dictionary<int, StreetComponent> StreetComponentID_Dic = new Dictionary<int, StreetComponent>(); //Contains all Streets by ID
 
-        private static List<Street> allStreets;
+        private static List<Street> allStreets = new List<Street>();
 
         private static int setComponentId;
 
@@ -61,7 +57,7 @@ namespace Gameplay.StreetComponents
             return GetComponentByID(_id) as Cross;
         }
 
-        public static List<Street> GetAllStreet()
+        public static List<Street> GetAllStreets()
         {
             return allStreets;
         }
@@ -359,7 +355,9 @@ namespace Gameplay.StreetComponents
         {
             CreateCollisionStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.GetStartConnection(), _street.m_EndConnection);
             Destroy(_street.GetCollisionStreet().gameObject);
-            return CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.GetStartConnection(), _street.m_EndConnection);
+            Street output = CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.GetStartConnection(), _street.m_EndConnection);
+            allStreets.Add(output);
+            return output;
         }
 
         private static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConn, Connection _endConn)

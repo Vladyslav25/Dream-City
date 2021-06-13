@@ -134,8 +134,8 @@ namespace MeshGeneration
                     //032   013
                 }
 
-                int subMeshIndex = cells[a].pos.y;
-                if (cells[a].pos.x < 0)
+                int subMeshIndex = cells[a].Pos.y;
+                if (cells[a].Pos.x < 0)
                     subMeshIndex += maxRow;
 
                 if (!indiceDic.ContainsKey(subMeshIndex))
@@ -164,7 +164,6 @@ namespace MeshGeneration
 
             return _mf;
         }
-
 
         public static void Extrude(SplineStreetComonents _comp)
         {

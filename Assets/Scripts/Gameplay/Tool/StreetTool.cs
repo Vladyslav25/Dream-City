@@ -157,7 +157,6 @@ namespace Gameplay.Streets
                         pos3 = m_hitPos;
                         CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
                         Street newStreet = StreetComponentManager.CreateStreet(m_previewStreet); //Create a valid Street from the preview Street
-
                         //Reset
                         ResetTool();
                         return;
@@ -168,6 +167,11 @@ namespace Gameplay.Streets
 
         public override void ToolEnd()
         {
+            if (m_previewStreet != null)
+            {
+                DecombinePreview(true);
+                DecombinePreview(false);
+            }
             ResetTool();
             Cursor.SetActiv(false);
         }
@@ -178,11 +182,13 @@ namespace Gameplay.Streets
             Cursor.SetColor(Color.blue);
             isCurrendToolLine = false;
             UIManager.Instance.SetActivStreetType();
+            UIManager.Instance.HighlightButton(UIManager.Instance.CurveButton);
         }
 
         private void ResetTool()
         {
             //Reset
+
             pos1 = Vector3.zero;
             pos2 = Vector3.zero;
             pos3 = Vector3.zero;
@@ -224,7 +230,7 @@ namespace Gameplay.Streets
             m_computeShader.Dispatch(m_kernelIndex, m_renderTexture.width / 32, m_renderTexture.height / 32, 1);
 
             m_computeBuffer.GetData(m_pixelCount);
-            if (m_pixelCount[0] > 3)
+            if (m_pixelCount[0] > 6)
             {
                 return true;
             }
@@ -413,7 +419,6 @@ namespace Gameplay.Streets
                         if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
                         {
                             StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
-                            Debug.Log("Remove DeadEnd");
                         }
                         CombinePreview(otherStreet, true, true);
 

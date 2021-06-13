@@ -1,4 +1,4 @@
-﻿using Gameplay.Building;
+﻿using Gameplay.Buildings;
 using Gameplay.StreetComponents;
 using MeshGeneration;
 using System;
@@ -36,7 +36,7 @@ namespace Grid
 
         public float CellSize { get; } = 1f;
 
-        public int MaxGeneration { get; } = 4;
+        public int MaxGeneration { get; } = 18;
         public float GridMaxSquareArea { get; } = 5f;
         public float GridMinSquareArea { get; } = 0.7f;
 
@@ -52,19 +52,24 @@ namespace Grid
 
         public static IEnumerator CheckForFinish(Street _street)
         {
+            List<Cell> cellsToDelete = new List<Cell>();
             while (listTask.Count > 0)
             {
                 for (int i = listTask.Count - 1; i >= 0; i--)
                 {
                     if (listTask[i].IsCompleted)
                     {
-                        if (listTask[i].Result.isValid)
+                        if (listTask[i].Result.IsValid)
                             output.Add(listTask[i].Result);
+                        else
+                            cellsToDelete.Add(listTask[i].Result);
                         listTask.RemoveAt(i);
                     }
                 }
                 yield return null;
             }
+
+            //Create Normal Grid
             GameObject obj = new GameObject("Grid");
             MeshFilter mf = obj.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.AddComponent<MeshRenderer>();
@@ -79,20 +84,25 @@ namespace Grid
 
             foreach (Cell c in output)
             {
-                _street.m_StreetCells.Add(c.pos, c);
-                if (c.pos.x == 1 || c.pos.x == -1)
+                _street.m_StreetCells.Add(c.Pos, c);
+                if (c.Pos.x == 1 || c.Pos.x == -1)
                     m_FirstGenCells.Add(c);
+            }
+
+            foreach (Cell c in cellsToDelete)
+            {
+                c.Delete();
             }
 
             //Remove Cells if Generation before is missing
             for (int i = 0; i < output.Count; i++)
             {
                 Cell c = output[i];
-                if (_street.m_StreetCells.ContainsKey(c.pos))
+                if (_street.m_StreetCells.ContainsKey(c.Pos))
                 {
-                    if (c.m_isLeft && c.pos.x - 1 > 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.pos.x - 1, c.pos.y)))
+                    if (c.m_isLeft && c.Pos.x - 1 > 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.Pos.x - 1, c.Pos.y)))
                     {
-                        Vector2Int nextPose = c.pos;
+                        Vector2Int nextPose = c.Pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
                             output.Remove(c);
@@ -100,9 +110,9 @@ namespace Grid
                             nextPose.x++;
                         }
                     }
-                    if (!c.m_isLeft && c.pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.pos.x + 1, c.pos.y)))
+                    if (!c.m_isLeft && c.Pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.Pos.x + 1, c.Pos.y)))
                     {
-                        Vector2Int nextPose = c.pos;
+                        Vector2Int nextPose = c.Pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
                             c.Delete();
