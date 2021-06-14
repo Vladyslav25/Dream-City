@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: IronOre
   m_EditorClassIdentifier: 
   m_Product: 1
-  m_Name: Eisen Erz
+  m_UI_Name: Eisen Erz
   m_Price: 0
   m_ImpactOnLiving: 0
