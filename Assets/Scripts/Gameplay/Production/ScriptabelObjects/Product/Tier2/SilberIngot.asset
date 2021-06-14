@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SilberIngot
   m_EditorClassIdentifier: 
   m_Product: 7
-  m_Name: Silber Baren
+  m_UI_Name: Silber Baren
   m_Price: 0
   m_ImpactOnLiving: 0

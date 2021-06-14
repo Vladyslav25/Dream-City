@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b1bdba2f1b12bb4cac7eb9a25271f1a, type: 3}
   m_Name: Circuit Board
   m_EditorClassIdentifier: 
-  m_Product: 12
-  m_Name: Platine
+  m_Product: 10
+  m_UI_Name: Platine
   m_Price: 0
   m_ImpactOnLiving: 0

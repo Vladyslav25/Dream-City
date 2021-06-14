@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SilverOre
   m_EditorClassIdentifier: 
   m_Product: 4
-  m_Name: Silber Erz
+  m_UI_Name: Silber Erz
   m_Price: 0
   m_ImpactOnLiving: 0

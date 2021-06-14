@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CoalOre
   m_EditorClassIdentifier: 
   m_Product: 0
-  m_Name: Kohle
+  m_UI_Name: Kohle
   m_Price: 0
   m_ImpactOnLiving: 0

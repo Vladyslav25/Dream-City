@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Car
   m_EditorClassIdentifier: 
   m_Product: 19
-  m_Name: Auto
+  m_UI_Name: Auto
   m_Price: 0
   m_ImpactOnLiving: 0

@@ -8,7 +8,7 @@ namespace Gameplay.Production
     public class Product : ScriptableObject
     {
         public EProduct m_Product;
-        public string m_Name;
+        public string m_UI_Name;
         public float m_Price;
         public int m_ImpactOnLiving;
     }
