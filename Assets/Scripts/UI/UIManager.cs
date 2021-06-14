@@ -215,6 +215,12 @@ namespace UI
             ToolManager.Instance.ChangeTool(TOOLTYPE.ASSIGNMENT);
         }
 
+        public void OnClickTeadDownTool()
+        {
+            DeactivateUI();
+            ToolManager.Instance.ChangeTool(TOOLTYPE.TEARDOWN);
+        }
+
         public void OnClickLine(Button sender)
         {
             streetTool.SetCurveLineTool(true);

@@ -29,7 +29,7 @@ namespace Gameplay.Tools
             Ray ray = UnityEngine.Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
+            if (Physics.Raycast(ray, out hit))
             {
                 Vector3 hitPoint = hit.point;
                 hitPoint.y = 0; //Set the hitpoint to y = 0 so collider if the Street get ignored

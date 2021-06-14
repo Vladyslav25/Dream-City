@@ -13,20 +13,31 @@ namespace Gameplay.Tools
 
         protected bool CheckAreaCollision(out Building b)
         {
-            List<Area> PolyPolyCheck = new List<Area>();
+            List<Area> SphereSphere = new List<Area>();
             b = null;
 
             foreach (Area area in HousingManager.m_AllAreas)
             {
                 if (MyCollision.SphereSphere(new Vector2(m_hitPos.x, m_hitPos.z), 0.8f, new Vector2(area.m_OP.Position.x, area.m_OP.Position.z), area.m_Radius))
                 {
-                    PolyPolyCheck.Add(area);
+                    SphereSphere.Add(area);
                 }
             }
-            if (PolyPolyCheck.Count == 0) return false;
+            if (SphereSphere.Count == 0) return false;
             else
             {
-                b = PolyPolyCheck[0].m_Building;
+                int index = -1;
+                float closestDistance = float.MaxValue;
+                for (int i = 0; i < SphereSphere.Count; i++)
+                {
+                    float distance = Vector3.SqrMagnitude(SphereSphere[i].m_OP.Position - m_hitPos);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        index = i;
+                    }
+                }
+                b = SphereSphere[index].m_Building;
                 return true;
             }
         }
