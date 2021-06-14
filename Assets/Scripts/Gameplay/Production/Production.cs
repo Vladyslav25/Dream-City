@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Gameplay.Production
+namespace Gameplay.Productions
 {
     [CreateAssetMenu(fileName = "Production", menuName = "Production/Production", order = 1)]
     public class Production : ScriptableObject

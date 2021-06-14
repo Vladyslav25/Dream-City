@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Gameplay.Production
+namespace Gameplay.Productions
 {
     [CreateAssetMenu(fileName = "Product", menuName = "Production/Product", order = 0)]
     public class Product : ScriptableObject

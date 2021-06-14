@@ -1,4 +1,5 @@
-﻿using Gameplay.StreetComponents;
+﻿using Gameplay.Productions;
+using Gameplay.StreetComponents;
 using Grid;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,12 +22,16 @@ namespace Gameplay.Buildings
         private List<GameObject> m_BusinessPrefabs;
         [SerializeField]
         private List<GameObject> m_IndustryPrefabs;
+        [SerializeField]
+        private List<GameObject> m_ProductionPrefabs;
 
         private Dictionary<Vector2Int, List<GameObject>> livingPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> businessPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> industryPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
+        private Dictionary<Production, GameObject> productionPrefabs_Dic = new Dictionary<Production, GameObject>();
 
         public static List<Area> m_AllAreas = new List<Area>();
+        public List<ProductionBuilding> m_ProductionBuildWaitingList = new List<ProductionBuilding>();
 
         // between 0 - 1
         // 0 no Demand
@@ -222,6 +227,16 @@ namespace Gameplay.Buildings
                 }
                 yield return new WaitForSeconds(5);
             }
+        }
+
+        public void AddProductionBuildingToList(ProductionBuilding _p)
+        {
+            m_ProductionBuildWaitingList.Add(_p);
+        }
+
+        public void RemoveProductionBuilingInList(int _index = 0)
+        {
+            m_ProductionBuildWaitingList.RemoveAt(_index);
         }
 
         private GameObject SpawnPrefab(Area _a, Building _b, GameObject _prefab)
@@ -465,6 +480,28 @@ namespace Gameplay.Buildings
                     _dic.Add(building.Size, new List<GameObject>());
                 }
                 _dic[building.Size].Add(obj);
+            }
+        }
+
+        private void InitDictionary(List<GameObject> _prefList, Dictionary<Production, GameObject> _dic)
+        {
+            foreach (GameObject obj in _prefList)
+            {
+                ProductionBuilding pb = obj.GetComponent<ProductionBuilding>();
+                if (pb == null)
+                {
+                    Debug.LogError("No ProductionBuilding Component found in: " + obj);
+                    return;
+                }
+
+                if (!_dic.ContainsKey(pb.m_Production))
+                {
+                    _dic.Add(pb.m_Production, obj);
+                }
+                else
+                {
+                    Debug.LogError("Production: " + pb.m_Production + " already exist in Dictionary");
+                }
             }
         }
 
