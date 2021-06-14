@@ -85,7 +85,7 @@ namespace Gameplay.Tools
             }
         }
 
-        public void ChanageMaterial(EAssignment _assignment, int _index, MeshRenderer _mr, MeshRenderer _collMr)
+        private void ChanageMaterial(EAssignment _assignment, int _index, MeshRenderer _mr, MeshRenderer _collMr)
         {
             Material mat = null;
             switch (_assignment)

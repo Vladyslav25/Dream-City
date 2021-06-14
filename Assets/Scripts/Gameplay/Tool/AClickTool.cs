@@ -11,6 +11,11 @@ namespace Gameplay.Tools
     {
         protected MeshRenderer lastRenderer;
 
+        /// <summary>
+        /// Check if the HitPos is over an Building/Area
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
         protected bool CheckAreaCollision(out Building b)
         {
             List<Area> SphereSphere = new List<Area>();
@@ -42,6 +47,11 @@ namespace Gameplay.Tools
             }
         }
 
+        /// <summary>
+        /// Change the material Color of a building
+        /// </summary>
+        /// <param name="_b">The Building to change the Material</param>
+        /// <param name="_c">The Color to change it</param>
         protected void SetMaterialsColor(Building _b, Color _c)
         {
             Material[] mats;

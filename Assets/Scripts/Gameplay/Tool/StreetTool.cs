@@ -56,6 +56,15 @@ namespace Gameplay.Streets
             m_Type = TOOLTYPE.STREET;
         }
 
+        public override void ToolStart()
+        {
+            Cursor.SetActiv(true);
+            Cursor.SetColor(Color.blue);
+            isCurrendToolLine = false;
+            UIManager.Instance.SetActivStreetType();
+            UIManager.Instance.HighlightButton(UIManager.Instance.CurveButton);
+        }
+
         public override void ToolUpdate()
         {
             if (Input.GetKeyUp(KeyCode.C)) //Change to Curve Tool
@@ -69,7 +78,7 @@ namespace Gameplay.Streets
                 UIManager.Instance.HighlightButton(UIManager.Instance.LineButton);
             }
 
-            if (m_validHit) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
+            if (m_validHit)
             {
 
                 if (pos1Set == false && pos2Set == false && pos3Set == false)
@@ -176,15 +185,6 @@ namespace Gameplay.Streets
             Cursor.SetActiv(false);
         }
 
-        public override void ToolStart()
-        {
-            Cursor.SetActiv(true);
-            Cursor.SetColor(Color.blue);
-            isCurrendToolLine = false;
-            UIManager.Instance.SetActivStreetType();
-            UIManager.Instance.HighlightButton(UIManager.Instance.CurveButton);
-        }
-
         private void ResetTool()
         {
             //Reset
@@ -202,6 +202,10 @@ namespace Gameplay.Streets
             m_previewStreet = null;
         }
 
+        /// <summary>
+        /// Change the Tool setting between Line and Curve
+        /// </summary>
+        /// <param name="_setLine">Set to Line Setting?</param>
         public void SetCurveLineTool(bool _setLine)
         {
             if (_setLine)
@@ -253,7 +257,7 @@ namespace Gameplay.Streets
         }
 
         /// <summary>
-        /// Look for the closest Street End or Start GameObject
+        /// Look for the closest Street End or Start Collider
         /// </summary>
         /// <param name="_hitPoint">The Pos from where to look</param>
         /// <returns>The GameObject closest from the Pos (null if its too far away)</returns>
