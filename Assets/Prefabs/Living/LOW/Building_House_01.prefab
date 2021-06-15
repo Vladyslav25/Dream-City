@@ -93,14 +93,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  width: 2
+  depth: 3
+  InverseRotation: 1
   m_Assigment: 1
   m_Density: 1
-  depth: 3
-  width: 2
-  InverseRotation: 1
-  inflow: 5
+  inflow: 3
   impactOnLiving: 0
-  impactOnBusiness: 3
+  impactOnBusiness: 1
   impactOnIndustry: 2
 --- !u!1 &262139999499611114
 GameObject:

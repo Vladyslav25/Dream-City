@@ -17,6 +17,8 @@ namespace UI
         GameObject streetType;
         [SerializeField]
         GameObject assignment;
+        [SerializeField]
+        GameObject production;
 
         private StreetTool streetTool;
         private CellAssignmentTool cellTool;
@@ -177,6 +179,7 @@ namespace UI
 
         public void SetActivToolChoose()
         {
+            production.SetActive(false);
             toolChoose.SetActive(true);
             streetType.SetActive(false);
             assignment.SetActive(false);
@@ -187,6 +190,7 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(true);
             assignment.SetActive(false);
+            production.SetActive(false);
         }
 
         public void SetActivAssignment()
@@ -194,6 +198,12 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(false);
             assignment.SetActive(true);
+            production.SetActive(false);
+        }
+
+        public void SetActivProduction()
+        {
+            production.SetActive(true);
         }
 
         public void DeactivateUI()
@@ -201,6 +211,12 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(false);
             assignment.SetActive(false);
+        }
+
+        public void OnClickProduction(Button _b)
+        {
+            HighlightButton(_b, true);
+            production.SetActive(!production.activeSelf);
         }
 
         public void OnClickStreetTool()
@@ -263,9 +279,12 @@ namespace UI
             HighlightButton(sender);
         }
 
-        public void IncreaseOutline(Outline _o)
+        public void IncreaseOutline(Outline _o, bool _canBeToggle)
         {
             ResetOutline(lastOutline);
+
+            if (lastOutline == _o && _canBeToggle) return;
+
             _o.effectDistance = new Vector2(3, 3);
             lastOutline = _o;
         }
@@ -280,7 +299,7 @@ namespace UI
         /// Highlight a Button with Color and Outline. Also remove the Highlight of the last Button
         /// </summary>
         /// <param name="_b">The Button to Highlight</param>
-        public void HighlightButton(Button _b)
+        public void HighlightButton(Button _b, bool _canBeToggel = false)
         {
             if (_b == null) return;
 
@@ -292,7 +311,7 @@ namespace UI
 
             Outline o = _b.GetComponent<Outline>();
             if (o != null)
-                IncreaseOutline(o);
+                IncreaseOutline(o, _canBeToggel);
         }
 
         public void ResetHighlightButton()

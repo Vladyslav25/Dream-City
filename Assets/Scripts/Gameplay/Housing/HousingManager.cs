@@ -170,7 +170,7 @@ namespace Gameplay.Buildings
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
             InitDictionary(m_ProductionPrefabs, productionPrefabs_Dic);
 
-            m_Living_NeedAmount = 5;
+            m_Living_NeedAmount = 50;
             m_Business_NeedAmount = 0;
             m_Industry_NeedAmount = 0;
         }
@@ -299,9 +299,9 @@ namespace Gameplay.Buildings
                     density = m_IndustryDemand;
                     break;
             }
-            if (density == EDemand.NONE) Debug.LogError("DEMAND is NONE");
 
             GameObject prefab = GetRandomPrefab(_assignment, density);
+            if (prefab == null) return null;
             Building b = prefab.GetComponent<Building>();
 
             if (_leftSide)
@@ -509,17 +509,20 @@ namespace Gameplay.Buildings
 
         private float GetRatio(float _input, float _max)
         {
-            float min = _max * 0.7f - 15;
-            return Mathf.Clamp(1 - ((_input - min) / (_max - min)), 0f, 1f);
+            float min = _max * 0.2f - 200;
+            float max = _max;
+            return Mathf.Clamp(1 - ((_input - min) / (max - min)), 0f, 1f);
         }
 
         private EDemand GetDemand(float _ratio)
         {
-            if (_ratio < 0.21f)
+            if (_ratio == 0)
+                return EDemand.NONE;
+            else if (_ratio < 0.3f)
                 return EDemand.LOW;
-            else if (_ratio < 0.5f)
+            else if (_ratio < 0.6f)
                 return EDemand.LOWMID;
-            else if (_ratio < 0.75f)
+            else if (_ratio < 0.81f)
                 return EDemand.HIGHMID;
             else
                 return EDemand.HIGH;
