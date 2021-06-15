@@ -9,5 +9,6 @@ namespace Gameplay.Productions
     {
         [Header("Production")]
         public Production m_Production;
+        public string m_UIName;
     }
 }

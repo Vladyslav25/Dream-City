@@ -168,6 +168,7 @@ namespace Gameplay.Buildings
             InitDictionary(m_LivingPrefabs, livingPrefabs_Dic);
             InitDictionary(m_BusinessPrefabs, businessPrefabs_Dic);
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
+            InitDictionary(m_ProductionPrefabs, productionPrefabs_Dic);
 
             m_Living_NeedAmount = 5;
             m_Business_NeedAmount = 0;
@@ -497,6 +498,7 @@ namespace Gameplay.Buildings
                 if (!_dic.ContainsKey(pb.m_Production))
                 {
                     _dic.Add(pb.m_Production, obj);
+                    UIManager.Instance.InitProductionUI(pb);
                 }
                 else
                 {

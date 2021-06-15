@@ -1,7 +1,9 @@
 ﻿using Gameplay.Buildings;
+using Gameplay.Productions;
 using Gameplay.Streets;
 using Gameplay.Tools;
 using Grid;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,6 +43,10 @@ namespace UI
         [Space]
         [SerializeField]
         private GameObject BuilingInfoObj;
+        [SerializeField]
+        private GameObject ProductionUI_Prefab;
+        [SerializeField]
+        private GameObject ProductionUI_Parent;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -293,6 +299,13 @@ namespace UI
         {
             if (lastImage != null)
                 lastImage.color = new Color(0.77f, 0.77f, 0.77f, 1);
+        }
+
+        public void InitProductionUI(ProductionBuilding _pb)
+        {
+            GameObject obj = Instantiate(ProductionUI_Prefab, ProductionUI_Parent.transform);
+            ProductionBuildingUI pbUI = obj.GetComponent<ProductionBuildingUI>();
+            pbUI.Init(_pb);
         }
     }
 }
