@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Gameplay.Production
+namespace Gameplay.Productions
 {
     public enum EProduct
     {

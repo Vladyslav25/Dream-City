@@ -172,12 +172,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  width: 3
+  depth: 3
+  InverseRotation: 1
   m_Assigment: 2
   m_Density: 1
-  depth: 3
-  width: 3
-  InverseRotation: 1
-  inflow: 4
-  impactOnLiving: 2
+  inflow: 5
+  impactOnLiving: 3
   impactOnBusiness: 0
   impactOnIndustry: 2

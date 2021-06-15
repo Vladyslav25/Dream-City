@@ -1,4 +1,5 @@
-﻿using Gameplay.StreetComponents;
+﻿using Gameplay.Productions;
+using Gameplay.StreetComponents;
 using Grid;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,12 +22,16 @@ namespace Gameplay.Buildings
         private List<GameObject> m_BusinessPrefabs;
         [SerializeField]
         private List<GameObject> m_IndustryPrefabs;
+        [SerializeField]
+        private List<GameObject> m_ProductionPrefabs;
 
         private Dictionary<Vector2Int, List<GameObject>> livingPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> businessPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Vector2Int, List<GameObject>> industryPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
+        private Dictionary<Production, GameObject> productionPrefabs_Dic = new Dictionary<Production, GameObject>();
 
         public static List<Area> m_AllAreas = new List<Area>();
+        public List<ProductionBuilding> m_ProductionBuildWaitingList = new List<ProductionBuilding>();
 
         // between 0 - 1
         // 0 no Demand
@@ -163,8 +168,9 @@ namespace Gameplay.Buildings
             InitDictionary(m_LivingPrefabs, livingPrefabs_Dic);
             InitDictionary(m_BusinessPrefabs, businessPrefabs_Dic);
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
+            InitDictionary(m_ProductionPrefabs, productionPrefabs_Dic);
 
-            m_Living_NeedAmount = 5;
+            m_Living_NeedAmount = 50;
             m_Business_NeedAmount = 0;
             m_Industry_NeedAmount = 0;
         }
@@ -222,6 +228,17 @@ namespace Gameplay.Buildings
                 }
                 yield return new WaitForSeconds(5);
             }
+        }
+
+        public void AddProductionBuildingToList(ProductionBuilding _pb)
+        {
+            m_ProductionBuildWaitingList.Add(_pb);
+            UIManager.Instance.AddProductionItem(_pb);
+        }
+
+        public void RemoveProductionBuilingInList(int _index = 0, bool _removeInUI = true)
+        {
+            m_ProductionBuildWaitingList.RemoveAt(_index);
         }
 
         private GameObject SpawnPrefab(Area _a, Building _b, GameObject _prefab)
@@ -283,9 +300,9 @@ namespace Gameplay.Buildings
                     density = m_IndustryDemand;
                     break;
             }
-            if (density == EDemand.NONE) Debug.LogError("DEMAND is NONE");
 
             GameObject prefab = GetRandomPrefab(_assignment, density);
+            if (prefab == null) return null;
             Building b = prefab.GetComponent<Building>();
 
             if (_leftSide)
@@ -468,19 +485,45 @@ namespace Gameplay.Buildings
             }
         }
 
+        private void InitDictionary(List<GameObject> _prefList, Dictionary<Production, GameObject> _dic)
+        {
+            foreach (GameObject obj in _prefList)
+            {
+                ProductionBuilding pb = obj.GetComponent<ProductionBuilding>();
+                if (pb == null)
+                {
+                    Debug.LogError("No ProductionBuilding Component found in: " + obj);
+                    return;
+                }
+
+                if (!_dic.ContainsKey(pb.m_Production))
+                {
+                    _dic.Add(pb.m_Production, obj);
+                    UIManager.Instance.InitProductionUI(pb);
+                }
+                else
+                {
+                    Debug.LogError("Production: " + pb.m_Production + " already exist in Dictionary");
+                }
+            }
+        }
+
         private float GetRatio(float _input, float _max)
         {
-            float min = _max * 0.7f - 15;
-            return Mathf.Clamp(1 - ((_input - min) / (_max - min)), 0f, 1f);
+            float min = _max * 0.2f - 200;
+            float max = _max;
+            return Mathf.Clamp(1 - ((_input - min) / (max - min)), 0f, 1f);
         }
 
         private EDemand GetDemand(float _ratio)
         {
-            if (_ratio < 0.21f)
+            if (_ratio == 0)
+                return EDemand.NONE;
+            else if (_ratio < 0.3f)
                 return EDemand.LOW;
-            else if (_ratio < 0.5f)
+            else if (_ratio < 0.6f)
                 return EDemand.LOWMID;
-            else if (_ratio < 0.75f)
+            else if (_ratio < 0.81f)
                 return EDemand.HIGHMID;
             else
                 return EDemand.HIGH;

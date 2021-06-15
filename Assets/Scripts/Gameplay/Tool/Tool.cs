@@ -17,19 +17,19 @@ namespace Gameplay.Tools
         private void Awake()
         {
 #if !UNITY_EDITOR
-            pointerID = 0;  // needs to be in a standalone version 0 to check if the mouse i shovering over UI
+            pointerID = 0;  // needs to be in a standalone version 0 to check if the mouse is hovering over UI
 #endif
         }
 
         public void Update()
         {
-            if (EventSystem.current.IsPointerOverGameObject(pointerID) == true) return;
+            if (EventSystem.current.IsPointerOverGameObject(pointerID)) return;
 
             //Raycast from Mouse to Playground
             Ray ray = UnityEngine.Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
+            if (Physics.Raycast(ray, out hit))
             {
                 Vector3 hitPoint = hit.point;
                 hitPoint.y = 0; //Set the hitpoint to y = 0 so collider if the Street get ignored
@@ -39,10 +39,7 @@ namespace Gameplay.Tools
                 ToolUpdate();
             }
             else
-            {
                 m_validHit = false;
-                //Debug.LogError("Tool: " + m_Type + " faild Raycast: Mouse -> Screen -> Ground");
-            }
 
         }
 
@@ -57,7 +54,7 @@ namespace Gameplay.Tools
             if (_objs.Count == 1) return _objs[0];
 
             float shortestDistance = float.MaxValue;
-            GameObject output = null;
+            int index = -1;
 
             for (int i = 0; i < _objs.Count; i++)
             {
@@ -65,10 +62,10 @@ namespace Gameplay.Tools
                 if (distance < shortestDistance)
                 {
                     shortestDistance = distance;
-                    output = _objs[i];
+                    index = i;
                 }
             }
-            return output;
+            return _objs[index];
         }
 
         protected SphereCollider GetClosesetCollider(List<SphereCollider> _objs, Vector3 _point)

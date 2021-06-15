@@ -45,15 +45,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  width: 3
+  depth: 3
+  InverseRotation: 1
   m_Assigment: 1
   m_Density: 1
-  depth: 3
-  width: 3
-  InverseRotation: 1
-  inflow: 3
+  inflow: 2
   impactOnLiving: 0
   impactOnBusiness: 1
-  impactOnIndustry: 2
+  impactOnIndustry: 1
 --- !u!1 &4025817463968241183
 GameObject:
   m_ObjectHideFlags: 0

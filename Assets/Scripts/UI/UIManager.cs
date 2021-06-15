@@ -1,7 +1,9 @@
 ﻿using Gameplay.Buildings;
+using Gameplay.Productions;
 using Gameplay.Streets;
 using Gameplay.Tools;
 using Grid;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +17,9 @@ namespace UI
         GameObject streetType;
         [SerializeField]
         GameObject assignment;
+        [SerializeField]
+        GameObject production;
+
 
         private StreetTool streetTool;
         private CellAssignmentTool cellTool;
@@ -41,6 +46,13 @@ namespace UI
         [Space]
         [SerializeField]
         private GameObject BuilingInfoObj;
+        [SerializeField]
+        private GameObject ProductionUI_Prefab;
+        [SerializeField]
+        private GameObject ProductionUI_Parent;
+
+        [SerializeField]
+        private ProductionQueueUI m_pqu;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -171,6 +183,7 @@ namespace UI
 
         public void SetActivToolChoose()
         {
+            production.SetActive(false);
             toolChoose.SetActive(true);
             streetType.SetActive(false);
             assignment.SetActive(false);
@@ -181,6 +194,7 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(true);
             assignment.SetActive(false);
+            production.SetActive(false);
         }
 
         public void SetActivAssignment()
@@ -188,6 +202,12 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(false);
             assignment.SetActive(true);
+            production.SetActive(false);
+        }
+
+        public void SetActivProduction()
+        {
+            production.SetActive(true);
         }
 
         public void DeactivateUI()
@@ -195,6 +215,12 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(false);
             assignment.SetActive(false);
+        }
+
+        public void OnClickProduction(Button _b)
+        {
+            HighlightButton(_b, true);
+            production.SetActive(!production.activeSelf);
         }
 
         public void OnClickStreetTool()
@@ -213,6 +239,12 @@ namespace UI
         {
             SetActivAssignment();
             ToolManager.Instance.ChangeTool(TOOLTYPE.ASSIGNMENT);
+        }
+
+        public void OnClickTeadDownTool()
+        {
+            DeactivateUI();
+            ToolManager.Instance.ChangeTool(TOOLTYPE.TEARDOWN);
         }
 
         public void OnClickLine(Button sender)
@@ -251,9 +283,12 @@ namespace UI
             HighlightButton(sender);
         }
 
-        public void IncreaseOutline(Outline _o)
+        public void IncreaseOutline(Outline _o, bool _canBeToggle)
         {
             ResetOutline(lastOutline);
+
+            if (lastOutline == _o && _canBeToggle) return;
+
             _o.effectDistance = new Vector2(3, 3);
             lastOutline = _o;
         }
@@ -268,7 +303,7 @@ namespace UI
         /// Highlight a Button with Color and Outline. Also remove the Highlight of the last Button
         /// </summary>
         /// <param name="_b">The Button to Highlight</param>
-        public void HighlightButton(Button _b)
+        public void HighlightButton(Button _b, bool _canBeToggel = false)
         {
             if (_b == null) return;
 
@@ -280,13 +315,30 @@ namespace UI
 
             Outline o = _b.GetComponent<Outline>();
             if (o != null)
-                IncreaseOutline(o);
+                IncreaseOutline(o, _canBeToggel);
         }
 
         public void ResetHighlightButton()
         {
             if (lastImage != null)
                 lastImage.color = new Color(0.77f, 0.77f, 0.77f, 1);
+        }
+
+        public void InitProductionUI(ProductionBuilding _pb)
+        {
+            GameObject obj = Instantiate(ProductionUI_Prefab, ProductionUI_Parent.transform);
+            ProductionBuildingUIItem pbUI = obj.GetComponent<ProductionBuildingUIItem>();
+            pbUI.Init(_pb);
+        }
+
+        public void AddProductionItem(ProductionBuilding _pb)
+        {
+            m_pqu.AddToQueue(_pb);
+        }
+
+        public void RemoveProductionItem(int _index)
+        {
+            HousingManager.Instance.RemoveProductionBuilingInList(_index, false);
         }
     }
 }
