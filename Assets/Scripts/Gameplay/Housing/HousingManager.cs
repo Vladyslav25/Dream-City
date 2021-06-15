@@ -177,9 +177,9 @@ namespace Gameplay.Buildings
 
         private void Start()
         {
-            StartCoroutine(BuildingPlacement_Living());
-            StartCoroutine(BuildingPlacement_Business());
-            StartCoroutine(BuildingPlacement_Industry());
+            //StartCoroutine(BuildingPlacement_Living());
+            //StartCoroutine(BuildingPlacement_Business());
+            //StartCoroutine(BuildingPlacement_Industry());
         }
 
         private IEnumerator BuildingPlacement_Living()
