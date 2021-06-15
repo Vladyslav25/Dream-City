@@ -1,4 +1,5 @@
-﻿using Gameplay.Productions;
+﻿using Gameplay.Buildings;
+using Gameplay.Productions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,8 +7,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-
-    public class ProductionBuildingUI : MonoBehaviour
+    public class ProductionBuildingUIItem : MonoBehaviour
     {
         [HideInInspector]
         public ProductionBuilding m_PB;
@@ -20,6 +20,11 @@ namespace UI
         private GameObject Text_Parent;
         [SerializeField]
         private Text m_Title;
+
+        public void OnClick()
+        {
+            HousingManager.Instance.AddProductionBuildingToList(m_PB);
+        }
 
         public void Init(ProductionBuilding _pb)
         {

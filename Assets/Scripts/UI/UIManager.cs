@@ -20,6 +20,7 @@ namespace UI
         [SerializeField]
         GameObject production;
 
+
         private StreetTool streetTool;
         private CellAssignmentTool cellTool;
         private Outline lastOutline;
@@ -49,6 +50,9 @@ namespace UI
         private GameObject ProductionUI_Prefab;
         [SerializeField]
         private GameObject ProductionUI_Parent;
+
+        [SerializeField]
+        private ProductionQueueUI m_pqu;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -323,8 +327,18 @@ namespace UI
         public void InitProductionUI(ProductionBuilding _pb)
         {
             GameObject obj = Instantiate(ProductionUI_Prefab, ProductionUI_Parent.transform);
-            ProductionBuildingUI pbUI = obj.GetComponent<ProductionBuildingUI>();
+            ProductionBuildingUIItem pbUI = obj.GetComponent<ProductionBuildingUIItem>();
             pbUI.Init(_pb);
+        }
+
+        public void AddProductionItem(ProductionBuilding _pb)
+        {
+            m_pqu.AddToQueue(_pb);
+        }
+
+        public void RemoveProductionItem(int _index)
+        {
+            HousingManager.Instance.RemoveProductionBuilingInList(_index, false);
         }
     }
 }

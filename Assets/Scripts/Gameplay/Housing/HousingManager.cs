@@ -230,12 +230,13 @@ namespace Gameplay.Buildings
             }
         }
 
-        public void AddProductionBuildingToList(ProductionBuilding _p)
+        public void AddProductionBuildingToList(ProductionBuilding _pb)
         {
-            m_ProductionBuildWaitingList.Add(_p);
+            m_ProductionBuildWaitingList.Add(_pb);
+            UIManager.Instance.AddProductionItem(_pb);
         }
 
-        public void RemoveProductionBuilingInList(int _index = 0)
+        public void RemoveProductionBuilingInList(int _index = 0, bool _removeInUI = true)
         {
             m_ProductionBuildWaitingList.RemoveAt(_index);
         }
