@@ -18,7 +18,8 @@ namespace Grid
         NONE,
         LIVING,
         BUSINESS,
-        INDUSTRY
+        INDUSTRY,
+        PRODUCTION
     }
 
     public class Cell

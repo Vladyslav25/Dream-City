@@ -17,7 +17,7 @@ public class TeardownTool : AClickTool
 
     public override void ToolUpdate()
     {
-        if (CheckAreaCollision(out Building b))
+        if (CheckAreaCollision(out ABuilding b))
         {
             SetMaterialsColor(b, Color.red);
             if (Input.GetMouseButtonDown(0))

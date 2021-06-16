@@ -20,7 +20,6 @@ namespace UI
         [SerializeField]
         GameObject production;
 
-
         private StreetTool streetTool;
         private CellAssignmentTool cellTool;
         private Outline lastOutline;

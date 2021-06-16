@@ -16,7 +16,7 @@ namespace Gameplay.Tools
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected bool CheckAreaCollision(out Building b)
+        protected bool CheckAreaCollision(out ABuilding b)
         {
             List<Area> SphereSphere = new List<Area>();
             b = null;
@@ -52,7 +52,7 @@ namespace Gameplay.Tools
         /// </summary>
         /// <param name="_b">The Building to change the Material</param>
         /// <param name="_c">The Color to change it</param>
-        protected void SetMaterialsColor(Building _b, Color _c)
+        protected void SetMaterialsColor(ABuilding _b, Color _c)
         {
             Material[] mats;
             if (lastRenderer != null)

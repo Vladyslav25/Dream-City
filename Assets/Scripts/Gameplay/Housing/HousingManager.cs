@@ -241,6 +241,40 @@ namespace Gameplay.Buildings
             m_ProductionBuildWaitingList.RemoveAt(_index);
         }
 
+        public GameObject PlaceProductionBuilding(Production _p, Street _s, bool _isLeftSide)
+        {
+            if (!productionPrefabs_Dic.ContainsKey(_p)) return null;
+            GameObject prefab = productionPrefabs_Dic[_p];
+            ProductionBuilding PB = prefab.GetComponent<ProductionBuilding>();
+
+            if (_isLeftSide)
+            {
+
+                if (_s.FindAreaLeftSide(out Area a))
+                    return SpawnPrefab(a, PB, prefab);
+            }
+            else
+            {
+                if (_s.FindAreaRightSide(out Area a))
+                    return SpawnPrefab(a, PB, prefab);
+            }
+
+            return null;
+        }
+
+        private GameObject SpawnPrefab(Area _a, ProductionBuilding _pb, GameObject _prefab)
+        {
+            foreach (Cell c in _a.m_Cells)
+                _a.m_Street.SetCellBlocked(c);
+
+            // TODO: Add Production to Warehouse Production
+
+            GameObject obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation, _a.m_Street.transform);
+            _a.Init(_pb);
+            m_AllAreas.Add(_a);
+            return obj;
+        }
+
         private GameObject SpawnPrefab(Area _a, Building _b, GameObject _prefab)
         {
             foreach (Cell c in _a.m_Cells)
@@ -283,7 +317,7 @@ namespace Gameplay.Buildings
             return obj;
         }
 
-        public GameObject PlaceBuilding(EAssignment _assignment, Street _s, bool _leftSide)
+        public GameObject PlaceBuilding(EAssignment _assignment, Street _s, bool _isLeftSide)
         {
             EDemand density = EDemand.NONE;
             switch (_assignment)
@@ -305,20 +339,18 @@ namespace Gameplay.Buildings
             if (prefab == null) return null;
             Building b = prefab.GetComponent<Building>();
 
-            if (_leftSide)
+            if (_isLeftSide)
             {
                 if (_s.FindAreaLeftSide(b.Size, _assignment, out Area a))
                     return SpawnPrefab(a, b, prefab);
-                else
-                    return null;
             }
             else
             {
                 if (_s.FindAreaRightSide(b.Size, _assignment, out Area a))
                     return SpawnPrefab(a, b, prefab);
-                else
-                    return null;
             }
+
+            return null;
         }
 
         public GameObject PlaceBuilding(Area _a)

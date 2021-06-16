@@ -18,10 +18,10 @@ namespace Gameplay.Tools
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (CheckAreaCollision(out Building b))
+                if (CheckAreaCollision(out ABuilding b))
                 {
                     UIManager.Instance.SetBuildingInfoActiv(true);
-                    UIManager.Instance.SetBuildingStats(b);
+                    UIManager.Instance.SetBuildingStats((Building)b);
                     SetMaterialsColor(b, Color.cyan);
                 }
                 else

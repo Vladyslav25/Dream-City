@@ -10,5 +10,10 @@ namespace Gameplay.Productions
         [Header("Production")]
         public Production m_Production;
         public string m_UIName;
+
+        public override void Destroy()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

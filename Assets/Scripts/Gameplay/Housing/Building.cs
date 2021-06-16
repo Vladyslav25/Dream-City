@@ -10,9 +10,7 @@ namespace Gameplay.Buildings
     public class Building : ABuilding
     {
         [Header("Settings")]
-        public EAssignment m_Assigment;
         public EDemand m_Density;
-
 
         [Header("Impacts")]
         [SerializeField]
@@ -38,27 +36,8 @@ namespace Gameplay.Buildings
                 return new int[] { impactOnLiving, impactOnBusiness, impactOnIndustry };
             }
         }
-        public Vector2Int Size { get { return new Vector2Int(depth, width); } }
 
-        public GameObject GetColliderPlane()
-        {
-            if (m_ColliderPlane != null)
-                return m_ColliderPlane;
-            else
-            {
-                foreach (Transform child in transform)
-                {
-                    if (child.gameObject.layer == 8)
-                    {
-                        m_ColliderPlane = child.gameObject;
-                    }
-                }
-                if (m_ColliderPlane == null) Debug.LogError("Building Obj: " + gameObject + " couldnt find a Collider Plane");
-                return m_ColliderPlane;
-            }
-        }
-
-        public void Destroy()
+        public override void Destroy()
         {
             m_Area.Destroy();
 
@@ -84,35 +63,6 @@ namespace Gameplay.Buildings
             HousingManager.Instance.m_Industry_NeedAmount -= Impacts[2];
 
             Destroy(gameObject); //byby House
-        }
-
-        public void OnDrawGizmosSelected()
-        {
-            if (m_Area == null) return;
-
-            switch (m_Area.m_Assignment)
-            {
-                case EAssignment.NONE:
-                    break;
-                case EAssignment.LIVING:
-                    Gizmos.color = Color.green;
-                    break;
-                case EAssignment.BUSINESS:
-                    Gizmos.color = Color.blue;
-                    break;
-                case EAssignment.INDUSTRY:
-                    Gizmos.color = Color.yellow;
-                    break;
-            }
-
-            foreach (Cell c in m_Area.m_Cells)
-            {
-                Gizmos.DrawWireSphere(c.m_WorldPosCenter, c.m_Radius * 0.8f);
-            }
-
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(m_Area.m_OP.Position, m_Area.m_OP.Position + Vector3.up * 3f);
-            Gizmos.DrawLine(m_Area.m_OP.Position + Vector3.up * 3f, m_Area.m_OP.Rotation * (Vector3.forward * 2f) + m_Area.m_OP.Position + Vector3.up * 3f);
         }
     }
 
@@ -141,10 +91,10 @@ namespace Gameplay.Buildings
             }
         }
         public Vector3[] m_Corners = new Vector3[4];
-        public Building m_Building;
+        public ABuilding m_Building;
         public float m_Radius;
 
-        public void Init(Building _b)
+        public void Init(ABuilding _b)
         {
             m_Building = _b;
             m_Building.m_Area = this;
