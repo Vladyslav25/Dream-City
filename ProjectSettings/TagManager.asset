@@ -9,6 +9,7 @@ TagManager:
   - StreetEnd
   - RaycastGround
   - EditText
+  - ToggleButton
   layers:
   - Default
   - TransparentFX

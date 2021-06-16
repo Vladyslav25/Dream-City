@@ -303,25 +303,27 @@ namespace UI
         /// Highlight a Button with Color and Outline. Also remove the Highlight of the last Button
         /// </summary>
         /// <param name="_b">The Button to Highlight</param>
-        public void HighlightButton(Button _b, bool _canBeToggel = false)
+        public void HighlightButton(Button _b, bool _isToggel = false)
         {
             if (_b == null) return;
 
-            ResetHighlightButton();
             Image i = _b.GetComponent<Image>();
+            if (!_isToggel)
+                ResetHighlightButton();
             i.color = Color.white;
 
             lastImage = i;
 
             Outline o = _b.GetComponent<Outline>();
             if (o != null)
-                IncreaseOutline(o, _canBeToggel);
+                IncreaseOutline(o, _isToggel);
         }
 
         public void ResetHighlightButton()
         {
-            if (lastImage != null)
+            if (lastImage != null && lastImage.gameObject.tag != "ToggleButton")
                 lastImage.color = new Color(0.77f, 0.77f, 0.77f, 1);
+
         }
 
         public void InitProductionUI(ProductionBuilding _pb)
