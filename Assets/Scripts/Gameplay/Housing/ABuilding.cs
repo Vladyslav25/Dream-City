@@ -7,6 +7,7 @@ namespace Gameplay.Buildings
 {
     public abstract class ABuilding : MonoBehaviour
     {
+        [Header("Settings")]
         [SerializeField]
         protected int width;
         [SerializeField]
@@ -14,6 +15,22 @@ namespace Gameplay.Buildings
         
         public EAssignment m_Assigment;
         public bool InverseRotation;
+
+        [Header("Inflow")]
+        [SerializeField]
+        [Tooltip("The Amount of Impact of the Currend Demand")]
+        protected int inflow; //Living: Residents, Business: Jobs, Industry: Jobs
+
+        [Header("Impacts")]
+        [Tooltip("The Amount of Impact of the Needed Demand")]
+        [SerializeField]
+        protected int impactOnLiving;
+        [Tooltip("The Amount of Impact of the Needed Demand")]
+        [SerializeField]
+        protected int impactOnBusiness;
+        [Tooltip("The Amount of Impact of the Needed Demand")]
+        [SerializeField]
+        protected int impactOnIndustry;
 
         [HideInInspector]
         public Area m_Area;

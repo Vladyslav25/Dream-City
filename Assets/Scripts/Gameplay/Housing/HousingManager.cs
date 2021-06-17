@@ -31,7 +31,7 @@ namespace Gameplay.Buildings
         private Dictionary<Production, GameObject> productionPrefabs_Dic = new Dictionary<Production, GameObject>();
 
         public static List<Area> m_AllAreas = new List<Area>();
-        public List<ProductionBuilding> m_ProductionBuildWaitingList = new List<ProductionBuilding>();
+        public List<Production> m_ProductionBuildWaitingList = new List<Production>();
 
         // between 0 - 1
         // 0 no Demand
@@ -175,64 +175,9 @@ namespace Gameplay.Buildings
             m_Industry_NeedAmount = 0;
         }
 
-        private void Start()
-        {
-            //StartCoroutine(BuildingPlacement_Living());
-            //StartCoroutine(BuildingPlacement_Business());
-            //StartCoroutine(BuildingPlacement_Industry());
-        }
-
-        private IEnumerator BuildingPlacement_Living()
-        {
-            while (true)
-            {
-                List<Street> streets = StreetComponentManager.GetAllStreets();
-                for (int i = 0; i < StreetComponentManager.GetAllStreets().Count; i++)
-                {
-                    PlaceBuilding(EAssignment.LIVING, streets[i], true);
-                    yield return new WaitForSeconds(0.1f);
-                    PlaceBuilding(EAssignment.LIVING, streets[i], false);
-                    yield return new WaitForSeconds(0.1f);
-                }
-                yield return new WaitForSeconds(5);
-            }
-        }
-
-        private IEnumerator BuildingPlacement_Business()
-        {
-            while (true)
-            {
-                List<Street> streets = StreetComponentManager.GetAllStreets();
-                for (int i = 0; i < StreetComponentManager.GetAllStreets().Count; i++)
-                {
-                    PlaceBuilding(EAssignment.BUSINESS, streets[i], true);
-                    yield return new WaitForSeconds(0.1f);
-                    PlaceBuilding(EAssignment.BUSINESS, streets[i], false);
-                    yield return new WaitForSeconds(0.1f);
-                }
-                yield return new WaitForSeconds(5);
-            }
-        }
-
-        private IEnumerator BuildingPlacement_Industry()
-        {
-            while (true)
-            {
-                List<Street> streets = StreetComponentManager.GetAllStreets();
-                for (int i = 0; i < StreetComponentManager.GetAllStreets().Count; i++)
-                {
-                    PlaceBuilding(EAssignment.INDUSTRY, streets[i], true);
-                    yield return new WaitForSeconds(0.1f);
-                    PlaceBuilding(EAssignment.INDUSTRY, streets[i], false);
-                    yield return new WaitForSeconds(0.1f);
-                }
-                yield return new WaitForSeconds(5);
-            }
-        }
-
         public void AddProductionBuildingToList(ProductionBuilding _pb)
         {
-            m_ProductionBuildWaitingList.Add(_pb);
+            m_ProductionBuildWaitingList.Add(_pb.m_Production);
             UIManager.Instance.AddProductionItem(_pb);
         }
 
@@ -249,13 +194,12 @@ namespace Gameplay.Buildings
 
             if (_isLeftSide)
             {
-
-                if (_s.FindAreaLeftSide(out Area a))
+                if (_s.FindAreaLeftSide(PB.Size, EAssignment.INDUSTRY, out  Area a))
                     return SpawnPrefab(a, PB, prefab);
             }
             else
             {
-                if (_s.FindAreaRightSide(out Area a))
+                if (_s.FindAreaRightSide(PB.Size, EAssignment.INDUSTRY, out Area a))
                     return SpawnPrefab(a, PB, prefab);
             }
 
@@ -272,6 +216,8 @@ namespace Gameplay.Buildings
             GameObject obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation, _a.m_Street.transform);
             _a.Init(_pb);
             m_AllAreas.Add(_a);
+
+
             return obj;
         }
 

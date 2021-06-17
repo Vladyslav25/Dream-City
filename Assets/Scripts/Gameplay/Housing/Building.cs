@@ -12,21 +12,6 @@ namespace Gameplay.Buildings
         [Header("Settings")]
         public EDemand m_Density;
 
-        [Header("Impacts")]
-        [SerializeField]
-        [Tooltip("The Amount of Impact of the Currend Demand")]
-        private int inflow; //Living: Residents, Business: Jobs, Industry: Jobs
-        [Space]
-        [Tooltip("The Amount of Impact of the Needed Demand")]
-        [SerializeField]
-        private int impactOnLiving;
-        [Tooltip("The Amount of Impact of the Needed Demand")]
-        [SerializeField]
-        private int impactOnBusiness;
-        [Tooltip("The Amount of Impact of the Needed Demand")]
-        [SerializeField]
-        private int impactOnIndustry;
-
         public int Inflow { get { return inflow; } }
 
         public int[] Impacts

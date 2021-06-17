@@ -94,6 +94,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 3
   depth: 3
+  m_Assigment: 4
   InverseRotation: 0
+  inflow: 30
+  impactOnLiving: 25
+  impactOnBusiness: 5
+  impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: dea9bd878a574b3458b29350aa667a18, type: 2}
   m_UIName: Kuper Erz Mine

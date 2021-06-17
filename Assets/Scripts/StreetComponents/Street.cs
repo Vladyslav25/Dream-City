@@ -148,7 +148,7 @@ namespace Gameplay.StreetComponents
 
             CreateSegments();
 
-            if (_needID)
+            if (_needID) //if its isnt a Collision Street
                 StartCoroutine(PlaceBuildings());
 
             return this;
@@ -161,35 +161,57 @@ namespace Gameplay.StreetComponents
             EAssignment lastAssignemnt = EAssignment.NONE;
             while (true)
             {
+                if (lastAssignemnt != EAssignment.PRODUCTION && HousingManager.Instance.m_ProductionBuildWaitingList.Count > 0)
+                {
+                    if (!lastLeft)
+                    {
+                        obj = HousingManager.Instance.PlaceProductionBuilding(
+                            HousingManager.Instance.m_ProductionBuildWaitingList[0],
+                            this, true);
+                        lastLeft = true;
+                        if (obj != null)
+                        {
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                    if (lastLeft)
+                    {
+                        obj = HousingManager.Instance.PlaceProductionBuilding(
+                            HousingManager.Instance.m_ProductionBuildWaitingList[0],
+                            this, false);
+                        lastLeft = false;
+                        if (obj != null)
+                        {
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                }
+
                 if (lastAssignemnt != EAssignment.LIVING)
                 {
                     //LIVING
                     if (!lastLeft)
                     {
                         obj = HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
+                        lastLeft = true;
                         if (obj != null)
                         {
                             lastLeft = true;
                             yield return new WaitForSeconds(1f);
                             continue;
-                        }
-                        else
-                        {
-                            lastLeft = true;
                         }
                     }
                     if (lastLeft)
                     {
                         obj = HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
+                        lastLeft = false;
                         if (obj != null)
                         {
                             lastLeft = false;
                             yield return new WaitForSeconds(1f);
                             continue;
-                        }
-                        else
-                        {
-                            lastLeft = false;
                         }
                     }
                 }
@@ -201,27 +223,22 @@ namespace Gameplay.StreetComponents
                     if (!lastLeft)
                     {
                         obj = HousingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, true);
+                        lastLeft = true;
                         if (obj != null)
                         {
                             lastLeft = true;
                             yield return new WaitForSeconds(1f);
                             continue;
                         }
-                        else
-                            lastLeft = true;
                     }
                     if (lastLeft)
                     {
                         obj = HousingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, false);
+                        lastLeft = false;
                         if (obj != null)
                         {
-                            lastLeft = false;
                             yield return new WaitForSeconds(1f);
                             continue;
-                        }
-                        else
-                        {
-                            lastLeft = false;
                         }
                     }
                 }
@@ -233,27 +250,21 @@ namespace Gameplay.StreetComponents
                     if (!lastLeft)
                     {
                         obj = HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, true);
+                        lastLeft = true;
                         if (obj != null)
                         {
-                            lastLeft = true;
                             yield return new WaitForSeconds(1f);
                             continue;
                         }
-                        else
-                            lastLeft = true;
                     }
                     if (lastLeft)
                     {
                         obj = HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, false);
+                        lastLeft = false;
                         if (obj != null)
                         {
-                            lastLeft = false;
                             yield return new WaitForSeconds(1f);
                             continue;
-                        }
-                        else
-                        {
-                            lastLeft = false;
                         }
                     }
                 }
