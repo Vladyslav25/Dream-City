@@ -32,6 +32,8 @@ namespace UI
         public Button LivingButton;
         public Button BusinessButton;
         public Button IndustryButton;
+
+
         [Header("Images")]
         public Image LivingDemand;
         public Image BusinessDemand;
@@ -46,12 +48,16 @@ namespace UI
         [SerializeField]
         private GameObject BuilingInfoObj;
         [SerializeField]
+        private GameObject ProductionInfoObj;
+        [SerializeField]
         private GameObject ProductionUI_Prefab;
         [SerializeField]
         private GameObject ProductionUI_Parent;
 
         [SerializeField]
         private ProductionQueueUI m_pqu;
+        [SerializeField]
+        private ProductionInfoUI m_pii;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -83,6 +89,44 @@ namespace UI
         public void SetBuildingInfoActiv(bool _active)
         {
             BuilingInfoObj.SetActive(_active);
+        }
+
+        public void SetProductionInfoActiv(bool _active)
+        {
+            ProductionInfoObj.SetActive(_active);
+        }
+
+        public void SetProductionInfo(ProductionBuilding _pb)
+        {
+            m_pii.SetProductionInfo(_pb);
+        }
+
+        public void SetBuildingStats(ProductionBuilding _b)
+        {
+            string assigment = "Production";
+            string density = "";
+            string inflowType = " Arbeitsplätze";
+            string impact01Type = " Einwohner";
+            string impact02Type = " Verkaufsstände";
+
+            AssignmentText.text = assigment;
+            DensityText.text = density;
+            InflowText.text = _b.Inflow + inflowType;
+            if (_b.Impacts[0] == 0)
+            {
+                Impact01Text.text = _b.Impacts[1].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[2].ToString() + impact02Type;
+            }
+            else if (_b.Impacts[1] == 0)
+            {
+                Impact01Text.text = _b.Impacts[0].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[2].ToString() + impact02Type;
+            }
+            else if (_b.Impacts[2] == 0)
+            {
+                Impact01Text.text = _b.Impacts[0].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[1].ToString() + impact02Type;
+            }
         }
 
         public void SetBuildingStats(Building _b)
@@ -339,7 +383,7 @@ namespace UI
 
         public void RemoveProductionItem(int _index)
         {
-            HousingManager.Instance.RemoveProductionBuilingInList(_index, false);
+            m_pqu.RemoveItem(_index);
         }
     }
 }

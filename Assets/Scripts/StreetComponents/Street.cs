@@ -99,6 +99,7 @@ namespace Gameplay.StreetComponents
         public List<Area> m_LivingAreas = new List<Area>();
         public List<Area> m_BusinessAreas = new List<Area>();
         public List<Area> m_IndustryAreas = new List<Area>();
+        public List<Area> m_ProductionAreas = new List<Area>();
 
         /// <summary>
         /// Initialize the Street
@@ -445,6 +446,9 @@ namespace Gameplay.StreetComponents
                         case EAssignment.INDUSTRY:
                             m_IndustryAreas.Add(a);
                             break;
+                        case EAssignment.PRODUCTION:
+                            m_ProductionAreas.Add(a);
+                            break;
                     }
                     return true;
                 }
@@ -511,6 +515,9 @@ namespace Gameplay.StreetComponents
                             break;
                         case EAssignment.INDUSTRY:
                             m_IndustryAreas.Add(a);
+                            break;
+                        case EAssignment.PRODUCTION:
+                            m_ProductionAreas.Add(a);
                             break;
                     }
                     return true;

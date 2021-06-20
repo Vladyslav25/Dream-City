@@ -31,6 +31,7 @@ namespace Gameplay.Buildings
         private Dictionary<Production, GameObject> productionPrefabs_Dic = new Dictionary<Production, GameObject>();
 
         public static List<Area> m_AllAreas = new List<Area>();
+        [MyReadOnly]
         public List<Production> m_ProductionBuildWaitingList = new List<Production>();
 
         // between 0 - 1
@@ -177,12 +178,13 @@ namespace Gameplay.Buildings
 
         public void AddProductionBuildingToList(ProductionBuilding _pb)
         {
-            m_ProductionBuildWaitingList.Add(_pb.m_Production);
             UIManager.Instance.AddProductionItem(_pb);
+            m_ProductionBuildWaitingList.Add(_pb.m_Production);
         }
 
-        public void RemoveProductionBuilingInList(int _index = 0, bool _removeInUI = true)
+        public void RemoveProductionBuilingInList(int _index = 0)
         {
+            UIManager.Instance.RemoveProductionItem(_index);
             m_ProductionBuildWaitingList.RemoveAt(_index);
         }
 
@@ -211,12 +213,34 @@ namespace Gameplay.Buildings
             foreach (Cell c in _a.m_Cells)
                 _a.m_Street.SetCellBlocked(c);
 
+            int[] impacts = _pb.Impacts;
+            int inflow = _pb.Inflow;
+
+            switch (_a.m_Assignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    m_Living_CurrAmount += inflow;
+                    break;
+                case EAssignment.BUSINESS:
+                    m_Business_CurrAmount += inflow;
+                    break;
+                case EAssignment.INDUSTRY:
+                    m_Industry_CurrAmount += inflow;
+                    break;
+            }
+
+            m_Living_NeedAmount += impacts[0];
+            m_Business_NeedAmount += impacts[1];
+            m_Industry_NeedAmount += impacts[2];
+
             // TODO: Add Production to Warehouse Production
 
             GameObject obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation, _a.m_Street.transform);
-            _a.Init(_pb);
+            _a.Init(obj.GetComponent<ProductionBuilding>());
             m_AllAreas.Add(_a);
-
+            RemoveProductionBuilingInList();
 
             return obj;
         }

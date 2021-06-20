@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Gameplay.Buildings;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +22,7 @@ namespace UI
 
         public void OnClickRemove()
         {
-            m_Manager.RemoveItem(Index);
+            HousingManager.Instance.RemoveProductionBuilingInList(Index);
             Destroy(gameObject);
         }
     }

@@ -13,7 +13,9 @@ namespace Gameplay.Productions
 
         public override void Destroy()
         {
-            throw new System.NotImplementedException();
+            base.Destroy();
+
+            //TODO: Remove Production
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Gameplay.Productions;
+﻿using Gameplay.Buildings;
+using Gameplay.Productions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,11 +26,10 @@ namespace UI
 
         public void RemoveItem(int _index)
         {
-            UIManager.Instance.RemoveProductionItem(_index);
+            Destroy(m_items[_index].gameObject);
             m_items.RemoveAt(_index);
             if (m_items.Count == 0)
                 m_background.enabled = false;
-
         }
 
         public void AddToQueue(ProductionBuilding _pb)

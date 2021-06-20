@@ -73,6 +73,7 @@ namespace Gameplay.Tools
             if (lastRenderer == null || lastRenderer.gameObject.layer == 8) Debug.LogError("No or invalid Renderer found");
 
             mats = lastRenderer.materials;
+            if (mats == null) return;
             foreach (Material mat in mats)
             {
                 mat.color = _c;
