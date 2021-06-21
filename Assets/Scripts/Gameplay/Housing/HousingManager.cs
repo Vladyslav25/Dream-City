@@ -196,7 +196,7 @@ namespace Gameplay.Buildings
 
             if (_isLeftSide)
             {
-                if (_s.FindAreaLeftSide(PB.Size, EAssignment.INDUSTRY, out  Area a))
+                if (_s.FindAreaLeftSide(PB.Size, EAssignment.INDUSTRY, out Area a))
                     return SpawnPrefab(a, PB, prefab);
             }
             else
@@ -235,7 +235,14 @@ namespace Gameplay.Buildings
             m_Business_NeedAmount += impacts[1];
             m_Industry_NeedAmount += impacts[2];
 
-            // TODO: Add Production to Warehouse Production
+            foreach (ProductionStat ps in _pb.m_Production.m_Output)
+            {
+                Inventory.Instance.AddCurrendProduction(ps.m_Product, ps.m_Amount);
+            }
+            foreach (ProductionStat ps in _pb.m_Production.m_Input)
+            {
+                Inventory.Instance.AddNeededProduction(ps.m_Product, ps.m_Amount);
+            }
 
             GameObject obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation, _a.m_Street.transform);
             _a.Init(obj.GetComponent<ProductionBuilding>());

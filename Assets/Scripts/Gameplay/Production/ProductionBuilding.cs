@@ -15,7 +15,15 @@ namespace Gameplay.Productions
         {
             base.Destroy();
 
-            //TODO: Remove Production
+            foreach (ProductionStat ps in m_Production.m_Output)
+            {
+                Inventory.Instance.AddCurrendProduction(ps.m_Product, -ps.m_Amount);
+            }
+
+            foreach (ProductionStat ps in m_Production.m_Input)
+            {
+                Inventory.Instance.AddNeededProduction(ps.m_Product, -ps.m_Amount);
+            }
         }
     }
 }
