@@ -47,20 +47,33 @@ namespace Gameplay.Productions
             {
                 CalculateCurrentProduction();
                 CalculateNeededProduction();
-                for (int i = 0; i < m_Inventory.Keys.Count; i++)
+                HashSet<Production> ProductionsToUpdateRatio = new HashSet<Production>();
+                foreach (Production production in m_Productions)
                 {
-                    Product p = m_Inventory.ElementAt(i).Key;
-                    if (m_CurrendProduction.ContainsKey(p) && m_NeededProduction.ContainsKey(p))
+                    foreach (ProductionStat productionStat in production.m_Output)
                     {
-                        float add = (m_CurrendProduction[p] - m_NeededProduction[p]) * (1f / 60f);
-                        m_Inventory[p] += add;
-                        if (m_Inventory[p] <= 0f)
+                        Product p = productionStat.m_Product;
+                        if (m_Inventory.ContainsKey(p) && m_CurrendProduction.ContainsKey(p) && m_NeededProduction.ContainsKey(p))
                         {
-                            m_Inventory[p] = 0f;
-                            SetRatioInOutputProducts(p);
+                            float balance = m_CurrendProduction[p] - m_NeededProduction[p];
+                            float add = balance * (1f / 60f);
+                            m_Inventory[p] += add;
+                            if (m_Inventory[p] <= 0f)
+                            {
+                                m_Inventory[p] = 0f;
+                            }
+                            UI.UIManager.Instance.UpdateInventoryItem(p, m_Inventory[p], balance);
                         }
-                        Debug.Log("Product: " + p.m_UI_Name + " | In Inventory: " + m_Inventory[p] + " | Add: " + add);
+                        if (m_Inventory.ContainsKey(p))
+                        {
+                            ProductionsToUpdateRatio.Add(production);
+                        }
                     }
+                }
+                foreach (Production p in ProductionsToUpdateRatio)
+                {
+                    p.m_Ratio = GetRatio(p);
+                    //Debug.Log("Ratio for: " + p + " | Ratio set to: " + p.m_Ratio);
                 }
                 yield return new WaitForSeconds(1f);
             }
@@ -72,20 +85,6 @@ namespace Gameplay.Productions
                 m_ProductionBuildingAmount.Add(_pb.m_Production, 0);
             m_ProductionBuildingAmount[_pb.m_Production]++;
 
-            foreach (ProductionStat ps in _pb.m_Production.m_Output)
-            {
-                if (!m_CurrendProduction.ContainsKey(ps.m_Product))
-                    m_CurrendProduction.Add(ps.m_Product, 0f);
-
-                if (!m_NeededProduction.ContainsKey(ps.m_Product))
-                    m_NeededProduction.Add(ps.m_Product, 0f);
-
-                if (!m_Inventory.ContainsKey(ps.m_Product))
-                    m_Inventory.Add(ps.m_Product, 0f);
-
-                SetRatioInOutputProducts(ps.m_Product);
-            }
-
             foreach (ProductionStat ps in _pb.m_Production.m_Input)
             {
                 if (!m_CurrendProduction.ContainsKey(ps.m_Product))
@@ -96,10 +95,21 @@ namespace Gameplay.Productions
 
                 if (!m_Inventory.ContainsKey(ps.m_Product))
                     m_Inventory.Add(ps.m_Product, 0f);
-
-                SetRatioInOutputProducts(ps.m_Product);
             }
 
+            foreach (ProductionStat ps in _pb.m_Production.m_Output)
+            {
+                if (!m_CurrendProduction.ContainsKey(ps.m_Product))
+                    m_CurrendProduction.Add(ps.m_Product, 0f);
+
+                if (!m_NeededProduction.ContainsKey(ps.m_Product))
+                    m_NeededProduction.Add(ps.m_Product, 0f);
+
+                if (!m_Inventory.ContainsKey(ps.m_Product))
+                    m_Inventory.Add(ps.m_Product, 0f);
+            }
+
+            _pb.m_Production.m_Ratio = GetRatio(_pb.m_Production);
             CalculateCurrentProduction();
             CalculateNeededProduction();
         }
@@ -109,47 +119,38 @@ namespace Gameplay.Productions
             if (m_ProductionBuildingAmount.ContainsKey(_pb.m_Production))
                 m_ProductionBuildingAmount[_pb.m_Production]--;
 
-            foreach (ProductionStat ps in _pb.m_Production.m_Output)
-            {
-                SetRatioInOutputProducts(ps.m_Product);
-            }
-
-            foreach (ProductionStat ps in _pb.m_Production.m_Input)
-            {
-                SetRatioInOutputProducts(ps.m_Product);
-            }
+            _pb.m_Production.m_Ratio = GetRatio(_pb.m_Production);
         }
 
-        private float GetRatio(Product _p)
+        private float GetRatio(Production _p)
         {
-            if (!m_NeededProduction.ContainsKey(_p))
-                m_NeededProduction.Add(_p, 0f);
+            float max = 0f;
+            float min = 0f;
+            float sum = 0f;
 
-            float max = m_NeededProduction[_p];
-            float min = 0; //max * 0.75f;
-            return Mathf.Clamp((m_CurrendProduction[_p] - min) / (max - min), 0f, 1f);
-        }
-
-        private void SetRatioInOutputProducts(Product _p)
-        {
-            if (m_Inventory[_p] > 0) return;
-
-            float ratio = GetRatio(_p);
-
-            foreach (Production production in m_Productions)
-            {
-                foreach (ProductionStat ps in production.m_Input)
+            if (_p.m_Input.Count == 0)
+                return 1;
+            else
+                foreach (ProductionStat ps in _p.m_Input)
                 {
-                    if (ps.m_Product == _p)
-                    {
-                        if (production.m_Ratio > ratio)
-                        {
-                            production.m_Ratio = ratio;
-                            Debug.Log("Set Ratio to " + ratio + " in " + production);
-                        }
-                    }
+                    float balance = m_CurrendProduction[ps.m_Product] - m_NeededProduction[ps.m_Product];
+                    //if an input item is missing in the inventory AND
+                    //if one balance is 0 or less, no production possible
+                    if (balance < 0 && m_Inventory[ps.m_Product] <= 0) return 0;
+                    
+                    if(balance < 0 && balance > -ps.m_Amount)
+                        sum += m_CurrendProduction[ps.m_Product];
+                    else 
+                        sum += m_NeededProduction[ps.m_Product];
+
+                    max += m_NeededProduction[ps.m_Product];
                 }
+            if (max - min == 0)
+            {
+                Debug.Log("NaN");
+                return 1f;
             }
+            return Mathf.Clamp((sum - min) / (max - min), 0f, 1f);
         }
 
         private void CalculateCurrentProduction()

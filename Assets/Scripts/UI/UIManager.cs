@@ -58,6 +58,8 @@ namespace UI
         private ProductionQueueUI m_pqu;
         [SerializeField]
         private ProductionInfoUI m_pii;
+        [SerializeField]
+        private InventoryUI m_iu;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -99,6 +101,13 @@ namespace UI
         public void SetProductionInfo(ProductionBuilding _pb)
         {
             m_pii.SetProductionInfo(_pb);
+        }
+
+        public void UpdateInventoryItem(Product _p, float _inventory, float _balance)
+        {
+            if (!m_iu.m_ItemProduct_Dic.ContainsKey(_p))
+                m_iu.CreateItem(_p);
+            m_iu.m_ItemProduct_Dic[_p].UpdateItem(_inventory, _balance);
         }
 
         public void SetBuildingStats(ProductionBuilding _b)
