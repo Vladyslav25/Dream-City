@@ -235,19 +235,12 @@ namespace Gameplay.Buildings
             m_Business_NeedAmount += impacts[1];
             m_Industry_NeedAmount += impacts[2];
 
-            foreach (ProductionStat ps in _pb.m_Production.m_Output)
-            {
-                Inventory.Instance.AddCurrendProduction(ps.m_Product, ps.m_Amount);
-            }
-            foreach (ProductionStat ps in _pb.m_Production.m_Input)
-            {
-                Inventory.Instance.AddNeededProduction(ps.m_Product, ps.m_Amount);
-            }
 
             GameObject obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation, _a.m_Street.transform);
             _a.Init(obj.GetComponent<ProductionBuilding>());
             m_AllAreas.Add(_a);
             RemoveProductionBuilingInList();
+            Inventory.Instance.AddProductionBuilding(_pb);
 
             return obj;
         }
@@ -509,6 +502,8 @@ namespace Gameplay.Buildings
                 {
                     _dic.Add(pb.m_Production, obj);
                     UIManager.Instance.InitProductionUI(pb);
+                    pb.m_Production.m_Ratio = 1f;
+                    Inventory.Instance.m_Productions.Add(pb.m_Production);
                 }
                 else
                 {

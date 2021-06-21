@@ -13,17 +13,9 @@ namespace Gameplay.Productions
 
         public override void Destroy()
         {
+            Inventory.Instance.RemoveProductionBuilding(this);
+            
             base.Destroy();
-
-            foreach (ProductionStat ps in m_Production.m_Output)
-            {
-                Inventory.Instance.AddCurrendProduction(ps.m_Product, -ps.m_Amount);
-            }
-
-            foreach (ProductionStat ps in m_Production.m_Input)
-            {
-                Inventory.Instance.AddNeededProduction(ps.m_Product, -ps.m_Amount);
-            }
         }
     }
 }

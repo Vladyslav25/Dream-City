@@ -12,5 +12,8 @@ namespace Gameplay.Productions
 
         [Header("Output")]
         public List<ProductionStat> m_Output;
+
+        [HideInInspector]
+        public float m_Ratio = 1f;
     }
 }

@@ -61,7 +61,7 @@ namespace UI
                     pii.SetIcon(ps.m_Product.m_UI_Sprit);
                 }
 
-            m_RatioText.text = "100" + " %";
+            m_RatioText.text = (_pb.m_Production.m_Ratio * 100) + " %";
         }
     }
 }
