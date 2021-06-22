@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace Gameplay.Productions
 {
-
     public class Inventory : MonoBehaviour
     {
         public Dictionary<Product, float> m_Inventory = new Dictionary<Product, float>();
@@ -63,6 +62,7 @@ namespace Gameplay.Productions
                                 m_Inventory[p] = 0f;
                             }
                             UI.UIManager.Instance.UpdateInventoryItem(p, m_Inventory[p], balance);
+                            m_Bilance[p] = balance;
                         }
                         if (m_Inventory.ContainsKey(p))
                         {
@@ -73,7 +73,6 @@ namespace Gameplay.Productions
                 foreach (Production p in ProductionsToUpdateRatio)
                 {
                     p.m_Ratio = GetRatio(p);
-                    //Debug.Log("Ratio for: " + p + " | Ratio set to: " + p.m_Ratio);
                 }
                 yield return new WaitForSeconds(1f);
             }
@@ -95,6 +94,9 @@ namespace Gameplay.Productions
 
                 if (!m_Inventory.ContainsKey(ps.m_Product))
                     m_Inventory.Add(ps.m_Product, 0f);
+
+                if (!m_Bilance.ContainsKey(ps.m_Product))
+                    m_Bilance.Add(ps.m_Product, 0f);
             }
 
             foreach (ProductionStat ps in _pb.m_Production.m_Output)
@@ -107,6 +109,9 @@ namespace Gameplay.Productions
 
                 if (!m_Inventory.ContainsKey(ps.m_Product))
                     m_Inventory.Add(ps.m_Product, 0f);
+
+                if (!m_Bilance.ContainsKey(ps.m_Product))
+                    m_Bilance.Add(ps.m_Product, 0f);
             }
 
             _pb.m_Production.m_Ratio = GetRatio(_pb.m_Production);

@@ -15,7 +15,7 @@ namespace UI
         [SerializeField]
         private Text m_Balance;
 
-        private Product m_Product;
+        public Product m_Product;
 
         public void Init(Product _p)
         {

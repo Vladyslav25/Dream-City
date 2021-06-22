@@ -14,8 +14,13 @@ namespace Gameplay.Productions
         [Tooltip("The UI Icon")]
         public Sprite m_UI_Sprit;
         [Tooltip("What is the Price of the Product on the World Market")]
-        public float m_Price;
+        public float m_PriceWorld;
+        [Tooltip("What is the Price of the Product on the World Market")]
+        public float m_PriceLocal;
         [Tooltip("What is the Impact on the Needed Living Demand")]
         public int m_ImpactOnLiving;
+
+        [HideInInspector]
+        public bool IsSellingWorld;
     }
 }

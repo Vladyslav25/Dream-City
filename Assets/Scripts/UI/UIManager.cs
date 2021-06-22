@@ -53,6 +53,8 @@ namespace UI
         private GameObject ProductionUI_Prefab;
         [SerializeField]
         private GameObject ProductionUI_Parent;
+        [SerializeField]
+        private GameObject SellMenuObj;
 
         [SerializeField]
         private ProductionQueueUI m_pqu;
@@ -60,6 +62,8 @@ namespace UI
         private ProductionInfoUI m_pii;
         [SerializeField]
         private InventoryUI m_iu;
+        [SerializeField]
+        private SellMenuUI m_smi;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -343,6 +347,17 @@ namespace UI
 
             _o.effectDistance = new Vector2(3, 3);
             lastOutline = _o;
+        }
+
+        public void OpenInventorySellUI(InventoryUIItem _iui)
+        {
+            SellMenuObj.SetActive(true);
+            m_smi.UpdateInfo(_iui.m_Product);
+        }
+
+        public void CloseInventorySellUI()
+        {
+            SellMenuObj.SetActive(false);
         }
 
         private void ResetOutline(Outline _o)
