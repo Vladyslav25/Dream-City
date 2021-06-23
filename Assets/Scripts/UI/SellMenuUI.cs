@@ -84,12 +84,10 @@ namespace UI
             m_SellLocal_Btn.interactable = false;
             SetSellAmount();
             SetCurrPrice(m_currProduct.m_PriceLocal);
-
         }
 
         public char ValidateInput(char _addedChar)
         {
-
             if (!int.TryParse(_addedChar.ToString(), out int value))
             {
                 return '\0';
@@ -104,7 +102,8 @@ namespace UI
                 Gameplay.Buildings.HousingManager.Instance.m_Living_NeedAmount -= m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
 
             //after remove set new Amount
-            Inventory.Instance.SetSellingAmount(m_currProduct, ConvertStringToFloat(m_InputField.text));
+            Inventory.Instance.SetSellingAmount(m_currProduct, UIManager.ConvertStringToFloat(m_InputField.text));
+            UIManager.Instance.UpdateInventoryItem(m_currProduct);
 
             //add living impact if selling on local
             if (!m_currProduct.IsSellingWorld)
@@ -113,7 +112,7 @@ namespace UI
 
         private void SetCurrPrice(float _amount)
         {
-            m_CurrPrice.text = string.Format("{0:0.00 €}", _amount); ;
+            m_CurrPrice.text = UIManager.ConvertFloatToStringPrice(_amount);
         }
 
         private void SetCurrProduction(float _amount)
@@ -134,24 +133,7 @@ namespace UI
                 sign = "+";
             }
 
-            m_CurrProduction.text = sign + " " + ConvertFloatToString(_amount);
-        }
-
-        private string ConvertFloatToString(float _input)
-        {
-            float i = _input * 10;
-            int ii = (int)i;
-            float o = ii * 0.1f;
-            return (((int)(_input * 10)) * 0.1f).ToString();
-        }
-
-        private float ConvertStringToFloat(string _input)
-        {
-            if (_input.Length == 0) return 0f;
-            if (float.TryParse(_input, out float result))
-                return result;
-            Debug.LogError("Wrong Input. Input is: " + _input);
-            return 0f;
+            m_CurrProduction.text = sign + " " + UIManager.ConvertFloatToStringDigit(_amount);
         }
     }
 }

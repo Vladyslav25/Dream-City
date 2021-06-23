@@ -63,7 +63,7 @@ namespace Gameplay.Productions
                                 m_Inventory[p] = 0f;
                             }
                             m_Balance[p] = balance;
-                            UI.UIManager.Instance.UpdateInventoryItem(p, m_Inventory[p], balance);
+                            UI.UIManager.Instance.UpdateInventoryItem(p);
                             UI.UIManager.Instance.UpdateCurrendProductSellUI(p);
                         }
                         if (m_Inventory.ContainsKey(p))
@@ -120,7 +120,7 @@ namespace Gameplay.Productions
         public void SetSellingAmount(Product _p, float _amount)
         {
             m_SellingAmount[_p] = _amount;
-            UI.UIManager.Instance.UpdateInventoryItem(_p, m_Inventory[_p], m_Balance[_p]);
+            UI.UIManager.Instance.UpdateInventoryItem(_p);
             UI.UIManager.Instance.UpdateInventorySellUI(_p);
         }
 

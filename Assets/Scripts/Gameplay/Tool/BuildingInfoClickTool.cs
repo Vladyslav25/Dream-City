@@ -20,14 +20,14 @@ namespace Gameplay.Tools
         {
             if (Input.GetMouseButtonDown(0))
             {
+                UIManager instance = UIManager.Instance;
+
+                UIManager.Instance.SetBuildingInfoActiv(false);
+                UIManager.Instance.SetProductionInfoActiv(false);
+                SetMaterialsColor(null, Color.white);
+
                 if (CheckAreaCollision(out ABuilding b))
                 {
-                    UIManager instance = UIManager.Instance;
-
-                    UIManager.Instance.SetBuildingInfoActiv(false);
-                    UIManager.Instance.SetProductionInfoActiv(false);
-                    SetMaterialsColor(null, Color.white);
-
                     if (b is Building)
                     {
                         instance.SetBuildingStats((Building)b);

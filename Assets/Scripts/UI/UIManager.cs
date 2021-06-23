@@ -107,11 +107,11 @@ namespace UI
             m_pii.SetProductionInfo(_pb);
         }
 
-        public void UpdateInventoryItem(Product _p, float _inventory, float _balance)
+        public void UpdateInventoryItem(Product _p)
         {
             if (!m_iu.m_ItemProduct_Dic.ContainsKey(_p))
                 m_iu.CreateItem(_p);
-            m_iu.m_ItemProduct_Dic[_p].UpdateItem(_inventory, _balance);
+            m_iu.m_ItemProduct_Dic[_p].UpdateItem(_p);
         }
 
         public void SetBuildingStats(ProductionBuilding _b)
@@ -243,6 +243,7 @@ namespace UI
             toolChoose.SetActive(true);
             streetType.SetActive(false);
             assignment.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void SetActivStreetType()
@@ -251,6 +252,7 @@ namespace UI
             streetType.SetActive(true);
             assignment.SetActive(false);
             production.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void SetActivAssignment()
@@ -259,6 +261,7 @@ namespace UI
             streetType.SetActive(false);
             assignment.SetActive(true);
             production.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void SetActivProduction()
@@ -271,6 +274,7 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(false);
             assignment.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void OnClickProduction(Button _b)
@@ -424,5 +428,40 @@ namespace UI
         {
             m_pqu.RemoveItem(_index);
         }
+
+        #region -Static-
+        public static string ConvertFloatToStringDigit(float _input)
+        {
+            return string.Format("{0:0}", _input);
+        }
+
+        public static string ConvertFloatToStringDecimal(float _input)
+        {
+            return string.Format("{0:0.00}", _input);
+        }
+
+        public static string ConvertFloatToStringPrice(float _input)
+        {
+            string s = string.Format("{0:0.00}", _input);
+
+            if (s.EndsWith("00"))
+            {
+                return ((int)_input).ToString() + " €";
+            }
+            else
+            {
+                return s + " €";
+            }
+        }
+
+        public static float ConvertStringToFloat(string _input)
+        {
+            if (_input.Length == 0) return 0f;
+            if (float.TryParse(_input, out float result))
+                return result;
+            Debug.LogError("Wrong Input. Input is: " + _input);
+            return 0f;
+        }
+        #endregion
     }
 }

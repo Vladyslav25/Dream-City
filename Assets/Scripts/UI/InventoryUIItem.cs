@@ -14,6 +14,8 @@ namespace UI
         private Text m_InventoryAmount;
         [SerializeField]
         private Text m_Balance;
+        [SerializeField]
+        private Text m_Income;
         [HideInInspector]
         public Product m_Product;
 
@@ -30,37 +32,47 @@ namespace UI
             );
         }
 
-        public void UpdateItem(float _inventory, float _balance)
+        public void UpdateItem(Product _p)
         {
-            if (_inventory <= 0)
+
+            float inventory = Inventory.Instance.m_Inventory[_p];
+            float balance = Inventory.Instance.m_Balance[_p];
+
+            if (inventory <= 0)
                 m_InventoryAmount.color = Color.red;
             else
                 m_InventoryAmount.color = Color.black;
 
-            m_InventoryAmount.text = ConvertFloatToString(_inventory);
+            m_InventoryAmount.text = UIManager.ConvertFloatToStringDigit(inventory);
 
             string sign = "";
-            if (_balance < 0)
+            if (balance < 0)
             {
                 m_Balance.color = Color.red;
             }
-            else if (_balance == 0)
+            else if (balance == 0)
             {
                 m_Balance.color = Color.yellow;
                 sign = "";
             }
             else
             {
-                m_Balance.color = Color.black;
+                m_Balance.color = Color.green;
                 sign = "+";
             }
 
-            m_Balance.text = sign + " " + ConvertFloatToString(_balance);
+            m_Balance.text = sign + " " + UIManager.ConvertFloatToStringDigit(balance);
+            UpdateIncome();
         }
 
-        private string ConvertFloatToString(float _input)
+        public void UpdateIncome()
         {
-            return ((int)(_input * 10) * 0.1f).ToString();
+            float price = 0f;
+            if (m_Product.IsSellingWorld)
+                price = m_Product.m_PriceWorld;
+            else
+                price = m_Product.m_PriceLocal;
+            m_Income.text = UIManager.ConvertFloatToStringPrice(Inventory.Instance.m_SellingAmount[m_Product] * price);
         }
     }
 }

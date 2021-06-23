@@ -8,7 +8,7 @@ namespace Gameplay.Productions
     public class Product : ScriptableObject
     {
         [Tooltip("What Product is it")]
-        public EProduct m_Product;
+        public EProduct m_EProduct;
         [Tooltip("Which Name does the Product have in the UI")]
         public string m_UI_Name;
         [Tooltip("The UI Icon")]
