@@ -17,9 +17,9 @@ namespace UI
         [SerializeField]
         private GameObject Input_Prefab;
         [SerializeField]
-        private GameObject Text_Parent;
-        [SerializeField]
         private Text m_Title;
+        [SerializeField]
+        private RectTransform m_Rect;
 
         public void OnClick()
         {
@@ -33,7 +33,9 @@ namespace UI
 
             foreach (ProductionStat ps in m_PB.m_Production.m_Output)
             {
-                GameObject obj = Instantiate(Output_Prefab, Text_Parent.transform);
+                GameObject obj = Instantiate(Output_Prefab, transform);
+                obj.transform.SetSiblingIndex(1);
+                m_Rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, m_Rect.rect.height + 50f);
                 Text t = null;
                 foreach (Transform child in obj.transform)
                 {
@@ -58,7 +60,9 @@ namespace UI
 
             foreach (ProductionStat ps in m_PB.m_Production.m_Input)
             {
-                GameObject obj = Instantiate(Input_Prefab, Text_Parent.transform);
+                GameObject obj = Instantiate(Input_Prefab, transform);
+                obj.transform.SetSiblingIndex(1);
+                m_Rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, m_Rect.rect.height + 50f);
                 Text t = null;
                 foreach (Transform child in obj.transform)
                 {
