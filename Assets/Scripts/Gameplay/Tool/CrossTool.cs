@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
-public class CrossTool : Tool
+public class CrossTool : ATool
 {
     [SerializeField]
     private GameObject m_crossPrefab;

@@ -14,13 +14,20 @@ namespace UI
         private Text m_InventoryAmount;
         [SerializeField]
         private Text m_Balance;
-
+        [HideInInspector]
         public Product m_Product;
 
         public void Init(Product _p)
         {
             m_Product = _p;
             m_Image.sprite = _p.m_UI_Sprit;
+
+            GetComponent<Button>()?.onClick.AddListener(
+                delegate
+            {
+                UIManager.Instance.OpenInventorySellUI(this);
+            }
+            );
         }
 
         public void UpdateItem(float _inventory, float _balance)

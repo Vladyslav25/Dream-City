@@ -23,6 +23,11 @@ namespace Gameplay.Tools
                 if (CheckAreaCollision(out ABuilding b))
                 {
                     UIManager instance = UIManager.Instance;
+
+                    UIManager.Instance.SetBuildingInfoActiv(false);
+                    UIManager.Instance.SetProductionInfoActiv(false);
+                    SetMaterialsColor(null, Color.white);
+
                     if (b is Building)
                     {
                         instance.SetBuildingStats((Building)b);
@@ -37,12 +42,6 @@ namespace Gameplay.Tools
                     }
 
                     SetMaterialsColor(b, Color.cyan);
-                }
-                else
-                {
-                    UIManager.Instance.SetBuildingInfoActiv(false);
-                    UIManager.Instance.SetProductionInfoActiv(false);
-                    SetMaterialsColor(null, Color.white);
                 }
             }
         }

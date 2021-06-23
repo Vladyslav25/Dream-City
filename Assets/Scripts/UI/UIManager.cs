@@ -275,6 +275,8 @@ namespace UI
 
         public void OnClickProduction(Button _b)
         {
+            SetBuildingInfoActiv(false);
+            SetProductionInfoActiv(false);
             HighlightButton(_b, true);
             production.SetActive(!production.activeSelf);
         }
@@ -353,6 +355,19 @@ namespace UI
         {
             SellMenuObj.SetActive(true);
             m_smi.UpdateInfo(_iui.m_Product);
+        }
+
+        public void UpdateInventorySellUI(Product _p)
+        {
+            m_smi.UpdateInfo(_p);
+        }
+
+        public void UpdateCurrendProductSellUI(Product _p)
+        {
+            if(_p == m_smi.m_currProduct)
+            {
+                m_smi.UpdateInfo(_p);
+            }
         }
 
         public void CloseInventorySellUI()

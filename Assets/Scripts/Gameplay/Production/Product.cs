@@ -20,7 +20,7 @@ namespace Gameplay.Productions
         [Tooltip("What is the Impact on the Needed Living Demand")]
         public int m_ImpactOnLiving;
 
-        [HideInInspector]
-        public bool IsSellingWorld;
+        [MyReadOnly]
+        public bool IsSellingWorld = false;
     }
 }

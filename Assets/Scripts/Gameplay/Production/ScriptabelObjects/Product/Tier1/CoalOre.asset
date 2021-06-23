@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Product: 0
   m_UI_Name: Kohle
-  m_Price: 0
-  m_ImpactOnLiving: 0
+  m_UI_Sprit: {fileID: 0}
+  m_PriceWorld: 50
+  m_PriceLocal: 18
+  m_ImpactOnLiving: 10
+  IsSellingWorld: 0

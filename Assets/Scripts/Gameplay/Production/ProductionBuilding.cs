@@ -9,6 +9,9 @@ namespace Gameplay.Productions
     {
         [Header("Production")]
         public Production m_Production;
+        public float m_Cost;
+        public float m_OperatingCost;
+        [Space()]
         public string m_UIName;
 
         public override void Destroy()

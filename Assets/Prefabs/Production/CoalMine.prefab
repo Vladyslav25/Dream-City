@@ -97,11 +97,13 @@ MonoBehaviour:
   depth: 3
   m_Assigment: 4
   InverseRotation: 0
-  inflow: 30
-  impactOnLiving: 26
+  inflow: 10
+  impactOnLiving: 6
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 1bcd524f99ed21d4599dcff77ef9a832, type: 2}
+  m_Cost: 250
+  m_OperatingCost: 10
   m_UIName: Kohle Mine
 --- !u!1 &7677615291785965212
 GameObject:

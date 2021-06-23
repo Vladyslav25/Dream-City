@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Gameplay.Tools
 {
-    public abstract class Tool : MonoBehaviour
+    public abstract class ATool : MonoBehaviour
     {
         public TOOLTYPE m_Type;
         [HideInInspector]

@@ -418,6 +418,7 @@ MonoBehaviour:
   m_Image: {fileID: 1626087973832177644}
   m_InventoryAmount: {fileID: 8549372911233685467}
   m_Balance: {fileID: 5919018222209918343}
+  m_Product: {fileID: 0}
 --- !u!114 &5119614496423964346
 MonoBehaviour:
   m_ObjectHideFlags: 0

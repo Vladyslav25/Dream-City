@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Gameplay.Tools
 {
 
-    public abstract class AClickTool : Tool
+    public abstract class AClickTool : ATool
     {
         protected MeshRenderer lastRenderer;
 

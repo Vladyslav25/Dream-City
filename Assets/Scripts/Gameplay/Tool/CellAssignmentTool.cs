@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 namespace Gameplay.Tools
 {
-    public class CellAssignmentTool : Tool
+    public class CellAssignmentTool : ATool
     {
         [SerializeField]
         private Material m_LivingMat;

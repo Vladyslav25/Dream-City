@@ -503,6 +503,14 @@ namespace Gameplay.Buildings
                     _dic.Add(pb.m_Production, obj);
                     UIManager.Instance.InitProductionUI(pb);
                     pb.m_Production.m_Ratio = 1f;
+                    foreach (ProductionStat p in pb.m_Production.m_Input)
+                    {
+                        p.m_Product.IsSellingWorld = false;
+                    }
+                    foreach (ProductionStat p in pb.m_Production.m_Output)
+                    {
+                        p.m_Product.IsSellingWorld = false;
+                    }
                     Inventory.Instance.m_Productions.Add(pb.m_Production);
                 }
                 else

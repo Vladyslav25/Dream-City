@@ -10,7 +10,8 @@ namespace Gameplay.Productions
         public Dictionary<Product, float> m_Inventory = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_CurrendProduction = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_NeededProduction = new Dictionary<Product, float>();
-        public Dictionary<Product, float> m_Bilance = new Dictionary<Product, float>();
+        public Dictionary<Product, float> m_Balance = new Dictionary<Product, float>();
+        public Dictionary<Product, float> m_SellingAmount = new Dictionary<Product, float>();
 
         public HashSet<Production> m_Productions = new HashSet<Production>();
         public Dictionary<Production, int> m_ProductionBuildingAmount = new Dictionary<Production, int>();
@@ -54,15 +55,16 @@ namespace Gameplay.Productions
                         Product p = productionStat.m_Product;
                         if (m_Inventory.ContainsKey(p) && m_CurrendProduction.ContainsKey(p) && m_NeededProduction.ContainsKey(p))
                         {
-                            float balance = m_CurrendProduction[p] - m_NeededProduction[p];
+                            float balance = m_CurrendProduction[p] - m_NeededProduction[p] - m_SellingAmount[p];
                             float add = balance * (1f / 60f);
                             m_Inventory[p] += add;
                             if (m_Inventory[p] <= 0f)
                             {
                                 m_Inventory[p] = 0f;
                             }
+                            m_Balance[p] = balance;
                             UI.UIManager.Instance.UpdateInventoryItem(p, m_Inventory[p], balance);
-                            m_Bilance[p] = balance;
+                            UI.UIManager.Instance.UpdateCurrendProductSellUI(p);
                         }
                         if (m_Inventory.ContainsKey(p))
                         {
@@ -86,32 +88,20 @@ namespace Gameplay.Productions
 
             foreach (ProductionStat ps in _pb.m_Production.m_Input)
             {
-                if (!m_CurrendProduction.ContainsKey(ps.m_Product))
-                    m_CurrendProduction.Add(ps.m_Product, 0f);
-
-                if (!m_NeededProduction.ContainsKey(ps.m_Product))
-                    m_NeededProduction.Add(ps.m_Product, 0f);
-
-                if (!m_Inventory.ContainsKey(ps.m_Product))
-                    m_Inventory.Add(ps.m_Product, 0f);
-
-                if (!m_Bilance.ContainsKey(ps.m_Product))
-                    m_Bilance.Add(ps.m_Product, 0f);
+                LookForAddProduct(m_CurrendProduction, ps.m_Product);
+                LookForAddProduct(m_NeededProduction, ps.m_Product);
+                LookForAddProduct(m_Inventory, ps.m_Product);
+                LookForAddProduct(m_Balance, ps.m_Product);
+                LookForAddProduct(m_SellingAmount, ps.m_Product);
             }
 
             foreach (ProductionStat ps in _pb.m_Production.m_Output)
             {
-                if (!m_CurrendProduction.ContainsKey(ps.m_Product))
-                    m_CurrendProduction.Add(ps.m_Product, 0f);
-
-                if (!m_NeededProduction.ContainsKey(ps.m_Product))
-                    m_NeededProduction.Add(ps.m_Product, 0f);
-
-                if (!m_Inventory.ContainsKey(ps.m_Product))
-                    m_Inventory.Add(ps.m_Product, 0f);
-
-                if (!m_Bilance.ContainsKey(ps.m_Product))
-                    m_Bilance.Add(ps.m_Product, 0f);
+                LookForAddProduct(m_CurrendProduction, ps.m_Product);
+                LookForAddProduct(m_NeededProduction, ps.m_Product);
+                LookForAddProduct(m_Inventory, ps.m_Product);
+                LookForAddProduct(m_Balance, ps.m_Product);
+                LookForAddProduct(m_SellingAmount, ps.m_Product);
             }
 
             _pb.m_Production.m_Ratio = GetRatio(_pb.m_Production);
@@ -125,6 +115,13 @@ namespace Gameplay.Productions
                 m_ProductionBuildingAmount[_pb.m_Production]--;
 
             _pb.m_Production.m_Ratio = GetRatio(_pb.m_Production);
+        }
+
+        public void SetSellingAmount(Product _p, float _amount)
+        {
+            m_SellingAmount[_p] = _amount;
+            UI.UIManager.Instance.UpdateInventoryItem(_p, m_Inventory[_p], m_Balance[_p]);
+            UI.UIManager.Instance.UpdateInventorySellUI(_p);
         }
 
         private float GetRatio(Production _p)
@@ -142,10 +139,10 @@ namespace Gameplay.Productions
                     //if an input item is missing in the inventory AND
                     //if one balance is 0 or less, no production possible
                     if (balance < 0 && m_Inventory[ps.m_Product] <= 0) return 0;
-                    
-                    if(balance < 0 && balance > -ps.m_Amount)
+
+                    if (balance < 0 && balance > -ps.m_Amount)
                         sum += m_CurrendProduction[ps.m_Product];
-                    else 
+                    else
                         sum += m_NeededProduction[ps.m_Product];
 
                     max += m_NeededProduction[ps.m_Product];
@@ -200,6 +197,12 @@ namespace Gameplay.Productions
                         m_NeededProduction[ps.m_Product] += ps.m_Amount * m_ProductionBuildingAmount[production];
                     }
             }
+        }
+
+        private void LookForAddProduct(Dictionary<Product, float> _dic, Product _p, float _startVaslue = 0f)
+        {
+            if (!_dic.ContainsKey(_p))
+                _dic.Add(_p, _startVaslue);
         }
     }
 }
