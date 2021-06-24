@@ -45,7 +45,7 @@ namespace UI
                 SetCurrPrice(m_currProduct.m_PriceWorld);
             else
                 SetCurrPrice(m_currProduct.m_PriceLocal);
-            SetCurrProduction(Inventory.Instance.m_Balance[_product]);
+            SetCurrProduction(Inventory.Instance.m_ProductionBalance[_product]);
             m_Title.text = _product.m_UI_Name;
 
             if (_product.IsSellingWorld)

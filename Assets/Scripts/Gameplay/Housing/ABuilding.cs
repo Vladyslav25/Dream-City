@@ -45,6 +45,7 @@ namespace Gameplay.Buildings
 
         [HideInInspector]
         public Area m_Area;
+
         protected GameObject m_ColliderPlane;
 
         public Vector2Int Size { get { return new Vector2Int(depth, width); } }
@@ -92,8 +93,12 @@ namespace Gameplay.Buildings
             HousingManager.Instance.m_Business_NeedAmount -= Impacts[1];
             HousingManager.Instance.m_Industry_NeedAmount -= Impacts[2];
 
-            Destroy(gameObject); //byby House
+            foreach (Material mat in gameObject.GetComponent<MeshRenderer>().materials)
+            {
+                Destroy(mat);
+            }
 
+            Destroy(gameObject); //byby House
         }
 
         public void OnDrawGizmosSelected()

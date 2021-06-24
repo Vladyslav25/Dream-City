@@ -10,11 +10,16 @@ namespace Gameplay.Productions
         public Dictionary<Product, float> m_Inventory = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_CurrendProduction = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_NeededProduction = new Dictionary<Product, float>();
-        public Dictionary<Product, float> m_Balance = new Dictionary<Product, float>();
+        public Dictionary<Product, float> m_ProductionBalance = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_SellingAmount = new Dictionary<Product, float>();
 
         public HashSet<Production> m_Productions = new HashSet<Production>();
         public Dictionary<Production, int> m_ProductionBuildingAmount = new Dictionary<Production, int>();
+
+        public float m_Money = 0f;
+        public float m_MoneyBalance = 0f;
+        public float m_OperatingCostSum = 0f;
+        public float m_TaxIncome = 0f;
 
         #region -SingeltonPattern-
         private static Inventory _instance;
@@ -45,9 +50,11 @@ namespace Gameplay.Productions
         {
             while (true)
             {
+                //Production
                 CalculateCurrentProduction();
                 CalculateNeededProduction();
                 HashSet<Production> ProductionsToUpdateRatio = new HashSet<Production>();
+                m_MoneyBalance = 0f;
                 foreach (Production production in m_Productions)
                 {
                     foreach (ProductionStat productionStat in production.m_Output)
@@ -57,12 +64,18 @@ namespace Gameplay.Productions
                         {
                             float balance = m_CurrendProduction[p] - m_NeededProduction[p] - m_SellingAmount[p];
                             float add = balance * (1f / 60f);
+
+                            if (p.IsSellingWorld)
+                                m_MoneyBalance += p.m_PriceWorld * m_MoneyBalance - m_SellingAmount[p];
+                            else
+                                m_MoneyBalance += p.m_PriceLocal * m_MoneyBalance - m_SellingAmount[p];
+
                             m_Inventory[p] += add;
                             if (m_Inventory[p] <= 0f)
                             {
                                 m_Inventory[p] = 0f;
                             }
-                            m_Balance[p] = balance;
+                            m_ProductionBalance[p] = balance;
                             UI.UIManager.Instance.UpdateInventoryItem(p);
                             UI.UIManager.Instance.UpdateCurrendProductSellUI(p);
                         }
@@ -76,6 +89,13 @@ namespace Gameplay.Productions
                 {
                     p.m_Ratio = GetRatio(p);
                 }
+
+                //Money
+                m_MoneyBalance += m_TaxIncome;
+                m_MoneyBalance -= m_OperatingCostSum;
+                m_Money += m_MoneyBalance * (1f/60f);
+                UI.UIManager.Instance.UpdateMoneyUI();
+
                 yield return new WaitForSeconds(1f);
             }
         }
@@ -91,7 +111,7 @@ namespace Gameplay.Productions
                 LookForAddProduct(m_CurrendProduction, ps.m_Product);
                 LookForAddProduct(m_NeededProduction, ps.m_Product);
                 LookForAddProduct(m_Inventory, ps.m_Product);
-                LookForAddProduct(m_Balance, ps.m_Product);
+                LookForAddProduct(m_ProductionBalance, ps.m_Product);
                 LookForAddProduct(m_SellingAmount, ps.m_Product);
             }
 
@@ -100,13 +120,14 @@ namespace Gameplay.Productions
                 LookForAddProduct(m_CurrendProduction, ps.m_Product);
                 LookForAddProduct(m_NeededProduction, ps.m_Product);
                 LookForAddProduct(m_Inventory, ps.m_Product);
-                LookForAddProduct(m_Balance, ps.m_Product);
+                LookForAddProduct(m_ProductionBalance, ps.m_Product);
                 LookForAddProduct(m_SellingAmount, ps.m_Product);
             }
 
             _pb.m_Production.m_Ratio = GetRatio(_pb.m_Production);
             CalculateCurrentProduction();
             CalculateNeededProduction();
+            m_OperatingCostSum += _pb.m_OperatingCost;
         }
 
         public void RemoveProductionBuilding(ProductionBuilding _pb)
@@ -115,6 +136,7 @@ namespace Gameplay.Productions
                 m_ProductionBuildingAmount[_pb.m_Production]--;
 
             _pb.m_Production.m_Ratio = GetRatio(_pb.m_Production);
+            m_OperatingCostSum -= _pb.m_OperatingCost;
         }
 
         public void SetSellingAmount(Product _p, float _amount)

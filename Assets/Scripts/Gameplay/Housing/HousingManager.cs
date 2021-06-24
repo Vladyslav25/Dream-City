@@ -272,19 +272,22 @@ namespace Gameplay.Buildings
             m_Business_NeedAmount += impacts[1];
             m_Industry_NeedAmount += impacts[2];
 
-            GameObject obj;
-            if (_prefab.GetComponent<Building>().InverseRotation)
+            Building obj;
+            Building b = _prefab.GetComponent<Building>();
+            if (b.InverseRotation)
             {
-                obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
+                obj = Instantiate(b, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
             }
             else
             {
-                obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 0, 0), _a.m_Street.transform);
+                obj = Instantiate(b, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 0, 0), _a.m_Street.transform);
             }
 
-            _a.Init(obj.GetComponent<Building>());
+            _a.Init(obj);
             m_AllAreas.Add(_a);
-            return obj;
+            Inventory.Instance.m_TaxIncome += b.Tax;
+
+            return obj.gameObject;
         }
 
         public GameObject PlaceBuilding(EAssignment _assignment, Street _s, bool _isLeftSide)

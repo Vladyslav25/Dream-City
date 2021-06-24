@@ -6,6 +6,7 @@ using Grid;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace UI
 {
@@ -44,6 +45,10 @@ namespace UI
         public Text InflowText;
         public Text Impact01Text;
         public Text Impact02Text;
+
+        public TextMeshProUGUI MoneySum;
+        public TextMeshProUGUI MoneyBalance;
+
         [Space]
         [SerializeField]
         private GameObject BuilingInfoObj;
@@ -90,6 +95,7 @@ namespace UI
             streetTool = ToolManager.Instance.GetStreetTool();
             cellTool = ToolManager.Instance.GetCellAssignmentTool();
             SetActivToolChoose();
+            UpdateMoneyUI();
         }
 
         public void SetBuildingInfoActiv(bool _active)
@@ -368,7 +374,7 @@ namespace UI
 
         public void UpdateCurrendProductSellUI(Product _p)
         {
-            if(_p == m_smi.m_currProduct)
+            if (_p == m_smi.m_currProduct)
             {
                 m_smi.UpdateInfo(_p);
             }
@@ -429,6 +435,13 @@ namespace UI
             m_pqu.RemoveItem(_index);
         }
 
+        public void UpdateMoneyUI()
+        {
+            MoneySum.text = ConvertFloatToStringPrice(Inventory.Instance.m_Money);
+            MoneyBalance.text = ConvertFloatToStringPriceWithSign(Inventory.Instance.m_MoneyBalance, out Color c);
+            MoneyBalance.color = c;
+        }
+
         #region -Static-
         public static string ConvertFloatToStringDigit(float _input)
         {
@@ -451,6 +464,50 @@ namespace UI
             else
             {
                 return s + " €";
+            }
+        }
+
+        public static string ConvertFloatToStringPriceWithSign(float _input)
+        {
+            string s = string.Format("{0:0.00}", _input);
+            string sign = "";
+
+            if (_input > 0)
+                sign = "+ ";
+
+            if (s.EndsWith("00"))
+            {
+                return sign + ((int)_input).ToString() + " €";
+            }
+            else
+            {
+                return sign + s + " €";
+            }
+        }
+
+        public static string ConvertFloatToStringPriceWithSign(float _input, out Color c)
+        {
+            string s = string.Format("{0:0.00}", _input);
+            string sign = "";
+            c = Color.green;
+
+            if (_input > 0)
+            {
+                sign = "+ ";
+                c = Color.green;
+            }
+            else if (_input == 0)
+                c = Color.yellow;
+            else
+                c = Color.red;
+
+            if (s.EndsWith("00"))
+            {
+                return sign + ((int)_input).ToString() + " €";
+            }
+            else
+            {
+                return sign + s + " €";
             }
         }
 

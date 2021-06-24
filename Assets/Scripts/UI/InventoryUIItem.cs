@@ -36,7 +36,7 @@ namespace UI
         {
 
             float inventory = Inventory.Instance.m_Inventory[_p];
-            float balance = Inventory.Instance.m_Balance[_p];
+            float balance = Inventory.Instance.m_ProductionBalance[_p];
 
             if (inventory <= 0)
                 m_InventoryAmount.color = Color.red;
@@ -62,6 +62,8 @@ namespace UI
             }
 
             m_Balance.text = sign + " " + UIManager.ConvertFloatToStringDigit(balance);
+            m_Balance.text = UIManager.ConvertFloatToStringPriceWithSign(balance, out Color c);
+            m_Balance.color = c;
             UpdateIncome();
         }
 

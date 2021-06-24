@@ -11,5 +11,12 @@ namespace Gameplay.Buildings
     {
         [Header("Settings")]
         public EDemand m_Density;
+        public float Tax;
+
+        public override void Destroy()
+        {
+            Gameplay.Productions.Inventory.Instance.m_TaxIncome -= Tax;
+            base.Destroy();
+        }
     }
 }
