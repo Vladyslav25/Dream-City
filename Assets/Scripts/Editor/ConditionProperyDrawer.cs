@@ -28,7 +28,6 @@ public class ConditionProperyDrawer : PropertyDrawer
         choosenType = (EValueType)EditorGUILayout.EnumPopup("Value Type:", choosenType);
         if (choosenType != EValueType.NONE)
         {
-            EditorGUILayout.Space(20);
             switch (choosenType)
             {
                 case EValueType.NONE:
