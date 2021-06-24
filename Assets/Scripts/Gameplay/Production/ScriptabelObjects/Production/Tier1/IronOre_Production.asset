@@ -10,9 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5f82b2f901407e46a5d4ab2e6d76f73, type: 3}
-  m_Name: SilverOre
+  m_Name: IronOre_Production
   m_EditorClassIdentifier: 
   m_Input: []
   m_Output:
   - m_Amount: 2
-    m_Product: {fileID: 11400000, guid: 043741d5505c60749bba1a4c83f5f31e, type: 2}
+    m_Product: {fileID: 11400000, guid: ee772e9f97fc2c341b9fda13ad4a0b6b, type: 2}
+  m_Ratio: 1
+  m_Condition:
+    m_EValue: 0
+    m_Compare: 0
+    m_Value: 0

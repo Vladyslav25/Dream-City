@@ -22,7 +22,7 @@ namespace UI
 
         public void OnClickRemove()
         {
-            HousingManager.Instance.RemoveProductionBuilingInList(Index);
+            BuildingManager.Instance.RemoveProductionBuilingInList(Index);
             Destroy(gameObject);
         }
     }

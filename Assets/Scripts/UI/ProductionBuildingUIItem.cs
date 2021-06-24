@@ -27,7 +27,7 @@ namespace UI
 
         public void OnClick()
         {
-            HousingManager.Instance.AddProductionBuildingToList(m_PB);
+            BuildingManager.Instance.AddProductionBuildingToList(m_PB);
         }
 
         public void Init(ProductionBuilding _pb)

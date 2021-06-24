@@ -77,21 +77,21 @@ namespace Gameplay.Buildings
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    HousingManager.Instance.m_Living_CurrAmount -= Inflow;
+                    BuildingManager.Instance.m_Living_CurrAmount -= Inflow;
                     break;
                 case EAssignment.BUSINESS:
-                    HousingManager.Instance.m_Business_CurrAmount -= Inflow;
+                    BuildingManager.Instance.m_Business_CurrAmount -= Inflow;
                     break;
                 case EAssignment.INDUSTRY:
-                    HousingManager.Instance.m_Industry_CurrAmount -= Inflow;
+                    BuildingManager.Instance.m_Industry_CurrAmount -= Inflow;
                     break;
                 default:
                     break;
             }
 
-            HousingManager.Instance.m_Living_NeedAmount -= Impacts[0];
-            HousingManager.Instance.m_Business_NeedAmount -= Impacts[1];
-            HousingManager.Instance.m_Industry_NeedAmount -= Impacts[2];
+            BuildingManager.Instance.m_Living_NeedAmount -= Impacts[0];
+            BuildingManager.Instance.m_Business_NeedAmount -= Impacts[1];
+            BuildingManager.Instance.m_Industry_NeedAmount -= Impacts[2];
 
             foreach (Material mat in gameObject.GetComponent<MeshRenderer>().materials)
             {
@@ -194,7 +194,7 @@ namespace Gameplay.Buildings
 
         public void Destroy()
         {
-            HousingManager.m_AllAreas.Remove(this);
+            BuildingManager.m_AllAreas.Remove(this);
             switch (m_Assignment)
             {
                 case EAssignment.NONE:

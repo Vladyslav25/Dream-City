@@ -162,12 +162,12 @@ namespace Gameplay.StreetComponents
             EAssignment lastAssignemnt = EAssignment.NONE;
             while (true)
             {
-                if (lastAssignemnt != EAssignment.PRODUCTION && HousingManager.Instance.m_ProductionBuildWaitingList.Count > 0)
+                if (lastAssignemnt != EAssignment.PRODUCTION && BuildingManager.Instance.m_ProductionBuildWaitingList.Count > 0)
                 {
                     if (!lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceProductionBuilding(
-                            HousingManager.Instance.m_ProductionBuildWaitingList[0],
+                        obj = BuildingManager.Instance.PlaceProductionBuilding(
+                            BuildingManager.Instance.m_ProductionBuildWaitingList[0],
                             this, true);
                         lastLeft = true;
                         if (obj != null)
@@ -178,8 +178,8 @@ namespace Gameplay.StreetComponents
                     }
                     if (lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceProductionBuilding(
-                            HousingManager.Instance.m_ProductionBuildWaitingList[0],
+                        obj = BuildingManager.Instance.PlaceProductionBuilding(
+                            BuildingManager.Instance.m_ProductionBuildWaitingList[0],
                             this, false);
                         lastLeft = false;
                         if (obj != null)
@@ -195,7 +195,7 @@ namespace Gameplay.StreetComponents
                     //LIVING
                     if (!lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
                         lastLeft = true;
                         if (obj != null)
                         {
@@ -206,7 +206,7 @@ namespace Gameplay.StreetComponents
                     }
                     if (lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
                         lastLeft = false;
                         if (obj != null)
                         {
@@ -223,7 +223,7 @@ namespace Gameplay.StreetComponents
                     //BUSINESS
                     if (!lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, true);
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, true);
                         lastLeft = true;
                         if (obj != null)
                         {
@@ -234,7 +234,7 @@ namespace Gameplay.StreetComponents
                     }
                     if (lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, false);
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, false);
                         lastLeft = false;
                         if (obj != null)
                         {
@@ -250,7 +250,7 @@ namespace Gameplay.StreetComponents
                     //INDUSTRY
                     if (!lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, true);
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, true);
                         lastLeft = true;
                         if (obj != null)
                         {
@@ -260,7 +260,7 @@ namespace Gameplay.StreetComponents
                     }
                     if (lastLeft)
                     {
-                        obj = HousingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, false);
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, false);
                         lastLeft = false;
                         if (obj != null)
                         {
@@ -690,8 +690,8 @@ namespace Gameplay.StreetComponents
 
             if (Input.GetKeyDown(KeyCode.F) && m_StreetCells.Count > 1)
             {
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
+                BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
+                BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
             }
         }
 

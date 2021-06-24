@@ -15,5 +15,8 @@ namespace Gameplay.Productions
 
         [HideInInspector]
         public float m_Ratio = 1f;
+
+        [Space()]
+        public Condition m_Condition;
     }
 }

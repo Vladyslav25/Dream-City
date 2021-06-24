@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Gameplay.Buildings
 {
-    public class HousingManager : MonoBehaviour
+    public class BuildingManager : MonoBehaviour
     {
         [Header("For Testing")]
         [SerializeField]
@@ -145,18 +145,18 @@ namespace Gameplay.Buildings
         public EDemand m_IndustryDemand = 0;
 
         #region -SingeltonPattern-
-        private static HousingManager _instance;
-        public static HousingManager Instance
+        private static BuildingManager _instance;
+        public static BuildingManager Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = GameObject.FindObjectOfType<HousingManager>();
+                    _instance = GameObject.FindObjectOfType<BuildingManager>();
                     if (_instance == null)
                     {
                         GameObject container = new GameObject("SplineManager");
-                        _instance = container.AddComponent<HousingManager>();
+                        _instance = container.AddComponent<BuildingManager>();
                     }
                 }
                 return _instance;

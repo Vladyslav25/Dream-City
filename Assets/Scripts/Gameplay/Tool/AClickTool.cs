@@ -21,7 +21,7 @@ namespace Gameplay.Tools
             List<Area> SphereSphere = new List<Area>();
             b = null;
 
-            foreach (Area area in HousingManager.m_AllAreas)
+            foreach (Area area in BuildingManager.m_AllAreas)
             {
                 if (MyCollision.SphereSphere(new Vector2(m_hitPos.x, m_hitPos.z), 0.8f, new Vector2(area.m_OP.Position.x, area.m_OP.Position.z), area.m_Radius))
                 {

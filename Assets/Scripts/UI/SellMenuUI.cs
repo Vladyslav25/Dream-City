@@ -99,7 +99,7 @@ namespace UI
         {
             //remove Living Impact if selling on world
             if (m_currProduct.IsSellingWorld)
-                Gameplay.Buildings.HousingManager.Instance.m_Living_NeedAmount -= m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
+                Gameplay.Buildings.BuildingManager.Instance.m_Living_NeedAmount -= m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
 
             //after remove set new Amount
             Inventory.Instance.SetSellingAmount(m_currProduct, UIManager.ConvertStringToFloat(m_InputField.text));
@@ -107,7 +107,7 @@ namespace UI
 
             //add living impact if selling on local
             if (!m_currProduct.IsSellingWorld)
-                Gameplay.Buildings.HousingManager.Instance.m_Living_NeedAmount += m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
+                Gameplay.Buildings.BuildingManager.Instance.m_Living_NeedAmount += m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
         }
 
         private void SetCurrPrice(float _amount)
