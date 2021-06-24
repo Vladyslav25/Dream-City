@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5295889691379189876}
+  - component: {fileID: 7666015018801652190}
   - component: {fileID: 2065489679119149241}
   - component: {fileID: 5502426156394767992}
-  - component: {fileID: 7666015018801652190}
   m_Layer: 0
   m_Name: CoalMine
   m_TagString: Untagged
@@ -34,6 +34,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7666015018801652190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5568758332235640911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034692af5c1fa2a4ab787574e8a1682c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 3
+  depth: 3
+  m_Assigment: 4
+  InverseRotation: 0
+  inflow: 10
+  impactOnLiving: 6
+  impactOnBusiness: 4
+  impactOnIndustry: 0
+  m_Production: {fileID: 11400000, guid: 1bcd524f99ed21d4599dcff77ef9a832, type: 2}
+  m_Cost: 250
+  m_OperatingCost: -10
+  m_UIName: Kohle Mine
 --- !u!33 &2065489679119149241
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -81,30 +105,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &7666015018801652190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5568758332235640911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 034692af5c1fa2a4ab787574e8a1682c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  width: 3
-  depth: 3
-  m_Assigment: 4
-  InverseRotation: 0
-  inflow: 10
-  impactOnLiving: 6
-  impactOnBusiness: 4
-  impactOnIndustry: 0
-  m_Production: {fileID: 11400000, guid: 1bcd524f99ed21d4599dcff77ef9a832, type: 2}
-  m_Cost: 250
-  m_OperatingCost: 10
-  m_UIName: Kohle Mine
 --- !u!1 &7677615291785965212
 GameObject:
   m_ObjectHideFlags: 0

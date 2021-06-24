@@ -66,9 +66,9 @@ namespace Gameplay.Productions
                             float add = balance * (1f / 60f);
 
                             if (p.IsSellingWorld)
-                                m_MoneyBalance += p.m_PriceWorld * m_MoneyBalance - m_SellingAmount[p];
+                                m_MoneyBalance += p.m_PriceWorld * m_SellingAmount[p];
                             else
-                                m_MoneyBalance += p.m_PriceLocal * m_MoneyBalance - m_SellingAmount[p];
+                                m_MoneyBalance += p.m_PriceLocal * m_SellingAmount[p];
 
                             m_Inventory[p] += add;
                             if (m_Inventory[p] <= 0f)
@@ -92,7 +92,7 @@ namespace Gameplay.Productions
 
                 //Money
                 m_MoneyBalance += m_TaxIncome;
-                m_MoneyBalance -= m_OperatingCostSum;
+                m_MoneyBalance += m_OperatingCostSum;
                 m_Money += m_MoneyBalance * (1f/60f);
                 UI.UIManager.Instance.UpdateMoneyUI();
 

@@ -1,6 +1,7 @@
 ﻿using Gameplay.Productions;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,9 +17,17 @@ namespace UI
         private Text m_RatioText;
         [SerializeField]
         private Transform m_OutputTransform;
+        [SerializeField]
+        private TextMeshProUGUI m_Title;
+        [SerializeField]
+        private TextMeshProUGUI m_OperatingCost;
 
         public void SetProductionInfo(ProductionBuilding _pb)
         {
+            m_Title.text = _pb.m_UIName;
+            m_OperatingCost.text = UIManager.ConvertFloatToStringPriceWithSign(_pb.m_OperatingCost, out Color c);
+            m_OperatingCost.color = c;
+
             foreach (Transform child in m_InputTransform.transform)
             {
                 Destroy(child.gameObject);
@@ -30,7 +39,6 @@ namespace UI
             }
 
             Production p = _pb.m_Production;
-
             if (p.m_Input.Count == 0)
             {
                 GameObject obj = Instantiate(m_ProductionInfoItem_Prefab, m_InputTransform);

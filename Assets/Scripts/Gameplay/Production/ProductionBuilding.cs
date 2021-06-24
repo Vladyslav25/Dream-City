@@ -10,6 +10,7 @@ namespace Gameplay.Productions
         [Header("Production")]
         public Production m_Production;
         public float m_Cost;
+        [Tooltip("Must be a negativ Number!")]
         public float m_OperatingCost;
         [Space()]
         public string m_UIName;
@@ -17,7 +18,7 @@ namespace Gameplay.Productions
         public override void Destroy()
         {
             Inventory.Instance.RemoveProductionBuilding(this);
-            
+
             base.Destroy();
         }
     }

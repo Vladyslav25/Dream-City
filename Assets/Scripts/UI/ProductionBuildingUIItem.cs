@@ -20,6 +20,10 @@ namespace UI
         private Text m_Title;
         [SerializeField]
         private RectTransform m_Rect;
+        [SerializeField]
+        private Text m_Cost;
+        [SerializeField]
+        private Text m_Balance;
 
         public void OnClick()
         {
@@ -30,6 +34,9 @@ namespace UI
         {
             m_PB = _pb;
             m_Title.text = m_PB.m_UIName;
+            m_Cost.text = UIManager.ConvertFloatToStringPrice(_pb.m_Cost);
+            m_Balance.text = UIManager.ConvertFloatToStringPriceWithSign(_pb.m_OperatingCost, out Color c);
+            m_Balance.color = c;
 
             foreach (ProductionStat ps in m_PB.m_Production.m_Output)
             {
