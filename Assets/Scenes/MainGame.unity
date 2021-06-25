@@ -6836,10 +6836,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9032dc37b4e1f1b459fbc3941c325c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Money: 0
+  m_MoneyAmount: 0
   m_MoneyBalance: 0
   m_OperatingCostSum: 0
   m_TaxIncome: 0
+  m_AllProducts:
+  - {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
+  - {fileID: 11400000, guid: 931a49fead54e0344aa4070c6b3c1f0a, type: 2}
+  - {fileID: 11400000, guid: 46a214b929eae1b4292beb91f263f26c, type: 2}
+  - {fileID: 11400000, guid: ee772e9f97fc2c341b9fda13ad4a0b6b, type: 2}
+  - {fileID: 11400000, guid: 67524c1d237b7c544913d9573f35dc15, type: 2}
+  - {fileID: 11400000, guid: b02b77d47b546ac40b916306b3227708, type: 2}
+  - {fileID: 11400000, guid: 043741d5505c60749bba1a4c83f5f31e, type: 2}
+  - {fileID: 11400000, guid: 0a53f5de567201d4686aafa3fd8cad1d, type: 2}
+  - {fileID: 11400000, guid: 0d49f899eebd47047a62d2cce286aa56, type: 2}
+  - {fileID: 11400000, guid: 3ce33d02bd34aa542a255dea9b98dc5f, type: 2}
+  - {fileID: 11400000, guid: c5ec254ee398d2a489599530d8cbddb0, type: 2}
+  - {fileID: 11400000, guid: 2935c734365b41248a9d3ae5565fc651, type: 2}
+  - {fileID: 11400000, guid: 09aabda2c685bdc47b9be2ac4973a677, type: 2}
+  - {fileID: 11400000, guid: 158f6064885d54b43a0f8be4a8bb9e6b, type: 2}
+  - {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}
+  - {fileID: 11400000, guid: aa382187ceb251a4e96a0845d9978d38, type: 2}
+  - {fileID: 11400000, guid: 4dd9ad61fd0263548a8ffafcae633723, type: 2}
+  - {fileID: 11400000, guid: 9362ce91a6e0c1c459b7b2c311b60d57, type: 2}
+  - {fileID: 11400000, guid: b221faa228aa3b94eb1b7596375cc8a0, type: 2}
+  - {fileID: 11400000, guid: 597c904c218527f4ea436146efe08518, type: 2}
 --- !u!1 &1289521881
 GameObject:
   m_ObjectHideFlags: 0
@@ -8451,7 +8472,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0

@@ -28,6 +28,9 @@ namespace Gameplay.Buildings
         private Dictionary<Vector2Int, List<GameObject>> industryPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Production, GameObject> productionPrefabs_Dic = new Dictionary<Production, GameObject>();
 
+        [HideInInspector]
+        public Dictionary<Production, ProductionBuilding> productionBuilding_Dic = new Dictionary<Production, ProductionBuilding>();
+
         public static List<Area> m_AllAreas = new List<Area>();
         [MyReadOnly]
         public List<Production> m_ProductionBuildWaitingList = new List<Production>();
@@ -182,7 +185,7 @@ namespace Gameplay.Buildings
             GameObject prefab = productionPrefabs_Dic[_p];
             ProductionBuilding PB = prefab.GetComponent<ProductionBuilding>();
 
-            if(Inventory.Instance.m_Money < PB.m_Cost)
+            if (Inventory.Instance.m_MoneyAmount < PB.m_Cost)
             {
                 UIManager.Instance.ChangeProductionItemColor(Color.red);
                 return null;
@@ -497,6 +500,7 @@ namespace Gameplay.Buildings
                 if (!_dic.ContainsKey(pb.m_Production))
                 {
                     _dic.Add(pb.m_Production, obj);
+                    productionBuilding_Dic.Add(pb.m_Production, pb);
                     UIManager.Instance.InitProductionUI(pb);
                     pb.m_Production.m_Ratio = 1f;
                     foreach (ProductionStat p in pb.m_Production.m_Input)
@@ -507,7 +511,8 @@ namespace Gameplay.Buildings
                     {
                         p.m_Product.IsSellingWorld = false;
                     }
-                    Inventory.Instance.m_Productions.Add(pb.m_Production);
+                    if (!Inventory.Instance.m_AllProductions.Contains(pb.m_Production))
+                        Inventory.Instance.m_AllProductions.Add(pb.m_Production);
                 }
                 else
                 {

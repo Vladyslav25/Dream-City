@@ -32,7 +32,6 @@ namespace UI
 
         public void UpdateItem(Product _p)
         {
-
             float inventory = Inventory.Instance.m_Inventory[_p];
             float balance = Inventory.Instance.m_ProductionBalance[_p];
 
@@ -42,25 +41,7 @@ namespace UI
                 m_InventoryAmount.color = Color.black;
 
             m_InventoryAmount.text = UIManager.ConvertFloatToStringDigit(inventory);
-
-            string sign = "";
-            if (balance < 0)
-            {
-                m_Balance.color = Color.red;
-            }
-            else if (balance == 0)
-            {
-                m_Balance.color = Color.yellow;
-                sign = "";
-            }
-            else
-            {
-                m_Balance.color = Color.green;
-                sign = "+";
-            }
-
-            m_Balance.text = sign + " " + UIManager.ConvertFloatToStringDigit(balance);
-            m_Balance.text = UIManager.ConvertFloatToStringPriceWithSign(balance, out Color c);
+            m_Balance.text = UIManager.ConvertFloatToStringDigitWithSign(balance, out Color c);
             m_Balance.color = c;
             UpdateIncome();
         }

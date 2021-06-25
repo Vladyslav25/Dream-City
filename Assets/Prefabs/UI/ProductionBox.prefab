@@ -289,14 +289,14 @@ MonoBehaviour:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 25
     m_FontStyle: 1
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 1
+    m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 10 Industrie Jobs
 --- !u!1 &2106117725848620774
@@ -315,7 +315,7 @@ GameObject:
   - component: {fileID: 8579592167914029002}
   - component: {fileID: 3578251334929333036}
   m_Layer: 5
-  m_Name: ProductionBox 1 1
+  m_Name: ProductionBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -416,6 +416,9 @@ MonoBehaviour:
   m_Rect: {fileID: 2106117725848620761}
   m_Cost: {fileID: 1978801998101747774}
   m_Balance: {fileID: 314543691504001032}
+  m_Btn: {fileID: 3578251334929333036}
+  m_BtnBG: {fileID: 2106117727001798472}
+  m_ConditionText: {fileID: 2106117725807140583}
 --- !u!114 &8579592167914029002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -627,12 +630,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
+    m_Left: 5
+    m_Right: 5
+    m_Top: 8
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1

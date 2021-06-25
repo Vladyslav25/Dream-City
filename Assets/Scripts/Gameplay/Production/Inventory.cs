@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using static Gameplay.Productions.Condition;
+using UI;
 
 namespace Gameplay.Productions
 {
@@ -13,13 +15,22 @@ namespace Gameplay.Productions
         public Dictionary<Product, float> m_ProductionBalance = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_SellingAmount = new Dictionary<Product, float>();
 
-        public HashSet<Production> m_Productions = new HashSet<Production>();
+        public List<Production> m_AllProductions = new List<Production>();
         public Dictionary<Production, int> m_ProductionBuildingAmount = new Dictionary<Production, int>();
 
-        public float m_Money = 0f;
+        [HideInInspector]
+        public float m_MoneyAmount = 0f;
+        [HideInInspector]
         public float m_MoneyBalance = 0f;
+        [HideInInspector]
         public float m_OperatingCostSum = 0f;
+        [HideInInspector]
         public float m_TaxIncome = 0f;
+
+        public List<Product> m_AllProducts = new List<Product>();
+
+        private int m_currIndex;
+        private Condition m_currCondition;
 
         #region -SingeltonPattern-
         private static Inventory _instance;
@@ -43,6 +54,8 @@ namespace Gameplay.Productions
 
         private void Start()
         {
+            m_currIndex = 0;
+            m_currCondition = m_AllProductions[m_currIndex].m_Condition;
             StartCoroutine(CalculateInventory());
         }
 
@@ -55,7 +68,7 @@ namespace Gameplay.Productions
                 CalculateNeededProduction();
                 HashSet<Production> ProductionsToUpdateRatio = new HashSet<Production>();
                 m_MoneyBalance = 0f;
-                foreach (Production production in m_Productions)
+                foreach (Production production in m_AllProductions)
                 {
                     foreach (ProductionStat productionStat in production.m_Output)
                     {
@@ -76,8 +89,8 @@ namespace Gameplay.Productions
                                 m_Inventory[p] = 0f;
                             }
                             m_ProductionBalance[p] = balance;
-                            UI.UIManager.Instance.UpdateInventoryItem(p);
-                            UI.UIManager.Instance.UpdateCurrendProductSellUI(p);
+                            UIManager.Instance.UpdateInventoryItem(p);
+                            UIManager.Instance.UpdateCurrendProductSellUI(p);
                         }
                         if (m_Inventory.ContainsKey(p))
                         {
@@ -93,11 +106,44 @@ namespace Gameplay.Productions
                 //Money
                 m_MoneyBalance += m_TaxIncome;
                 m_MoneyBalance += m_OperatingCostSum;
-                m_Money += m_MoneyBalance * (1f/60f);
-                UI.UIManager.Instance.UpdateMoneyUI();
+                m_MoneyAmount += m_MoneyBalance * (1f / 60f);
+                UIManager.Instance.UpdateMoneyUI();
+
+                //Condition
+                if (m_currCondition != null && m_currCondition.CheckCondition())
+                {
+                    UIManager.Instance.UnlockProduction(m_AllProductions[m_currIndex]);
+                    m_currIndex++;
+                    if (m_currIndex < m_AllProductions.Count)
+                        m_currCondition = m_AllProductions[m_currIndex].m_Condition;
+                    else //if all Productions are Unlocked
+                        m_currCondition = null;
+                }
 
                 yield return new WaitForSeconds(1f);
             }
+        }
+
+        public Product GetProductByEnum(EProduct _eProduct)
+        {
+            foreach (Product product in m_AllProducts)
+            {
+                if (product.m_EProduct == _eProduct)
+                    return product;
+            }
+            Debug.LogError("No Product: " + _eProduct.ToString() + " found");
+            return null;
+        }
+
+        public Production GetProductionByEnmun(EProduction _eProduction)
+        {
+            foreach (Production production in m_AllProductions)
+            {
+                if (production.m_EProduction == _eProduction)
+                    return production;
+            }
+            Debug.LogError("No Production: " + _eProduction.ToString() + " found");
+            return null;
         }
 
         public void AddProductionBuilding(ProductionBuilding _pb)
@@ -128,7 +174,7 @@ namespace Gameplay.Productions
             CalculateCurrentProduction();
             CalculateNeededProduction();
             m_OperatingCostSum += _pb.m_OperatingCost;
-            m_Money -= _pb.m_Cost;
+            m_MoneyAmount -= _pb.m_Cost;
         }
 
         public void RemoveProductionBuilding(ProductionBuilding _pb)
@@ -188,9 +234,9 @@ namespace Gameplay.Productions
                 m_CurrendProduction[p] = 0;
             }
 
-            for (int i = 0; i < m_Productions.Count; i++)
+            for (int i = 0; i < m_AllProductions.Count; i++)
             {
-                Production production = m_Productions.ElementAt(i);
+                Production production = m_AllProductions.ElementAt(i);
                 if (m_ProductionBuildingAmount.ContainsKey(production))
                     for (int ii = 0; ii < production.m_Output.Count; ii++)
                     {
@@ -210,9 +256,9 @@ namespace Gameplay.Productions
                 m_NeededProduction[p] = 0;
             }
 
-            for (int i = 0; i < m_Productions.Count; i++)
+            for (int i = 0; i < m_AllProductions.Count; i++)
             {
-                Production production = m_Productions.ElementAt(i);
+                Production production = m_AllProductions.ElementAt(i);
                 if (m_ProductionBuildingAmount.ContainsKey(production))
                     for (int ii = 0; ii < production.m_Input.Count; ii++)
                     {

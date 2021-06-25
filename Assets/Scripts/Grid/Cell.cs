@@ -235,7 +235,7 @@ namespace Grid
                     GridManager.m_AllLivingCells.Remove(this);
                     break;
                 case EAssignment.BUSINESS:
-                    GridManager.m_AllBuisnessCells.Remove(this);
+                    GridManager.m_AllBusinessCells.Remove(this);
                     break;
                 case EAssignment.INDUSTRY:
                     GridManager.m_AllIndustryCells.Remove(this);
@@ -252,7 +252,7 @@ namespace Grid
                     GridManager.m_AllLivingCells.Add(this);
                     break;
                 case EAssignment.BUSINESS:
-                    GridManager.m_AllBuisnessCells.Add(this);
+                    GridManager.m_AllBusinessCells.Add(this);
                     break;
                 case EAssignment.INDUSTRY:
                     GridManager.m_AllIndustryCells.Add(this);

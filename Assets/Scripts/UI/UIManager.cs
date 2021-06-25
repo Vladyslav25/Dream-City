@@ -6,6 +6,7 @@ using Grid;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 namespace UI
 {
@@ -68,6 +69,8 @@ namespace UI
         private InventoryUI m_iu;
         [SerializeField]
         private SellMenuUI m_smi;
+
+        private Dictionary<Production,ProductionBuildingUIItem> m_ProductionBuildingItems = new Dictionary<Production, ProductionBuildingUIItem> ();
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -422,6 +425,8 @@ namespace UI
             GameObject obj = Instantiate(ProductionUI_Prefab, ProductionUI_Parent.transform);
             ProductionBuildingUIItem pbUI = obj.GetComponent<ProductionBuildingUIItem>();
             pbUI.Init(_pb);
+            if (!m_ProductionBuildingItems.ContainsKey(_pb.m_Production))
+                m_ProductionBuildingItems.Add(_pb.m_Production, pbUI);
         }
 
         public void AddProductionBuildingItem(ProductionBuilding _pb)
@@ -441,15 +446,60 @@ namespace UI
 
         public void UpdateMoneyUI()
         {
-            MoneySum.text = ConvertFloatToStringPrice(Inventory.Instance.m_Money);
+            MoneySum.text = ConvertFloatToStringPrice(Inventory.Instance.m_MoneyAmount);
             MoneyBalance.text = ConvertFloatToStringPriceWithSign(Inventory.Instance.m_MoneyBalance, out Color c);
             MoneyBalance.color = c;
+        }
+
+        public void UnlockProduction(Production _production)
+        {
+            m_ProductionBuildingItems[_production].UnlockProduction();
         }
 
         #region -Static-
         public static string ConvertFloatToStringDigit(float _input)
         {
             return string.Format("{0:0}", _input);
+        }
+
+        public static string ConvertFloatToStringDigit(float _input, out Color c)
+        {
+            c = Color.green;
+
+            if (_input > 0)
+                c = Color.green;
+            else if (_input == 0)
+                c = Color.yellow;
+            else
+                c = Color.red;
+
+            return string.Format("{0:0}", _input);
+        }
+
+        public static string ConvertFloatToStringDigitWithSign(float _input, out Color c)
+        {
+            string s = string.Format("{0:0.00}", _input);
+            string sign = "";
+            c = Color.green;
+
+            if (_input > 0)
+            {
+                sign = "+ ";
+                c = Color.green;
+            }
+            else if (_input == 0)
+                c = Color.yellow;
+            else
+                c = Color.red;
+
+            if (s.EndsWith("00"))
+            {
+                return sign + ((int)_input).ToString();
+            }
+            else
+            {
+                return sign + s;
+            }
         }
 
         public static string ConvertFloatToStringDecimal(float _input)

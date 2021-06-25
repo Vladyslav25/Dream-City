@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f82b2f901407e46a5d4ab2e6d76f73, type: 3}
   m_Name: GoldOre_Production
   m_EditorClassIdentifier: 
+  m_EProduction: 3
   m_Input: []
   m_Output:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: 46a214b929eae1b4292beb91f263f26c, type: 2}
-  m_Ratio: 1
   m_Condition:
-    m_EValue: 0
+    m_EValueType: 0
+    m_EValue_Inflow: 0
+    m_EValue_Cell: 0
+    m_EValue_Money: 0
+    m_EValue_IBalance: 0
+    m_EValue_IAmount: 0
+    m_EValue_PAmount: 0
     m_Compare: 0
     m_Value: 0
+  m_Ratio: 1
