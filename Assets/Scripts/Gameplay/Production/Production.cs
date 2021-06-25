@@ -13,10 +13,9 @@ namespace Gameplay.Productions
         [Header("Output")]
         public List<ProductionStat> m_Output;
 
+        public Condition m_Condition;
+
         [HideInInspector]
         public float m_Ratio = 1f;
-
-        [Space()]
-        public Condition m_Condition;
     }
 }

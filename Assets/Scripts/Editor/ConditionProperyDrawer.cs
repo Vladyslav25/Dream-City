@@ -9,51 +9,77 @@ using System;
 [CustomPropertyDrawer(typeof(Condition))]
 public class ConditionProperyDrawer : PropertyDrawer
 {
-    public EValueType choosenType;
+    private bool initialized = false;
 
-    public EValue_Inflow EValue_Inflow;
-    public EValue_Cell EValue_Cell;
-    public EValue_Money EValue_Money;
-    public EValue_IBalance EValue_IBalance;
-    public EValue_IAmount EValue_IAmount;
-    public EValue_PAmount EValue_PAmount;
-    public EComparisonSign sign;
-
-    public float valueToCompare;
+    private SerializedProperty P_Condition;
+    private SerializedProperty P_ChoosenType;
+    private SerializedProperty P_EValue_Inflow;
+    private SerializedProperty P_EValue_Cell;
+    private SerializedProperty P_EValue_Money;
+    private SerializedProperty P_EValue_IBalance;
+    private SerializedProperty P_EValue_IAmount;
+    private SerializedProperty P_EValue_PAmount;
+    private SerializedProperty P_Sign;
+    private SerializedProperty P_ValueToCompare;
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        property.serializedObject.Update();
+        SerializedObject SO = new SerializedObject(property.serializedObject.targetObject as Production);
 
-        choosenType = (EValueType)EditorGUILayout.EnumPopup("Value Type:", choosenType);
-        if (choosenType != EValueType.NONE)
+        if (!initialized)
+            Init(SO);
+
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.LabelField("Condition", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(P_ChoosenType);
+        EditorGUILayout.Space(15);
+        if (P_ChoosenType.enumValueIndex != (int)EValueType.NONE)
         {
-            switch (choosenType)
+            switch ((EValueType)P_ChoosenType.enumValueIndex)
             {
                 case EValueType.NONE:
                     break;
                 case EValueType.INFLOW:
-                    EValue_Inflow = (EValue_Inflow)EditorGUILayout.EnumPopup(new GUIContent("Value"), EValue_Inflow);
+                    EditorGUILayout.PropertyField(P_EValue_Inflow);
                     break;
                 case EValueType.CELL_AMOUNT:
-                    EValue_Cell = (EValue_Cell)EditorGUILayout.EnumPopup(new GUIContent("Value"), EValue_Cell);
+                    EditorGUILayout.PropertyField(P_EValue_Cell);
                     break;
                 case EValueType.MONEY:
-                    EValue_Money = (EValue_Money)EditorGUILayout.EnumPopup(new GUIContent("Value"), EValue_Money);
+                    EditorGUILayout.PropertyField(P_EValue_Money);
                     break;
                 case EValueType.INVENTORY_BALANCE:
-                    EValue_IBalance = (EValue_IBalance)EditorGUILayout.EnumPopup(new GUIContent("Value"), EValue_IBalance);
+                    EditorGUILayout.PropertyField(P_EValue_IBalance);
                     break;
                 case EValueType.INVENTORY_AMOUNT:
-                    EValue_IAmount = (EValue_IAmount)EditorGUILayout.EnumPopup(new GUIContent("Value"), EValue_IAmount);
+                    EditorGUILayout.PropertyField(P_EValue_IAmount);
                     break;
                 case EValueType.PRODUCTIONBUILDING_AMOUNT:
-                    EValue_PAmount = (EValue_PAmount)EditorGUILayout.EnumPopup(new GUIContent("Value"), EValue_PAmount);
+                    EditorGUILayout.PropertyField(P_EValue_PAmount);
                     break;
             }
 
-            sign = (EComparisonSign)EditorGUILayout.EnumPopup("Sign", sign);
-            valueToCompare = EditorGUILayout.FloatField("Compare to", valueToCompare);
+            EditorGUILayout.PropertyField(P_Sign);
+            EditorGUILayout.PropertyField(P_ValueToCompare);
         }
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            SO.ApplyModifiedProperties();
+        }
+    }
+
+    private void Init(SerializedObject _serializedObject)
+    {
+        P_Condition = _serializedObject.FindProperty("m_Condition");
+        P_ChoosenType = P_Condition.FindPropertyRelative("m_EValueType");
+        P_EValue_Inflow = P_Condition.FindPropertyRelative("m_EValue_Inflow");
+        P_EValue_Cell = P_Condition.FindPropertyRelative("m_EValue_Cell");
+        P_EValue_Money = P_Condition.FindPropertyRelative("m_EValue_Money");
+        P_EValue_IBalance = P_Condition.FindPropertyRelative("m_EValue_IBalance");
+        P_EValue_IAmount = P_Condition.FindPropertyRelative("m_EValue_IAmount");
+        P_EValue_PAmount = P_Condition.FindPropertyRelative("m_EValue_PAmount");
+        P_Sign = P_Condition.FindPropertyRelative("m_Compare");
+        P_ValueToCompare = P_Condition.FindPropertyRelative("m_Value");
     }
 }

@@ -33,21 +33,21 @@ namespace Gameplay.Productions
 
         public enum EValue_Inflow
         {
-            POPULATION = 10,
+            POPULATION,
             JOBS,
             STALLS,
         }
 
         public enum EValue_Cell
         {
-            LIVING_CELLS = 100,
+            LIVING_CELLS,
             BUSINESS_CELLS,
             INDUSTRY_CELLS,
         }
 
         public enum EValue_Money
         {
-            MONEY_BALANCE = 1_000,
+            MONEY_BALANCE,
             MONEY_AMOUNT,
         }
 
@@ -55,7 +55,7 @@ namespace Gameplay.Productions
         {
             //Inventory Balance
             //Tier 1
-            COAL_ORE_BALANCE = 10_000,
+            COAL_ORE_BALANCE,
             IRON_ORE_BALANCE,
             COPPER_ORE_BALANCE,
             GOLD_ORE_BALANCE,
@@ -91,7 +91,7 @@ namespace Gameplay.Productions
         {
             //Inventory Amount
             //Tier 1
-            COAL_ORE_INVENTORY = 100_000,
+            COAL_ORE_INVENTORY,
             IRON_ORE_INVENTORY,
             COPPER_ORE_INVENTORY,
             GOLD_ORE_INVENTORY,
@@ -128,7 +128,7 @@ namespace Gameplay.Productions
         {
             //Production Amount
             //Tier 1
-            COAL_ORE_PRODUCTION_AMOUNT = 1_000_000,
+            COAL_ORE_PRODUCTION_AMOUNT,
             IRON_ORE_PRODUCTION_AMOUNT,
             COPPER_ORE_PRODUCTION_AMOUNT,
             GOLD_ORE_PRODUCTION_AMOUNT,
