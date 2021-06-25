@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: IronIngot_Production
   m_EditorClassIdentifier: 
   m_EProduction: 5
+  m_UIName: Eisen Hochofen
   m_Input:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: ee772e9f97fc2c341b9fda13ad4a0b6b, type: 2}
@@ -22,7 +23,7 @@ MonoBehaviour:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: 3ce33d02bd34aa542a255dea9b98dc5f, type: 2}
   m_Condition:
-    m_EValueType: 0
+    m_EValueType: 1
     m_EValue_Inflow: 0
     m_EValue_Cell: 0
     m_EValue_Money: 0
@@ -30,5 +31,5 @@ MonoBehaviour:
     m_EValue_IAmount: 0
     m_EValue_PAmount: 0
     m_Compare: 0
-    m_Value: 0
+    m_Value: 2500
   m_Ratio: 1

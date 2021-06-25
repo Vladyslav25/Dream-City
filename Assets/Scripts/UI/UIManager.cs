@@ -34,20 +34,21 @@ namespace UI
         public Button BusinessButton;
         public Button IndustryButton;
 
-
         [Header("Images")]
         public Image LivingDemand;
         public Image BusinessDemand;
         public Image IndustryDemand;
-        [Header("Texts")]
-        public Text AssignmentText;
-        public Text DensityText;
-        public Text InflowText;
-        public Text Impact01Text;
-        public Text Impact02Text;
+        [Header("Texts Building Info")]
+        public TextMeshProUGUI AssignmentText;
+        public TextMeshProUGUI DensityText;
+        public TextMeshProUGUI InflowText;
+        public TextMeshProUGUI Impact01Text;
+        public TextMeshProUGUI Impact02Text;
 
         public TextMeshProUGUI MoneySum;
         public TextMeshProUGUI MoneyBalance;
+
+        public ScrollRect ProductionListScrollRect;
 
         [Space]
         [SerializeField]
@@ -163,19 +164,19 @@ namespace UI
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    assigment = " Wohngebiet";
+                    assigment = "Wohngebiet";
                     inflowType = " Wohnplätze";
                     impact01Type = " Verkaufsstände";
                     impact02Type = " Arbeitsplätze";
                     break;
                 case EAssignment.BUSINESS:
-                    assigment = " Gewerbegebiet";
+                    assigment = "Gewerbegebiet";
                     inflowType = " Verkaufsstände";
                     impact01Type = " Einwohner";
                     impact02Type = " Arbeitsplätze";
                     break;
                 case EAssignment.INDUSTRY:
-                    assigment = " Industriegebiet";
+                    assigment = "Industriegebiet";
                     inflowType = " Arbeitsplätze";
                     impact01Type = " Einwohner";
                     impact02Type = " Verkaufsstände";
@@ -417,7 +418,6 @@ namespace UI
         {
             if (lastImage != null && lastImage.gameObject.tag != "ToggleButton")
                 lastImage.color = new Color(0.77f, 0.77f, 0.77f, 1);
-
         }
 
         public void InitProductionUI(ProductionBuilding _pb)
@@ -427,6 +427,11 @@ namespace UI
             pbUI.Init(_pb);
             if (!m_ProductionBuildingItems.ContainsKey(_pb.m_Production))
                 m_ProductionBuildingItems.Add(_pb.m_Production, pbUI);
+        }
+
+        public void MoveScrollRectContentToTop()
+        {
+            ProductionListScrollRect.normalizedPosition = new Vector2(0, 1);
         }
 
         public void AddProductionBuildingItem(ProductionBuilding _pb)

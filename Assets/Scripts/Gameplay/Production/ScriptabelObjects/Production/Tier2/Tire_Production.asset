@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Tire_Production
   m_EditorClassIdentifier: 
   m_EProduction: 16
+  m_UIName: Reifen Herstellung
   m_Input:
   - m_Amount: 5
     m_Product: {fileID: 11400000, guid: b02b77d47b546ac40b916306b3227708, type: 2}

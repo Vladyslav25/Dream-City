@@ -519,6 +519,8 @@ namespace Gameplay.Buildings
                     Debug.LogError("Production: " + pb.m_Production + " already exist in Dictionary");
                 }
             }
+
+            UIManager.Instance.MoveScrollRectContentToTop(); //Move Conten in ScrollRect to top, because the new Insert Prefabs move to the top
         }
 
         private float GetRatio(float _input, float _max)

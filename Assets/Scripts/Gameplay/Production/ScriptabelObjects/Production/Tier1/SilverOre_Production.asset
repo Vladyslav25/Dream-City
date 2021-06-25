@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SilverOre_Production
   m_EditorClassIdentifier: 
   m_EProduction: 4
+  m_UIName: Silber Mine
   m_Input: []
   m_Output:
   - m_Amount: 2

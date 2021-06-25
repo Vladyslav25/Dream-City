@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: CopperIngot_Production
   m_EditorClassIdentifier: 
   m_EProduction: 6
+  m_UIName: Kupfer Hochofen
   m_Input:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: 931a49fead54e0344aa4070c6b3c1f0a, type: 2}

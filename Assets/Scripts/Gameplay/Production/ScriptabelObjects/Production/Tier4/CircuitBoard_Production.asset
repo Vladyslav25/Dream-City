@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: CircuitBoard_Production
   m_EditorClassIdentifier: 
   m_EProduction: 10
+  m_UIName: Microchip Herstellung
   m_Input:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}

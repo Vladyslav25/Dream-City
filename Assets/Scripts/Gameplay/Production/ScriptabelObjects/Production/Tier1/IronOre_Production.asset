@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: IronOre_Production
   m_EditorClassIdentifier: 
   m_EProduction: 1
+  m_UIName: Eisen Mine
   m_Input: []
   m_Output:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: ee772e9f97fc2c341b9fda13ad4a0b6b, type: 2}
   m_Condition:
-    m_EValueType: 0
+    m_EValueType: 1
     m_EValue_Inflow: 0
     m_EValue_Cell: 0
     m_EValue_Money: 0
@@ -26,5 +27,5 @@ MonoBehaviour:
     m_EValue_IAmount: 0
     m_EValue_PAmount: 0
     m_Compare: 0
-    m_Value: 0
+    m_Value: 1
   m_Ratio: 1

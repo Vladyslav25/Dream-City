@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: OilPump
   m_EditorClassIdentifier: 
   m_EProduction: 12
+  m_UIName: "\xD6l Pumpe"
   m_Input: []
   m_Output:
   - m_Amount: 4

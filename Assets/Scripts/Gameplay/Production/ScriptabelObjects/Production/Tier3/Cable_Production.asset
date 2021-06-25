@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Cable_Production
   m_EditorClassIdentifier: 
   m_EProduction: 15
+  m_UIName: Kabel Herstellung
   m_Input:
   - m_Amount: 1
     m_Product: {fileID: 11400000, guid: 0a53f5de567201d4686aafa3fd8cad1d, type: 2}

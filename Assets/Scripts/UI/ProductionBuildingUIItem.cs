@@ -1,5 +1,6 @@
 ﻿using Gameplay.Buildings;
 using Gameplay.Productions;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,19 +16,19 @@ namespace UI
         [SerializeField]
         private GameObject Input_Prefab;
         [SerializeField]
-        private Text m_Title;
+        private TextMeshProUGUI m_Title;
         [SerializeField]
         private RectTransform m_Rect;
         [SerializeField]
-        private Text m_Cost;
+        private TextMeshProUGUI m_Cost;
         [SerializeField]
-        private Text m_Balance;
+        private TextMeshProUGUI m_Balance;
         [SerializeField]
         private Button m_Btn;
         [SerializeField]
         private Image m_BtnBG;
         [SerializeField]
-        private Text m_ConditionText;
+        private TextMeshProUGUI m_ConditionText;
 
         public void OnClick()
         {
@@ -50,12 +51,12 @@ namespace UI
                 GameObject obj = Instantiate(Output_Prefab, transform);
                 obj.transform.SetSiblingIndex(1);
                 m_Rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, m_Rect.rect.height + 50f);
-                Text t = null;
+                TextMeshProUGUI t = null;
                 foreach (Transform child in obj.transform)
                 {
                     if (child.gameObject.tag == "EditText")
                     {
-                        t = child.GetComponent<Text>();
+                        t = child.GetComponent<TextMeshProUGUI>();
                         break;
                     }
                 }
@@ -77,12 +78,12 @@ namespace UI
                 GameObject obj = Instantiate(Input_Prefab, transform);
                 obj.transform.SetSiblingIndex(1);
                 m_Rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, m_Rect.rect.height + 50f);
-                Text t = null;
+                TextMeshProUGUI t = null;
                 foreach (Transform child in obj.transform)
                 {
                     if (child.gameObject.tag == "EditText")
                     {
-                        t = child.GetComponent<Text>();
+                        t = child.GetComponent<TextMeshProUGUI>();
                         break;
                     }
                 }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GoldIngot_Production
   m_EditorClassIdentifier: 
   m_EProduction: 7
+  m_UIName: Gold Hochofen
   m_Input:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: 46a214b929eae1b4292beb91f263f26c, type: 2}

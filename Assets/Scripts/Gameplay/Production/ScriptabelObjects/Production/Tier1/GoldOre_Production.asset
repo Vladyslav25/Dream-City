@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GoldOre_Production
   m_EditorClassIdentifier: 
   m_EProduction: 3
+  m_UIName: Gold Mine
   m_Input: []
   m_Output:
   - m_Amount: 2

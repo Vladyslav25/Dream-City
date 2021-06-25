@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SilverIngot_Production
   m_EditorClassIdentifier: 
   m_EProduction: 8
+  m_UIName: Silber Hochofen
   m_Input:
   - m_Amount: 2
     m_Product: {fileID: 11400000, guid: 043741d5505c60749bba1a4c83f5f31e, type: 2}

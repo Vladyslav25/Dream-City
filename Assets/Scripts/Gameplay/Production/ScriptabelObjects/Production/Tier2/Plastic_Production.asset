@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Plastic_Production
   m_EditorClassIdentifier: 
   m_EProduction: 13
+  m_UIName: Plastik Herstellung
   m_Input:
   - m_Amount: 8
     m_Product: {fileID: 11400000, guid: 67524c1d237b7c544913d9573f35dc15, type: 2}
