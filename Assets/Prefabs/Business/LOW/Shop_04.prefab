@@ -126,13 +126,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 3
   depth: 3
-  InverseRotation: 1
   m_Assigment: 2
-  m_Density: 1
+  InverseRotation: 1
+  m_MeshRenderer: {fileID: 4428864379584126895}
   inflow: 5
   impactOnLiving: 3
   impactOnBusiness: 0
   impactOnIndustry: 2
+  m_Density: 1
+  Tax: 0.2
 --- !u!1 &6003257491575678396
 GameObject:
   m_ObjectHideFlags: 0

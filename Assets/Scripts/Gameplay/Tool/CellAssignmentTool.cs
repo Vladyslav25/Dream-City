@@ -1,15 +1,11 @@
-﻿using Gameplay.Tools;
-using Grid;
+﻿using Grid;
 using MyCustomCollsion;
-using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Gameplay.Tools
 {
-    public class CellAssignmentTool : Tool
+    public class CellAssignmentTool : ATool
     {
         [SerializeField]
         private Material m_LivingMat;

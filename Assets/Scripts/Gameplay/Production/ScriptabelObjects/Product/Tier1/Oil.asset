@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b1bdba2f1b12bb4cac7eb9a25271f1a, type: 3}
   m_Name: Oil
   m_EditorClassIdentifier: 
-  m_Product: 12
+  m_EProduct: 0
   m_UI_Name: "\xD6l"
-  m_Price: 0
-  m_ImpactOnLiving: 0
+  m_UI_Sprit: {fileID: 0}
+  m_PriceWorld: 150
+  m_PriceLocal: 34
+  m_ImpactOnLiving: 4
+  IsSellingWorld: 0

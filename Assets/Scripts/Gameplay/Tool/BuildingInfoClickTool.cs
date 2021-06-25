@@ -1,9 +1,7 @@
-﻿using Gameplay.Tools;
-using Gameplay.Buildings;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Gameplay.Buildings;
 using UnityEngine;
 using UI;
+using Gameplay.Productions;
 
 namespace Gameplay.Tools
 {
@@ -12,22 +10,35 @@ namespace Gameplay.Tools
         public override void ToolStart()
         {
             UIManager.Instance.SetBuildingInfoActiv(false);
+            UIManager.Instance.SetProductionInfoActiv(false);
         }
 
         public override void ToolUpdate()
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (CheckAreaCollision(out Building b))
+                UIManager instance = UIManager.Instance;
+
+                UIManager.Instance.SetBuildingInfoActiv(false);
+                UIManager.Instance.SetProductionInfoActiv(false);
+                SetMaterialsColor(null, Color.white);
+
+                if (CheckAreaCollision(out ABuilding b))
                 {
-                    UIManager.Instance.SetBuildingInfoActiv(true);
-                    UIManager.Instance.SetBuildingStats(b);
+                    if (b is Building)
+                    {
+                        instance.SetBuildingStats((Building)b);
+                        instance.SetBuildingInfoActiv(true);
+                    }
+                    else if (b is ProductionBuilding)
+                    {
+                        instance.SetBuildingStats((ProductionBuilding)b);
+                        instance.SetBuildingInfoActiv(true);
+                        instance.SetProductionInfo((ProductionBuilding)b);
+                        instance.SetProductionInfoActiv(true);
+                    }
+
                     SetMaterialsColor(b, Color.cyan);
-                }
-                else
-                {
-                    UIManager.Instance.SetBuildingInfoActiv(false);
-                    SetMaterialsColor(null, Color.white);
                 }
             }
         }

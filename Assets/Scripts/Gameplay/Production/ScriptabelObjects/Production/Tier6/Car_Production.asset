@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f82b2f901407e46a5d4ab2e6d76f73, type: 3}
   m_Name: Car_Production
   m_EditorClassIdentifier: 
+  m_EProduction: 19
   m_Input:
   - m_Amount: 1
     m_Product: {fileID: 11400000, guid: 9362ce91a6e0c1c459b7b2c311b60d57, type: 2}
@@ -26,3 +27,14 @@ MonoBehaviour:
   m_Output:
   - m_Amount: 1
     m_Product: {fileID: 11400000, guid: 597c904c218527f4ea436146efe08518, type: 2}
+  m_Condition:
+    m_EValueType: 0
+    m_EValue_Inflow: 0
+    m_EValue_Cell: 0
+    m_EValue_Money: 0
+    m_EValue_IBalance: 0
+    m_EValue_IAmount: 0
+    m_EValue_PAmount: 0
+    m_Compare: 0
+    m_Value: 10
+  m_Ratio: 1

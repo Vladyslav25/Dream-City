@@ -1,15 +1,9 @@
 ﻿using Gameplay.StreetComponents;
-using MeshGeneration;
 using MyCustomCollsion;
 using Splines;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Unity.Collections;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 
 namespace Grid
 {
@@ -18,7 +12,8 @@ namespace Grid
         NONE,
         LIVING,
         BUSINESS,
-        INDUSTRY
+        INDUSTRY,
+        PRODUCTION
     }
 
     public class Cell
@@ -240,7 +235,7 @@ namespace Grid
                     GridManager.m_AllLivingCells.Remove(this);
                     break;
                 case EAssignment.BUSINESS:
-                    GridManager.m_AllBuisnessCells.Remove(this);
+                    GridManager.m_AllBusinessCells.Remove(this);
                     break;
                 case EAssignment.INDUSTRY:
                     GridManager.m_AllIndustryCells.Remove(this);
@@ -257,7 +252,7 @@ namespace Grid
                     GridManager.m_AllLivingCells.Add(this);
                     break;
                 case EAssignment.BUSINESS:
-                    GridManager.m_AllBuisnessCells.Add(this);
+                    GridManager.m_AllBusinessCells.Add(this);
                     break;
                 case EAssignment.INDUSTRY:
                     GridManager.m_AllIndustryCells.Add(this);

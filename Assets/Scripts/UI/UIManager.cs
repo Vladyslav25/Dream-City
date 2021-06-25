@@ -3,9 +3,10 @@ using Gameplay.Productions;
 using Gameplay.Streets;
 using Gameplay.Tools;
 using Grid;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
 
 namespace UI
 {
@@ -20,7 +21,6 @@ namespace UI
         [SerializeField]
         GameObject production;
 
-
         private StreetTool streetTool;
         private CellAssignmentTool cellTool;
         private Outline lastOutline;
@@ -33,26 +33,45 @@ namespace UI
         public Button LivingButton;
         public Button BusinessButton;
         public Button IndustryButton;
+
         [Header("Images")]
         public Image LivingDemand;
         public Image BusinessDemand;
         public Image IndustryDemand;
-        [Header("Texts")]
-        public Text AssignmentText;
-        public Text DensityText;
-        public Text InflowText;
-        public Text Impact01Text;
-        public Text Impact02Text;
+        [Header("Texts Building Info")]
+        public TextMeshProUGUI AssignmentText;
+        public TextMeshProUGUI DensityText;
+        public TextMeshProUGUI InflowText;
+        public TextMeshProUGUI Impact01Text;
+        public TextMeshProUGUI Impact02Text;
+
+        public TextMeshProUGUI MoneySum;
+        public TextMeshProUGUI MoneyBalance;
+
+        public ScrollRect ProductionListScrollRect;
+
         [Space]
         [SerializeField]
         private GameObject BuilingInfoObj;
         [SerializeField]
+        private GameObject ProductionInfoObj;
+        [SerializeField]
         private GameObject ProductionUI_Prefab;
         [SerializeField]
         private GameObject ProductionUI_Parent;
+        [SerializeField]
+        private GameObject SellMenuObj;
 
         [SerializeField]
         private ProductionQueueUI m_pqu;
+        [SerializeField]
+        private ProductionInfoUI m_pii;
+        [SerializeField]
+        private InventoryUI m_iu;
+        [SerializeField]
+        private SellMenuUI m_smi;
+
+        private Dictionary<Production,ProductionBuildingUIItem> m_ProductionBuildingItems = new Dictionary<Production, ProductionBuildingUIItem> ();
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -79,11 +98,57 @@ namespace UI
             streetTool = ToolManager.Instance.GetStreetTool();
             cellTool = ToolManager.Instance.GetCellAssignmentTool();
             SetActivToolChoose();
+            UpdateMoneyUI();
         }
 
         public void SetBuildingInfoActiv(bool _active)
         {
             BuilingInfoObj.SetActive(_active);
+        }
+
+        public void SetProductionInfoActiv(bool _active)
+        {
+            ProductionInfoObj.SetActive(_active);
+        }
+
+        public void SetProductionInfo(ProductionBuilding _pb)
+        {
+            m_pii.SetProductionInfo(_pb);
+        }
+
+        public void UpdateInventoryItem(Product _p)
+        {
+            if (!m_iu.m_ItemProduct_Dic.ContainsKey(_p))
+                m_iu.CreateItem(_p);
+            m_iu.m_ItemProduct_Dic[_p].UpdateItem(_p);
+        }
+
+        public void SetBuildingStats(ProductionBuilding _b)
+        {
+            string assigment = "Production";
+            string density = "";
+            string inflowType = " Arbeitsplätze";
+            string impact01Type = " Einwohner";
+            string impact02Type = " Verkaufsstände";
+
+            AssignmentText.text = assigment;
+            DensityText.text = density;
+            InflowText.text = _b.Inflow + inflowType;
+            if (_b.Impacts[0] == 0)
+            {
+                Impact01Text.text = _b.Impacts[1].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[2].ToString() + impact02Type;
+            }
+            else if (_b.Impacts[1] == 0)
+            {
+                Impact01Text.text = _b.Impacts[0].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[2].ToString() + impact02Type;
+            }
+            else if (_b.Impacts[2] == 0)
+            {
+                Impact01Text.text = _b.Impacts[0].ToString() + impact01Type;
+                Impact02Text.text = _b.Impacts[1].ToString() + impact02Type;
+            }
         }
 
         public void SetBuildingStats(Building _b)
@@ -99,19 +164,19 @@ namespace UI
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    assigment = " Wohngebiet";
+                    assigment = "Wohngebiet";
                     inflowType = " Wohnplätze";
                     impact01Type = " Verkaufsstände";
                     impact02Type = " Arbeitsplätze";
                     break;
                 case EAssignment.BUSINESS:
-                    assigment = " Gewerbegebiet";
+                    assigment = "Gewerbegebiet";
                     inflowType = " Verkaufsstände";
                     impact01Type = " Einwohner";
                     impact02Type = " Arbeitsplätze";
                     break;
                 case EAssignment.INDUSTRY:
-                    assigment = " Industriegebiet";
+                    assigment = "Industriegebiet";
                     inflowType = " Arbeitsplätze";
                     impact01Type = " Einwohner";
                     impact02Type = " Verkaufsstände";
@@ -187,6 +252,7 @@ namespace UI
             toolChoose.SetActive(true);
             streetType.SetActive(false);
             assignment.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void SetActivStreetType()
@@ -195,6 +261,7 @@ namespace UI
             streetType.SetActive(true);
             assignment.SetActive(false);
             production.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void SetActivAssignment()
@@ -203,6 +270,7 @@ namespace UI
             streetType.SetActive(false);
             assignment.SetActive(true);
             production.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void SetActivProduction()
@@ -215,10 +283,13 @@ namespace UI
             toolChoose.SetActive(false);
             streetType.SetActive(false);
             assignment.SetActive(false);
+            SellMenuObj.SetActive(false);
         }
 
         public void OnClickProduction(Button _b)
         {
+            SetBuildingInfoActiv(false);
+            SetProductionInfoActiv(false);
             HighlightButton(_b, true);
             production.SetActive(!production.activeSelf);
         }
@@ -293,6 +364,30 @@ namespace UI
             lastOutline = _o;
         }
 
+        public void OpenInventorySellUI(InventoryUIItem _iui)
+        {
+            SellMenuObj.SetActive(true);
+            m_smi.UpdateInfo(_iui.m_Product);
+        }
+
+        public void UpdateInventorySellUI(Product _p)
+        {
+            m_smi.UpdateInfo(_p);
+        }
+
+        public void UpdateCurrendProductSellUI(Product _p)
+        {
+            if (_p == m_smi.m_currProduct)
+            {
+                m_smi.UpdateInfo(_p);
+            }
+        }
+
+        public void CloseInventorySellUI()
+        {
+            SellMenuObj.SetActive(false);
+        }
+
         private void ResetOutline(Outline _o)
         {
             if (_o != null)
@@ -303,24 +398,25 @@ namespace UI
         /// Highlight a Button with Color and Outline. Also remove the Highlight of the last Button
         /// </summary>
         /// <param name="_b">The Button to Highlight</param>
-        public void HighlightButton(Button _b, bool _canBeToggel = false)
+        public void HighlightButton(Button _b, bool _isToggel = false)
         {
             if (_b == null) return;
 
-            ResetHighlightButton();
             Image i = _b.GetComponent<Image>();
+            if (!_isToggel)
+                ResetHighlightButton();
             i.color = Color.white;
 
             lastImage = i;
 
             Outline o = _b.GetComponent<Outline>();
             if (o != null)
-                IncreaseOutline(o, _canBeToggel);
+                IncreaseOutline(o, _isToggel);
         }
 
         public void ResetHighlightButton()
         {
-            if (lastImage != null)
+            if (lastImage != null && lastImage.gameObject.tag != "ToggleButton")
                 lastImage.color = new Color(0.77f, 0.77f, 0.77f, 1);
         }
 
@@ -329,16 +425,159 @@ namespace UI
             GameObject obj = Instantiate(ProductionUI_Prefab, ProductionUI_Parent.transform);
             ProductionBuildingUIItem pbUI = obj.GetComponent<ProductionBuildingUIItem>();
             pbUI.Init(_pb);
+            if (!m_ProductionBuildingItems.ContainsKey(_pb.m_Production))
+                m_ProductionBuildingItems.Add(_pb.m_Production, pbUI);
         }
 
-        public void AddProductionItem(ProductionBuilding _pb)
+        public void MoveScrollRectContentToTop()
+        {
+            ProductionListScrollRect.normalizedPosition = new Vector2(0, 1);
+        }
+
+        public void AddProductionBuildingItem(ProductionBuilding _pb)
         {
             m_pqu.AddToQueue(_pb);
         }
 
-        public void RemoveProductionItem(int _index)
+        public void ChangeProductionItemColor(Color _color, int _index = 0)
         {
-            HousingManager.Instance.RemoveProductionBuilingInList(_index, false);
+            m_pqu.ChangeColor(_index, _color);
         }
+
+        public void RemoveProductionBuildingItem(int _index)
+        {
+            m_pqu.RemoveItem(_index);
+        }
+
+        public void UpdateMoneyUI()
+        {
+            MoneySum.text = ConvertFloatToStringPrice(Inventory.Instance.m_MoneyAmount);
+            MoneyBalance.text = ConvertFloatToStringPriceWithSign(Inventory.Instance.m_MoneyBalance, out Color c);
+            MoneyBalance.color = c;
+        }
+
+        public void UnlockProduction(Production _production)
+        {
+            m_ProductionBuildingItems[_production].UnlockProduction();
+        }
+
+        #region -Static-
+        public static string ConvertFloatToStringDigit(float _input)
+        {
+            return string.Format("{0:0}", _input);
+        }
+
+        public static string ConvertFloatToStringDigit(float _input, out Color c)
+        {
+            c = Color.green;
+
+            if (_input > 0)
+                c = Color.green;
+            else if (_input == 0)
+                c = Color.yellow;
+            else
+                c = Color.red;
+
+            return string.Format("{0:0}", _input);
+        }
+
+        public static string ConvertFloatToStringDigitWithSign(float _input, out Color c)
+        {
+            string s = string.Format("{0:0.00}", _input);
+            string sign = "";
+            c = Color.green;
+
+            if (_input > 0)
+            {
+                sign = "+ ";
+                c = Color.green;
+            }
+            else if (_input == 0)
+                c = Color.yellow;
+            else
+                c = Color.red;
+
+            if (s.EndsWith("00"))
+            {
+                return sign + ((int)_input).ToString();
+            }
+            else
+            {
+                return sign + s;
+            }
+        }
+
+        public static string ConvertFloatToStringDecimal(float _input)
+        {
+            return string.Format("{0:0.00}", _input);
+        }
+
+        public static string ConvertFloatToStringPrice(float _input)
+        {
+            string s = string.Format("{0:0.00}", _input);
+
+            if (s.EndsWith("00"))
+            {
+                return ((int)_input).ToString() + " €";
+            }
+            else
+            {
+                return s + " €";
+            }
+        }
+
+        public static string ConvertFloatToStringPriceWithSign(float _input)
+        {
+            string s = string.Format("{0:0.00}", _input);
+            string sign = "";
+
+            if (_input > 0)
+                sign = "+ ";
+
+            if (s.EndsWith("00"))
+            {
+                return sign + ((int)_input).ToString() + " €";
+            }
+            else
+            {
+                return sign + s + " €";
+            }
+        }
+
+        public static string ConvertFloatToStringPriceWithSign(float _input, out Color c)
+        {
+            string s = string.Format("{0:0.00}", _input);
+            string sign = "";
+            c = Color.green;
+
+            if (_input > 0)
+            {
+                sign = "+ ";
+                c = Color.green;
+            }
+            else if (_input == 0)
+                c = Color.yellow;
+            else
+                c = Color.red;
+
+            if (s.EndsWith("00"))
+            {
+                return sign + ((int)_input).ToString() + " €";
+            }
+            else
+            {
+                return sign + s + " €";
+            }
+        }
+
+        public static float ConvertStringToFloat(string _input)
+        {
+            if (_input.Length == 0) return 0f;
+            if (float.TryParse(_input, out float result))
+                return result;
+            Debug.LogError("Wrong Input. Input is: " + _input);
+            return 0f;
+        }
+        #endregion
     }
 }

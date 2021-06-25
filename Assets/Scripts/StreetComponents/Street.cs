@@ -3,10 +3,8 @@ using Grid;
 using MeshGeneration;
 using MyCustomCollsion;
 using Splines;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Gameplay.StreetComponents
@@ -99,6 +97,7 @@ namespace Gameplay.StreetComponents
         public List<Area> m_LivingAreas = new List<Area>();
         public List<Area> m_BusinessAreas = new List<Area>();
         public List<Area> m_IndustryAreas = new List<Area>();
+        public List<Area> m_ProductionAreas = new List<Area>();
 
         /// <summary>
         /// Initialize the Street
@@ -147,7 +146,131 @@ namespace Gameplay.StreetComponents
             }
 
             CreateSegments();
+
+            if (_needID) //if its isnt a Collision Street
+                StartCoroutine(PlaceBuildings());
+
             return this;
+        }
+
+        private IEnumerator PlaceBuildings()
+        {
+            GameObject obj;
+            bool lastLeft = false;
+            EAssignment lastAssignemnt = EAssignment.NONE;
+            while (true)
+            {
+                if (lastAssignemnt != EAssignment.PRODUCTION && BuildingManager.Instance.m_ProductionBuildWaitingList.Count > 0)
+                {
+                    if (!lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceProductionBuilding(
+                            BuildingManager.Instance.m_ProductionBuildWaitingList[0],
+                            this, true);
+                        lastLeft = true;
+                        if (obj != null)
+                        {
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                    if (lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceProductionBuilding(
+                            BuildingManager.Instance.m_ProductionBuildWaitingList[0],
+                            this, false);
+                        lastLeft = false;
+                        if (obj != null)
+                        {
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                }
+
+                if (lastAssignemnt != EAssignment.LIVING)
+                {
+                    //LIVING
+                    if (!lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
+                        lastLeft = true;
+                        if (obj != null)
+                        {
+                            lastLeft = true;
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                    if (lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
+                        lastLeft = false;
+                        if (obj != null)
+                        {
+                            lastLeft = false;
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                }
+
+                if (lastAssignemnt != EAssignment.BUSINESS)
+                {
+
+                    //BUSINESS
+                    if (!lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, true);
+                        lastLeft = true;
+                        if (obj != null)
+                        {
+                            lastLeft = true;
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                    if (lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.BUSINESS, this, false);
+                        lastLeft = false;
+                        if (obj != null)
+                        {
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                }
+
+                if (lastAssignemnt != EAssignment.INDUSTRY)
+                {
+
+                    //INDUSTRY
+                    if (!lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, true);
+                        lastLeft = true;
+                        if (obj != null)
+                        {
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                    if (lastLeft)
+                    {
+                        obj = BuildingManager.Instance.PlaceBuilding(EAssignment.INDUSTRY, this, false);
+                        lastLeft = false;
+                        if (obj != null)
+                        {
+                            yield return new WaitForSeconds(1f);
+                            continue;
+                        }
+                    }
+                }
+
+                lastAssignemnt = EAssignment.NONE;
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         #region AreaHandling/-Creation
@@ -200,6 +323,7 @@ namespace Gameplay.StreetComponents
             if (width == 0) return false;
 
             List<Cell> areaCells = SetCellsInArea(pStart, new Vector2Int(height, width), true);
+            if (areaCells == null) return false;
             Debug.Log("Size: X: " + height + " Y: " + width + " Assigmnet: " + assi);
             a = new Area(new Vector2Int(width, height), areaCells, this, null);
             return true;
@@ -254,6 +378,7 @@ namespace Gameplay.StreetComponents
             if (width == 0) return false;
 
             List<Cell> areaCells = SetCellsInArea(pStart, new Vector2Int(height, width), false);
+            if (areaCells == null) return false;
             Debug.Log("Size: X: " + height + " Y: " + width + " Assigmnet: " + assi);
             a = new Area(new Vector2Int(width, height), areaCells, this, null);
             return true;
@@ -304,6 +429,7 @@ namespace Gameplay.StreetComponents
                 if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, true)) //if to the right all cells are valid + reset pStart if invalid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, true);
+                    if (cells == null) return false;
                     a = new Area(_size, cells, this, GetOrientenPointFromCells(m_StreetCells[pStart], m_StreetCells[p]));
                     switch (_assignment)
                     {
@@ -317,6 +443,9 @@ namespace Gameplay.StreetComponents
                             break;
                         case EAssignment.INDUSTRY:
                             m_IndustryAreas.Add(a);
+                            break;
+                        case EAssignment.PRODUCTION:
+                            m_ProductionAreas.Add(a);
                             break;
                     }
                     return true;
@@ -370,6 +499,7 @@ namespace Gameplay.StreetComponents
                 if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, false)) //if to the right all cells are valid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, false);
+                    if (cells == null) return false;
                     a = new Area(_size, cells, this, GetOrientenPointFromCells(m_StreetCells[pStart], m_StreetCells[p]));
                     switch (_assignment)
                     {
@@ -383,6 +513,9 @@ namespace Gameplay.StreetComponents
                             break;
                         case EAssignment.INDUSTRY:
                             m_IndustryAreas.Add(a);
+                            break;
+                        case EAssignment.PRODUCTION:
+                            m_ProductionAreas.Add(a);
                             break;
                     }
                     return true;
@@ -430,10 +563,19 @@ namespace Gameplay.StreetComponents
                     else
                         v = _start + new Vector2Int(-x, y);
 
-                    if (m_StreetCells.ContainsKey(v))
+                    if (m_StreetCells.ContainsKey(v) && !m_StreetCells[v].IsInArea)
                     {
                         output.Add(m_StreetCells[v]);
                         m_StreetCells[v].IsInArea = true;
+                    }
+                    else
+                    {
+                        //Reset Cells
+                        foreach (Cell c in output)
+                        {
+                            c.IsInArea = false;
+                        }
+                        return null;
                     }
                 }
             }
@@ -546,8 +688,8 @@ namespace Gameplay.StreetComponents
 
             if (Input.GetKeyDown(KeyCode.F) && m_StreetCells.Count > 1)
             {
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
-                HousingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
+                BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, true);
+                BuildingManager.Instance.PlaceBuilding(EAssignment.LIVING, this, false);
             }
         }
 
@@ -563,7 +705,8 @@ namespace Gameplay.StreetComponents
 
         public void SetCellBlocked(Cell c)
         {
-            if (c.IsBlocked) Debug.LogError("Cell at: " + c.Pos + " is already blocked");
+            if (c.IsBlocked)
+                Debug.LogError("Cell at: " + c.Pos + " is already blocked");
             c.IsBlocked = true;
         }
 
@@ -708,7 +851,7 @@ namespace Gameplay.StreetComponents
             //Sphere Sphere Collsion | fast but not precies | Save the Cells that can possible collide for a more precies check 
             for (int i = 0; i < _cellsToCheck.Count; i++)
             {
-                if (!_cellsToCheck[i].IsBlocked 
+                if (!_cellsToCheck[i].IsBlocked
                     && MyCollision.SphereSphere(m_Center, m_CollisionRadius, _cellsToCheck[i].m_PosCenter, _cellsToCheck[i].m_Radius))
                 {
                     PolyPolyCheckList.Add(_cellsToCheck[i]);

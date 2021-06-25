@@ -1,6 +1,4 @@
 ﻿using Gameplay.Streets;
-using Gameplay.Tools;
-using System.Collections;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
@@ -33,16 +31,16 @@ namespace Gameplay.Tools
         #endregion
 
         [MyReadOnly]
-        public Tool m_CurrendTool;
+        public ATool m_CurrendTool;
 
         public GameObject m_spherePrefab;
 
-        private Dictionary<TOOLTYPE, Tool> m_dic_TypeTool = new Dictionary<TOOLTYPE, Tool>();
+        private Dictionary<TOOLTYPE, ATool> m_dic_TypeTool = new Dictionary<TOOLTYPE, ATool>();
 
         public void Awake()
         {
-            Tool[] tools = GetComponents<Tool>();
-            foreach (Tool t in tools)
+            ATool[] tools = GetComponents<ATool>();
+            foreach (ATool t in tools)
             {
                 t.enabled = false;
                 m_dic_TypeTool.Add(t.m_Type, t);

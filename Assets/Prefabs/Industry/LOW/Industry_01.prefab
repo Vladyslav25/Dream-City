@@ -205,10 +205,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 3
   depth: 4
-  InverseRotation: 1
   m_Assigment: 3
-  m_Density: 1
+  InverseRotation: 1
+  m_MeshRenderer: {fileID: 5249972600780958002}
   inflow: 5
   impactOnLiving: 3
   impactOnBusiness: 2
   impactOnIndustry: 0
+  m_Density: 1
+  Tax: 0.1

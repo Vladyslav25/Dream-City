@@ -1,13 +1,11 @@
 ﻿using Gameplay.Buildings;
 using MyCustomCollsion;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay.Tools
 {
-
-    public abstract class AClickTool : Tool
+    public abstract class AClickTool : ATool
     {
         protected MeshRenderer lastRenderer;
 
@@ -16,12 +14,12 @@ namespace Gameplay.Tools
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-        protected bool CheckAreaCollision(out Building b)
+        protected bool CheckAreaCollision(out ABuilding b)
         {
             List<Area> SphereSphere = new List<Area>();
             b = null;
 
-            foreach (Area area in HousingManager.m_AllAreas)
+            foreach (Area area in BuildingManager.m_AllAreas)
             {
                 if (MyCollision.SphereSphere(new Vector2(m_hitPos.x, m_hitPos.z), 0.8f, new Vector2(area.m_OP.Position.x, area.m_OP.Position.z), area.m_Radius))
                 {
@@ -52,7 +50,7 @@ namespace Gameplay.Tools
         /// </summary>
         /// <param name="_b">The Building to change the Material</param>
         /// <param name="_c">The Color to change it</param>
-        protected void SetMaterialsColor(Building _b, Color _c)
+        protected void SetMaterialsColor(ABuilding _b, Color _c)
         {
             Material[] mats;
             if (lastRenderer != null)
@@ -68,11 +66,10 @@ namespace Gameplay.Tools
 
             //Set new Renderer
             if (_b == null) return;
-            lastRenderer = _b.gameObject.GetComponent<MeshRenderer>();
-            if (lastRenderer == null) lastRenderer = _b.gameObject.GetComponentInChildren<MeshRenderer>();
-            if (lastRenderer == null || lastRenderer.gameObject.layer == 8) Debug.LogError("No or invalid Renderer found");
+            lastRenderer = _b.m_MeshRenderer;
 
             mats = lastRenderer.materials;
+            if (mats == null) return;
             foreach (Material mat in mats)
             {
                 mat.color = _c;

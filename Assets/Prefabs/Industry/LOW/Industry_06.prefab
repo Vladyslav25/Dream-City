@@ -204,15 +204,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Assigment: 3
-  m_Density: 1
-  depth: 10
   width: 9
+  depth: 10
+  m_Assigment: 3
   InverseRotation: 1
+  m_MeshRenderer: {fileID: 5332647946236678424}
   inflow: 7
   impactOnLiving: 5
   impactOnBusiness: 2
   impactOnIndustry: 0
+  m_Density: 1
+  Tax: 0.1
 --- !u!1 &5332647946234482648
 GameObject:
   m_ObjectHideFlags: 0

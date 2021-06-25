@@ -1,7 +1,5 @@
 ﻿using Gameplay.Buildings;
 using Gameplay.Tools;
-using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
@@ -17,7 +15,7 @@ public class TeardownTool : AClickTool
 
     public override void ToolUpdate()
     {
-        if (CheckAreaCollision(out Building b))
+        if (CheckAreaCollision(out ABuilding b))
         {
             SetMaterialsColor(b, Color.red);
             if (Input.GetMouseButtonDown(0))
@@ -25,7 +23,7 @@ public class TeardownTool : AClickTool
         }
         else
         {
-                SetMaterialsColor(null, Color.white);
+            SetMaterialsColor(null, Color.white);
         }
     }
 
