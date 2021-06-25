@@ -1,12 +1,10 @@
 ﻿using Gameplay.Buildings;
 using MyCustomCollsion;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay.Tools
 {
-
     public abstract class AClickTool : ATool
     {
         protected MeshRenderer lastRenderer;

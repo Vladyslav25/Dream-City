@@ -1,6 +1,4 @@
 ﻿using Gameplay.Streets;
-using Gameplay.Tools;
-using System.Collections;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;

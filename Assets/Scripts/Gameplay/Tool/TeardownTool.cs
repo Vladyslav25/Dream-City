@@ -1,7 +1,5 @@
 ﻿using Gameplay.Buildings;
 using Gameplay.Tools;
-using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
@@ -25,7 +23,7 @@ public class TeardownTool : AClickTool
         }
         else
         {
-                SetMaterialsColor(null, Color.white);
+            SetMaterialsColor(null, Color.white);
         }
     }
 

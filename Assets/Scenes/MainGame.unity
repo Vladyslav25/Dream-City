@@ -6880,7 +6880,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1289521881}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: baea1a42d49077d43897cb34b441f637, type: 3}
+  m_Script: {fileID: 11500000, guid: 30e50224bd9ff8848865dbef6d7cf1a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CheckDensity: 1
@@ -6957,15 +6957,6 @@ MonoBehaviour:
   - {fileID: 5568758332235640911, guid: 40d72097bdc234f42b2c8687fd2f4bf6, type: 3}
   - {fileID: 5568758332235640911, guid: 1c61f8fb21fb7e845b4a31bdd035d132, type: 3}
   m_ProductionBuildWaitingList: []
-  living_NeedAmount: 0
-  business_NeedAmount: 0
-  industry_NeedAmount: 0
-  living_CurrAmount: 0
-  business_CurrAmount: 0
-  industry_CurrAmount: 0
-  living_Ratio: 0
-  business_Ratio: 0
-  industry_Ratio: 0
   m_LivingDemand: 0
   m_BusinessDemand: 0
   m_IndustryDemand: 0

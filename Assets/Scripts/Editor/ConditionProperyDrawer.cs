@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using Gameplay.Productions;
 using static Gameplay.Productions.Condition;
-using System;
 
 [CustomPropertyDrawer(typeof(Condition))]
 public class ConditionProperyDrawer : PropertyDrawer

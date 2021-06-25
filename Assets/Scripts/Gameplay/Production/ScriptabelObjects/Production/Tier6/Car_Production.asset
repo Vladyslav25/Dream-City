@@ -26,3 +26,14 @@ MonoBehaviour:
   m_Output:
   - m_Amount: 1
     m_Product: {fileID: 11400000, guid: 597c904c218527f4ea436146efe08518, type: 2}
+  m_Condition:
+    m_EValueType: 0
+    m_EValue_Inflow: 0
+    m_EValue_Cell: 0
+    m_EValue_Money: 0
+    m_EValue_IBalance: 0
+    m_EValue_IAmount: 0
+    m_EValue_PAmount: 0
+    m_Compare: 0
+    m_Value: 10
+  m_Ratio: 1

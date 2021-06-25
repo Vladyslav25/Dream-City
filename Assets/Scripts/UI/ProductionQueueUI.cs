@@ -1,7 +1,4 @@
-﻿using Gameplay.Buildings;
-using Gameplay.Productions;
-using System;
-using System.Collections;
+﻿using Gameplay.Productions;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;

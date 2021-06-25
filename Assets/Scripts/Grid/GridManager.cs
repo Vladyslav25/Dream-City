@@ -1,13 +1,9 @@
-﻿using Gameplay.Buildings;
-using Gameplay.StreetComponents;
+﻿using Gameplay.StreetComponents;
 using MeshGeneration;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace Grid

@@ -6,7 +6,6 @@ namespace MyCustomCollsion
 {
     public class MyCollision
     {
-
         public static bool SphereSphere(Vector2 _pos1, float _radius1, Vector2 _pos2, float _radius2)
         {
             Vector2 v = _pos2 - _pos1;
