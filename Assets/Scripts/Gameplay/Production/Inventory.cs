@@ -128,6 +128,7 @@ namespace Gameplay.Productions
             CalculateCurrentProduction();
             CalculateNeededProduction();
             m_OperatingCostSum += _pb.m_OperatingCost;
+            m_Money -= _pb.m_Cost;
         }
 
         public void RemoveProductionBuilding(ProductionBuilding _pb)

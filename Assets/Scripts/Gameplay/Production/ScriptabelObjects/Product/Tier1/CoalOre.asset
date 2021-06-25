@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 0
   m_UI_Name: Kohle
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 50
-  m_PriceLocal: 18.5
-  m_ImpactOnLiving: 10
+  m_PriceWorld: 20
+  m_PriceLocal: 5.75
+  m_ImpactOnLiving: 2
   IsSellingWorld: 0

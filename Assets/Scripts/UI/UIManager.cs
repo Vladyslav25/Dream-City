@@ -424,12 +424,17 @@ namespace UI
             pbUI.Init(_pb);
         }
 
-        public void AddProductionItem(ProductionBuilding _pb)
+        public void AddProductionBuildingItem(ProductionBuilding _pb)
         {
             m_pqu.AddToQueue(_pb);
         }
 
-        public void RemoveProductionItem(int _index)
+        public void ChangeProductionItemColor(Color _color, int _index = 0)
+        {
+            m_pqu.ChangeColor(_index, _color);
+        }
+
+        public void RemoveProductionBuildingItem(int _index)
         {
             m_pqu.RemoveItem(_index);
         }

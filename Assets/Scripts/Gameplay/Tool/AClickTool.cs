@@ -66,9 +66,7 @@ namespace Gameplay.Tools
 
             //Set new Renderer
             if (_b == null) return;
-            lastRenderer = _b.gameObject.GetComponent<MeshRenderer>();
-            if (lastRenderer == null) lastRenderer = _b.gameObject.GetComponentInChildren<MeshRenderer>();
-            if (lastRenderer == null || lastRenderer.gameObject.layer == 8) Debug.LogError("No or invalid Renderer found");
+            lastRenderer = _b.m_MeshRenderer;
 
             mats = lastRenderer.materials;
             if (mats == null) return;

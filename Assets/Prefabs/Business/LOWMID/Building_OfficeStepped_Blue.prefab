@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1865373511282146671}
+  - component: {fileID: 6696951892826923417}
   - component: {fileID: 1865373511280852303}
   - component: {fileID: 1865373511279722383}
-  - component: {fileID: 6696951892826923417}
   m_Layer: 0
   m_Name: Building_OfficeStepped_Blue
   m_TagString: Untagged
@@ -34,6 +34,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6696951892826923417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865373511281975631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 6
+  depth: 4
+  m_Assigment: 2
+  InverseRotation: 1
+  m_MeshRenderer: {fileID: 1865373511279722383}
+  inflow: 8
+  impactOnLiving: 5
+  impactOnBusiness: 0
+  impactOnIndustry: 3
+  m_Density: 2
+  Tax: 0.8
 --- !u!33 &1865373511280852303
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -81,27 +104,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &6696951892826923417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1865373511281975631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Assigment: 2
-  m_Density: 2
-  width: 6
-  depth: 4
-  InverseRotation: 1
-  inflow: 8
-  impactOnLiving: 5
-  impactOnBusiness: 0
-  impactOnIndustry: 3
 --- !u!1 &7976603267394491776
 GameObject:
   m_ObjectHideFlags: 0

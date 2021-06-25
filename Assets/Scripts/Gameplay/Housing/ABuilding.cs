@@ -16,6 +16,9 @@ namespace Gameplay.Buildings
         public EAssignment m_Assigment;
         public bool InverseRotation;
 
+        [Space]
+        public MeshRenderer m_MeshRenderer;
+
         public int Inflow { get { return inflow; } }
 
         public int[] Impacts
@@ -55,6 +58,7 @@ namespace Gameplay.Buildings
                 return m_ColliderPlane;
             else
             {
+                //Look in child Objects
                 foreach (Transform child in transform)
                 {
                     if (child.gameObject.layer == 8)
@@ -62,7 +66,18 @@ namespace Gameplay.Buildings
                         m_ColliderPlane = child.gameObject;
                     }
                 }
-                if (m_ColliderPlane == null) Debug.LogError("Building Obj: " + gameObject + " couldnt find a Collider Plane");
+
+                //Look for parent child Objects
+                if (m_ColliderPlane == null)
+                    foreach (Transform child in transform.parent)
+                    {
+                        if (child.gameObject.layer == 8)
+                        {
+                            m_ColliderPlane = child.gameObject;
+                        }
+                    }
+                if (m_ColliderPlane == null)
+                    Debug.LogError("Building Obj: " + gameObject + " couldnt find a Collider Plane");
                 return m_ColliderPlane;
             }
         }
@@ -76,23 +91,23 @@ namespace Gameplay.Buildings
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    BuildingManager.Instance.m_Living_CurrAmount -= Inflow;
+                    BuildingManager.Instance.Living_CurrAmount -= Inflow;
                     break;
                 case EAssignment.BUSINESS:
-                    BuildingManager.Instance.m_Business_CurrAmount -= Inflow;
+                    BuildingManager.Instance.Business_CurrAmount -= Inflow;
                     break;
                 case EAssignment.INDUSTRY:
-                    BuildingManager.Instance.m_Industry_CurrAmount -= Inflow;
+                    BuildingManager.Instance.Industry_CurrAmount -= Inflow;
                     break;
                 default:
                     break;
             }
 
-            BuildingManager.Instance.m_Living_NeedAmount -= Impacts[0];
-            BuildingManager.Instance.m_Business_NeedAmount -= Impacts[1];
-            BuildingManager.Instance.m_Industry_NeedAmount -= Impacts[2];
+            BuildingManager.Instance.Living_NeedAmount -= Impacts[0];
+            BuildingManager.Instance.Business_NeedAmount -= Impacts[1];
+            BuildingManager.Instance.Industry_NeedAmount -= Impacts[2];
 
-            foreach (Material mat in gameObject.GetComponent<MeshRenderer>().materials)
+            foreach (Material mat in m_MeshRenderer.materials)
             {
                 Destroy(mat);
             }

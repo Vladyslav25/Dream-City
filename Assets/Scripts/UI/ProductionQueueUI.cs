@@ -38,5 +38,11 @@ namespace UI
             pqi.m_Title.text = _pb.m_UIName;
             m_items.Add(pqi);
         }
+
+        public void ChangeColor(int _index, Color _color)
+        {
+            Image img = m_items[_index].GetComponent<Image>();
+            img.color = _color;
+        }
     }
 }

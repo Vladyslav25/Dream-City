@@ -40,31 +40,31 @@ namespace Gameplay.Buildings
         private float business_NeedAmount;
         private float industry_NeedAmount;
 
-        public float m_Living_NeedAmount
+        public float Living_NeedAmount
         {
             get { return living_NeedAmount; }
             set
             {
                 living_NeedAmount = value;
-                m_Living_Ratio = GetRatio(living_CurrAmount, living_NeedAmount);
+                SetLiving_Ratio(GetRatio(living_CurrAmount, living_NeedAmount));
             }
         }
-        public float m_Business_NeedAmount
+        public float Business_NeedAmount
         {
             get { return business_NeedAmount; }
             set
             {
                 business_NeedAmount = value;
-                m_Business_Ratio = GetRatio(business_CurrAmount, business_NeedAmount);
+                SetBusiness_Ratio(GetRatio(business_CurrAmount, business_NeedAmount));
             }
         }
-        public float m_Industry_NeedAmount
+        public float Industry_NeedAmount
         {
             get { return industry_NeedAmount; }
             set
             {
                 industry_NeedAmount = value;
-                m_Industry_Ratio = GetRatio(industry_CurrAmount, industry_NeedAmount);
+                SetIndustry_Ratio(GetRatio(industry_CurrAmount, industry_NeedAmount));
             }
         }
 
@@ -72,68 +72,37 @@ namespace Gameplay.Buildings
         private int business_CurrAmount;
         private int industry_CurrAmount;
 
-        public int m_Living_CurrAmount
+        public int Living_CurrAmount
         {
             get { return living_CurrAmount; }
             set
             {
                 living_CurrAmount = value;
-                m_Living_Ratio = GetRatio(living_CurrAmount, living_NeedAmount);
+                SetLiving_Ratio(GetRatio(living_CurrAmount, living_NeedAmount));
             }
         }
-        public int m_Business_CurrAmount
+        public int Business_CurrAmount
         {
             get { return business_CurrAmount; }
             set
             {
                 business_CurrAmount = value;
-                m_Business_Ratio = GetRatio(business_CurrAmount, business_NeedAmount);
+                SetBusiness_Ratio(GetRatio(business_CurrAmount, business_NeedAmount));
             }
         }
-        public int m_Industry_CurrAmount
+        public int Industry_CurrAmount
         {
             get { return industry_CurrAmount; }
             set
             {
                 industry_CurrAmount = value;
-                m_Industry_Ratio = GetRatio(industry_CurrAmount, industry_NeedAmount);
+                SetIndustry_Ratio(GetRatio(industry_CurrAmount, industry_NeedAmount));
             }
         }
 
         private float living_Ratio;
         private float business_Ratio;
         private float industry_Ratio;
-
-        private float m_Living_Ratio
-        {
-            get { return living_Ratio; }
-            set
-            {
-                living_Ratio = value;
-                m_LivingDemand = GetDemand(living_Ratio);
-                UIManager.Instance.SetDemandRatio(EAssignment.LIVING, living_Ratio);
-            }
-        }
-        private float m_Business_Ratio
-        {
-            get { return business_Ratio; }
-            set
-            {
-                business_Ratio = value;
-                m_BusinessDemand = GetDemand(business_Ratio);
-                UIManager.Instance.SetDemandRatio(EAssignment.BUSINESS, business_Ratio);
-            }
-        }
-        private float m_Industry_Ratio
-        {
-            get { return industry_Ratio; }
-            set
-            {
-                industry_Ratio = value;
-                m_IndustryDemand = GetDemand(industry_Ratio);
-                UIManager.Instance.SetDemandRatio(EAssignment.INDUSTRY, industry_Ratio);
-            }
-        }
 
         [HideInInspector]
         public EDemand m_LivingDemand = 0;
@@ -169,20 +138,41 @@ namespace Gameplay.Buildings
             InitDictionary(m_IndustryPrefabs, industryPrefabs_Dic);
             InitDictionary(m_ProductionPrefabs, productionPrefabs_Dic);
 
-            m_Living_NeedAmount = 50;
-            m_Business_NeedAmount = 0;
-            m_Industry_NeedAmount = 0;
+            Living_NeedAmount = 50;
+            Business_NeedAmount = 0;
+            Industry_NeedAmount = 0;
+        }
+
+        private void SetLiving_Ratio(float value)
+        {
+            living_Ratio = value;
+            m_LivingDemand = GetDemand(living_Ratio);
+            UIManager.Instance.SetDemandRatio(EAssignment.LIVING, living_Ratio);
+        }
+
+        private void SetBusiness_Ratio(float value)
+        {
+            business_Ratio = value;
+            m_BusinessDemand = GetDemand(business_Ratio);
+            UIManager.Instance.SetDemandRatio(EAssignment.BUSINESS, business_Ratio);
+        }
+
+        private void SetIndustry_Ratio(float value)
+        {
+            industry_Ratio = value;
+            m_IndustryDemand = GetDemand(industry_Ratio);
+            UIManager.Instance.SetDemandRatio(EAssignment.INDUSTRY, industry_Ratio);
         }
 
         public void AddProductionBuildingToList(ProductionBuilding _pb)
         {
-            UIManager.Instance.AddProductionItem(_pb);
+            UIManager.Instance.AddProductionBuildingItem(_pb);
             m_ProductionBuildWaitingList.Add(_pb.m_Production);
         }
 
         public void RemoveProductionBuilingInList(int _index = 0)
         {
-            UIManager.Instance.RemoveProductionItem(_index);
+            UIManager.Instance.RemoveProductionBuildingItem(_index);
             m_ProductionBuildWaitingList.RemoveAt(_index);
         }
 
@@ -191,6 +181,12 @@ namespace Gameplay.Buildings
             if (!productionPrefabs_Dic.ContainsKey(_p)) return null;
             GameObject prefab = productionPrefabs_Dic[_p];
             ProductionBuilding PB = prefab.GetComponent<ProductionBuilding>();
+
+            if(Inventory.Instance.m_Money < PB.m_Cost)
+            {
+                UIManager.Instance.ChangeProductionItemColor(Color.red);
+                return null;
+            }
 
             if (_isLeftSide)
             {
@@ -219,20 +215,19 @@ namespace Gameplay.Buildings
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    m_Living_CurrAmount += inflow;
+                    Living_CurrAmount += inflow;
                     break;
                 case EAssignment.BUSINESS:
-                    m_Business_CurrAmount += inflow;
+                    Business_CurrAmount += inflow;
                     break;
                 case EAssignment.INDUSTRY:
-                    m_Industry_CurrAmount += inflow;
+                    Industry_CurrAmount += inflow;
                     break;
             }
 
-            m_Living_NeedAmount += impacts[0];
-            m_Business_NeedAmount += impacts[1];
-            m_Industry_NeedAmount += impacts[2];
-
+            Living_NeedAmount += impacts[0];
+            Business_NeedAmount += impacts[1];
+            Industry_NeedAmount += impacts[2];
 
             GameObject obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation, _a.m_Street.transform);
             _a.Init(obj.GetComponent<ProductionBuilding>());
@@ -256,19 +251,19 @@ namespace Gameplay.Buildings
                 case EAssignment.NONE:
                     break;
                 case EAssignment.LIVING:
-                    m_Living_CurrAmount += inflow;
+                    Living_CurrAmount += inflow;
                     break;
                 case EAssignment.BUSINESS:
-                    m_Business_CurrAmount += inflow;
+                    Business_CurrAmount += inflow;
                     break;
                 case EAssignment.INDUSTRY:
-                    m_Industry_CurrAmount += inflow;
+                    Industry_CurrAmount += inflow;
                     break;
             }
 
-            m_Living_NeedAmount += impacts[0];
-            m_Business_NeedAmount += impacts[1];
-            m_Industry_NeedAmount += impacts[2];
+            Living_NeedAmount += impacts[0];
+            Business_NeedAmount += impacts[1];
+            Industry_NeedAmount += impacts[2];
 
             Building obj;
             Building b = _prefab.GetComponent<Building>();

@@ -283,12 +283,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Assigment: 3
-  m_Density: 2
-  depth: 9
   width: 7
+  depth: 9
+  m_Assigment: 3
   InverseRotation: 1
+  m_MeshRenderer: {fileID: 2896301179502657392}
   inflow: 11
   impactOnLiving: 6
   impactOnBusiness: 5
   impactOnIndustry: 0
+  m_Density: 2
+  Tax: 0.5

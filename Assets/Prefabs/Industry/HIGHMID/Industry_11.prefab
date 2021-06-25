@@ -46,15 +46,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2043879bc4c8bd48bc300fc47d3bd37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Assigment: 3
-  m_Density: 3
   width: 3
   depth: 5
+  m_Assigment: 3
   InverseRotation: 1
+  m_MeshRenderer: {fileID: 5161373998812521027}
   inflow: 14
   impactOnLiving: 10
   impactOnBusiness: 4
   impactOnIndustry: 0
+  m_Density: 3
+  Tax: 1
 --- !u!1 &318978300428622384
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,7 +242,7 @@ GameObject:
   - component: {fileID: 5161373998813618307}
   - component: {fileID: 5161373998812521027}
   m_Layer: 0
-  m_Name: scp_ip_nuclear_plant_building_04 (1)
+  m_Name: scp_ip_nuclear_plant_building_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
