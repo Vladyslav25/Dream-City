@@ -88,16 +88,13 @@ namespace Gameplay.Tools
             return m_dic_TypeTool[TOOLTYPE.ASSIGNMENT] as CellAssignmentTool;
         }
 
-        public CrossTool GetCrossTool()
+        public static Vector3 GetHitPos()
         {
-            return m_dic_TypeTool[TOOLTYPE.CROSS] as CrossTool;
-
+            return Instance.m_CurrendTool.GetHitPos();
         }
 
         public void ChangeTool(TOOLTYPE _tool)
         {
-
-
             if (m_CurrendTool != null)
             {
                 m_CurrendTool.ToolEnd();
