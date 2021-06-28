@@ -75,7 +75,6 @@ namespace Gameplay.Streets
 
             if (m_validHit)
             {
-
                 if (pos1Set == false && pos2Set == false && pos3Set == false)
                 {
                     FindClosestConnection(m_hitPos); //if no Point is set, look for not far away Street possible combinations
@@ -85,6 +84,17 @@ namespace Gameplay.Streets
                 {
                     if (pos1Set == true && pos3Set == false && m_previewStreet != null) //Line: First Point Set -> Missing Sec Point
                     {
+
+                        if (Input.GetKey(KeyCode.LeftShift)) //Easy Placement
+                        {
+                            Vector3 StartEnd = pos1 - m_hitPos;
+                            if (Mathf.Abs(StartEnd.x) > Mathf.Abs(StartEnd.z))
+                                m_hitPos.z = pos1.z;
+                            else
+                                m_hitPos.x = pos1.x;
+                        }
+                        Cursor.SetPosition(m_hitPos);
+
                         Vector3 pos2Tmp = m_previewStreet.m_Spline.GetCentredOrientedPoint().Position; //Get the Midpoint on the Spline
                         Vector3 tangent1 = (pos1 + pos2Tmp) * 0.5f; // 1.Tanget must be between MidPoint and Start
                         Vector3 tangent2 = (pos2Tmp + m_hitPos) * 0.5f; // 2. Tanget must be between MidPoint and End (MousePos)

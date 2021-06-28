@@ -1,4 +1,5 @@
-﻿using Grid;
+﻿using Gameplay.StreetComponents;
+using Grid;
 using MyCustomCollsion;
 using UI;
 using UnityEngine;
@@ -51,15 +52,55 @@ namespace Gameplay.Tools
             {
                 foreach (Cell c in GridManager.m_FirstGenCells)
                 {
-                    if (c.IsBlocked) continue;
                     if (MyCollision.SphereSphere(new Vector2(m_hitPos.x, m_hitPos.z), 0.8f, c.m_PosCenter, c.m_Radius))
                     {
-                        int materialIndex = c.Pos.y;
-                        if (c.Pos.x < 0)
-                            materialIndex += c.m_Street.m_RowAmount;
+                        if (Input.GetKey(KeyCode.LeftShift)) //Multi Fill
+                        {
+                            Street s = c.m_Street;
+                            Vector2Int pos = c.Pos;
+                            EAssignment firstCellAssigment = c.m_CellAssignment;
+                            //Go y+
+                            do
+                            {
+                                Cell currCell = s.m_StreetCells[pos];
+                                int materialIndex = currCell.Pos.y;
+                                if (currCell.Pos.x < 0)
+                                    materialIndex += currCell.m_Street.m_RowAmount;
 
-                        ChanageMaterial(m_CurrendAssignment, materialIndex, c.m_Street.m_GridRenderer, c.m_Street.m_Coll_GridRenderer);
-                        c.m_Street.ChangeCellAssigtment(c.Pos, m_CurrendAssignment);
+                                ChanageMaterial(m_CurrendAssignment, materialIndex, currCell.m_Street.m_GridRenderer, currCell.m_Street.m_Coll_GridRenderer);
+                                c.m_Street.ChangeCellAssigtment(currCell.Pos, m_CurrendAssignment);
+                                pos.y ++;
+                                if (s.m_StreetCells.ContainsKey(pos) && s.m_StreetCells[pos].m_CellAssignment != firstCellAssigment)
+                                    break;
+                            }
+                            while (s.m_StreetCells.ContainsKey(pos));
+                            
+                            pos = c.Pos;
+                            //Go y--
+                            do
+                            {
+                                Cell currCell = s.m_StreetCells[pos];
+                                int materialIndex = currCell.Pos.y;
+                                if (currCell.Pos.x < 0)
+                                    materialIndex += currCell.m_Street.m_RowAmount;
+
+                                ChanageMaterial(m_CurrendAssignment, materialIndex, currCell.m_Street.m_GridRenderer, currCell.m_Street.m_Coll_GridRenderer);
+                                c.m_Street.ChangeCellAssigtment(currCell.Pos, m_CurrendAssignment);
+                                pos.y--;
+                                if (s.m_StreetCells.ContainsKey(pos) && s.m_StreetCells[pos].m_CellAssignment != firstCellAssigment)
+                                    break;
+                            }
+                            while (s.m_StreetCells.ContainsKey(pos));
+                        }
+                        else //Normal Fill
+                        {
+                            int materialIndex = c.Pos.y;
+                            if (c.Pos.x < 0)
+                                materialIndex += c.m_Street.m_RowAmount;
+
+                            ChanageMaterial(m_CurrendAssignment, materialIndex, c.m_Street.m_GridRenderer, c.m_Street.m_Coll_GridRenderer);
+                            c.m_Street.ChangeCellAssigtment(c.Pos, m_CurrendAssignment);
+                        }
                     }
                 }
             }

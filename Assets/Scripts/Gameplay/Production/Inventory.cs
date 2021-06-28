@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using static Gameplay.Productions.Condition;
 using UI;
 
 namespace Gameplay.Productions
@@ -15,6 +14,7 @@ namespace Gameplay.Productions
         public Dictionary<Product, float> m_ProductionBalance = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_SellingAmount = new Dictionary<Product, float>();
 
+        [HideInInspector]
         public List<Production> m_AllProductions = new List<Production>();
         public Dictionary<Production, int> m_ProductionBuildingAmount = new Dictionary<Production, int>();
 
@@ -57,6 +57,7 @@ namespace Gameplay.Productions
             m_currIndex = 0;
             m_currCondition = m_AllProductions[m_currIndex].m_Condition;
             StartCoroutine(CalculateInventory());
+            m_MoneyAmount = 1_000_000f;
         }
 
         private IEnumerator CalculateInventory()
