@@ -114,9 +114,12 @@ namespace Grid
                 if (c.ID != this.ID && MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_PosCenter, c.m_Radius))
                     cellToCheck.Add(c);
 
+            List<StreetComponent> allComponetns = StreetComponentManager.GetAllStreetComponents();
             //Cell Segment
-            foreach (StreetComponent comp in StreetComponentManager.GetAllStreetComponents())
+            for (int i = 0; i < allComponetns.Count; i++)
             {
+                StreetComponent comp = allComponetns[i];
+
                 if (comp.ID == this.ID) continue;
                 if (comp is Street)
                 {
@@ -163,7 +166,7 @@ namespace Grid
 
             float dot = Vector3.Dot(AB, crossAD_BC);
 
-            if (Mathf.Approximately(dot, 0f) && !Mathf.Approximately(crossAD_BC.sqrMagnitude, 0f))
+            if ((Mathf.Approximately(dot, 0f) || dot < 0.01f) && !Mathf.Approximately(crossAD_BC.sqrMagnitude, 0f))
             {
                 float tmp = Vector3.Dot(crossAB_BC, crossAD_BC) / crossAD_BC.sqrMagnitude;
                 m_WorldPosCenter = m_WorldCorner[0] + (AD * tmp);

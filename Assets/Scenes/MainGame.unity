@@ -5823,6 +5823,7 @@ MonoBehaviour:
   minClamp: {x: 0, y: 5, z: -10}
   maxClamp: {x: 500, y: 250, z: 500}
   scrollSpeed: 100
+  rotationSpeed: 10
 --- !u!1 &970087279
 GameObject:
   m_ObjectHideFlags: 0
@@ -7482,7 +7483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30e50224bd9ff8848865dbef6d7cf1a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CheckDensity: 1
+  CheckDensity: 0
   m_LivingPrefabs:
   - {fileID: 5292364575324725515, guid: 346abc3049ac1b747acb9fcfc6d90a92, type: 3}
   - {fileID: 3804195967815641103, guid: 388740a28c7cffb40b771d0c6fa1bd56, type: 3}

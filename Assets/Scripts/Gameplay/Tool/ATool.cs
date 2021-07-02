@@ -87,6 +87,8 @@ namespace Gameplay.Tools
             return output;
         }
 
+        public Vector3 GetHitPos() { return m_hitPos; }
+
         public abstract void ToolUpdate();
 
         public virtual void ToolStart() { }

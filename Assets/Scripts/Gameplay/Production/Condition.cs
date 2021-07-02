@@ -25,6 +25,7 @@ namespace Gameplay.Productions
 
         public override string ToString()
         {
+            UpdateValues();
             string sign = "";
             switch (m_Compare)
             {
@@ -47,7 +48,7 @@ namespace Gameplay.Productions
             return sign + m_Value.ToString() + sValueCompare;
         }
 
-        public void UpdateValues()
+        public bool UpdateValues()
         {
             float value = 0;
             product = null;
@@ -175,10 +176,13 @@ namespace Gameplay.Productions
                             product = Inventory.Instance.GetProductByEnum(EProduct.CAR);
                             break;
                     }
-                    sValueCompare = product.m_UI_Name + " Förderung";
-                    if (product != null)
+                    if (product != null && Inventory.Instance.m_ProductionBalance.ContainsKey(product))
+                    {
+                        sValueCompare = " " + product.m_UI_Name + " Förderung";
                         value = Inventory.Instance.m_ProductionBalance[product];
-                    break;
+                        break;
+                    }
+                    else return false;
 
                 case EValueType.INVENTORY_AMOUNT: //Inventory Amount
 
@@ -245,10 +249,13 @@ namespace Gameplay.Productions
                             product = Inventory.Instance.GetProductByEnum(EProduct.CAR);
                             break;
                     }
-                    sValueCompare = product.m_UI_Name + " im Besitz";
-                    if (product != null)
+                    sValueCompare = " " + product.m_UI_Name + " im Besitz";
+                    if (product != null && Inventory.Instance.m_Inventory.ContainsKey(product))
+                    {
                         value = Inventory.Instance.m_Inventory[product];
-                    break;
+                        break;
+                    }
+                    else return false;
 
                 case EValueType.PRODUCTIONBUILDING_AMOUNT: //Production Building Amount
 
@@ -315,48 +322,52 @@ namespace Gameplay.Productions
                             production = Inventory.Instance.GetProductionByEnmun(EProduction.CAR_MANUFACTURE);
                             break;
                     }
-                    if (production != null)
-                        value = Inventory.Instance.m_ProductionBuildingAmount[production];
                     sValueCompare = BuildingManager.Instance.productionBuilding_Dic[production].m_UIName + " erbaut";
-                    break;
+                    if (production != null && Inventory.Instance.m_ProductionBuildingAmount.ContainsKey(production))
+                    {
+                        value = Inventory.Instance.m_ProductionBuildingAmount[production];
+                        break;
+                    }
+                    else return false;
             }
 
             m_ValueToCompare = value;
+            return true;
         }
 
         public bool CheckCondition()
         {
-            UpdateValues();
-
-            switch (m_Compare)
+            if (UpdateValues())
             {
-                case EComparisonSign.GREATER_AS:
-                    if (m_Value < m_ValueToCompare)
-                        return true;
-                    else
-                        return false;
-                case EComparisonSign.GREATER_EQUAL:
-                    if (m_Value <= m_ValueToCompare)
-                        return true;
-                    else
-                        return false;
-                case EComparisonSign.EQUAL:
-                    if (m_Value == m_ValueToCompare)
-                        return true;
-                    else
-                        return false;
-                case EComparisonSign.SMALLER_AS:
-                    if (m_Value > m_ValueToCompare)
-                        return true;
-                    else
-                        return false;
-                case EComparisonSign.SMALLER_EQUAL:
-                    if (m_Value >= m_ValueToCompare)
-                        return true;
-                    else
-                        return false;
+                switch (m_Compare)
+                {
+                    case EComparisonSign.GREATER_AS:
+                        if (m_Value < m_ValueToCompare)
+                            return true;
+                        else
+                            return false;
+                    case EComparisonSign.GREATER_EQUAL:
+                        if (m_Value <= m_ValueToCompare)
+                            return true;
+                        else
+                            return false;
+                    case EComparisonSign.EQUAL:
+                        if (m_Value == m_ValueToCompare)
+                            return true;
+                        else
+                            return false;
+                    case EComparisonSign.SMALLER_AS:
+                        if (m_Value > m_ValueToCompare)
+                            return true;
+                        else
+                            return false;
+                    case EComparisonSign.SMALLER_EQUAL:
+                        if (m_Value >= m_ValueToCompare)
+                            return true;
+                        else
+                            return false;
+                }
             }
-
             return false;
         }
 

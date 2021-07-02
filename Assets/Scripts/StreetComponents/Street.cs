@@ -133,13 +133,12 @@ namespace Gameplay.StreetComponents
             //If its an finished Street Combine the Connections from the Preview Street
             if (_needID)
             {
-
-                if (_startConnection.m_OtherConnection != null) //if the preview Street had a connection to something
+                if (_startConnection?.m_OtherConnection != null) //if the preview Street had a connection to something
                     Connection.Combine(GetStartConnection(), _startConnection.m_OtherConnection); //combine the new Street with the preview other connection
                 else
                     StreetComponentManager.CreateDeadEnd(this, true); //If there is no Connections to Combine, Create a DeadEnd
 
-                if (_endConnection.m_OtherConnection != null)
+                if (_endConnection?.m_OtherConnection != null)
                     Connection.Combine(m_EndConnection, _endConnection.m_OtherConnection);
                 else
                     StreetComponentManager.CreateDeadEnd(this, false);
