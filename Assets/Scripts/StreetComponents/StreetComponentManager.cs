@@ -326,6 +326,23 @@ namespace Gameplay.StreetComponents
                 _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
             }
         }
+
+        public static void UpdateStreet(Street _street, Vector3 _startPos, Vector3 _endPos, Vector3 _tangent1Pos, Vector3 _tangent2Pos)
+        {
+            _street.m_Spline.SetStartPos(_startPos);
+            _street.m_Spline.SetEndPos(_endPos);
+            _street.m_Spline.SetTangent2Pos(_tangent2Pos);
+            _street.m_Spline.SetTangent1Pos(_tangent1Pos);
+            _street.m_Spline.UpdateOPs(_street);
+
+            if (_street.GetCollisionStreet() != null)
+            {
+                _street.GetCollisionStreet().m_Spline.SetTangent2Pos(_tangent2Pos);
+                _street.GetCollisionStreet().m_Spline.SetStartPos(_startPos);
+                _street.GetCollisionStreet().m_Spline.UpdateOPs(_street);
+            }
+
+        }
         #endregion
 
         private static Street CreateCollisionStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConnection, Connection _endConnection)
@@ -354,13 +371,13 @@ namespace Gameplay.StreetComponents
         public static Street CreateStreet(Street _street)
         {
             CreateCollisionStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.GetStartConnection(), _street.m_EndConnection);
-            Destroy(_street.GetCollisionStreet().gameObject);
+            Destroy(_street.GetCollisionStreet()?.gameObject);
             Street output = CreateStreet(_street.m_Spline.StartPos, _street.m_Spline.Tangent1Pos, _street.m_Spline.Tangent2Pos, _street.m_Spline.EndPos, _street.GetStartConnection(), _street.m_EndConnection);
             allStreets.Add(output);
             return output;
         }
 
-        private static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConn, Connection _endConn)
+        public static Street CreateStreet(Vector3 _startPos, Vector3 _tangent1, Vector3 _tangent2, Vector3 _endPos, Connection _startConn, Connection _endConn)
         {
             GameObject obj = new GameObject("Street");
             obj.transform.position = _startPos;

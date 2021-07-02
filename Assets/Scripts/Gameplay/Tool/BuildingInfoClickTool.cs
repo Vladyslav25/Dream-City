@@ -9,6 +9,7 @@ namespace Gameplay.Tools
     {
         public override void ToolStart()
         {
+            Cursor.SetActiv(false);
             UIManager.Instance.SetBuildingInfoActiv(false);
             UIManager.Instance.SetProductionInfoActiv(false);
         }
