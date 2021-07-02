@@ -48,7 +48,10 @@ namespace UI
         public TextMeshProUGUI MoneySum;
         public TextMeshProUGUI MoneyBalance;
 
+        public TextMeshProUGUI StreetCostText;
+
         public ScrollRect ProductionListScrollRect;
+
 
         [Space]
         [SerializeField]
@@ -61,6 +64,8 @@ namespace UI
         private GameObject ProductionUI_Parent;
         [SerializeField]
         private GameObject SellMenuObj;
+        [SerializeField]
+        private GameObject StreetCostObj;
 
         [SerializeField]
         private ProductionQueueUI m_pqu;
@@ -99,6 +104,7 @@ namespace UI
             cellTool = ToolManager.Instance.GetCellAssignmentTool();
             SetActivToolChoose();
             UpdateMoneyUI();
+            StreetCostObj.SetActive(false);
         }
 
         public void SetBuildingInfoActiv(bool _active)
@@ -459,6 +465,18 @@ namespace UI
         public void UnlockProduction(Production _production)
         {
             m_ProductionBuildingItems[_production].UnlockProduction();
+        }
+
+        public void SetStreetCost(float _value)
+        {
+            StreetCostObj.SetActive(true);
+            StreetCostText.text = ConvertFloatToStringPriceWithSign(_value, out Color c);
+            StreetCostText.color = c;
+        }
+
+        public void SetStreetCostActive(bool _active)
+        {
+            StreetCostObj.SetActive(_active);
         }
 
         #region -Static-

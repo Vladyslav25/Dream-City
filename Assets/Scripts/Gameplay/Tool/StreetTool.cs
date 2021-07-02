@@ -3,11 +3,14 @@ using UnityEngine;
 using Gameplay.Tools;
 using Gameplay.StreetComponents;
 using UI;
+using Gameplay.Productions;
 
 namespace Gameplay.Streets
 {
-    public class StreetTool : Tools.ATool
+    public class StreetTool : ATool
     {
+        [SerializeField]
+        float streetCostMultiplier;
         [SerializeField]
         Material previewStreetMaterial;
 
@@ -26,6 +29,8 @@ namespace Gameplay.Streets
 
         Street m_previewStreet;
         Connection m_previewLastConnected;
+
+        float m_currendCost;
 
         #region -ComputeShader Member-
         [SerializeField]
@@ -135,6 +140,8 @@ namespace Gameplay.Streets
 
                 if (m_previewStreet != null)
                 {
+                    m_currendCost = -m_previewStreet.m_Spline.GetLength() * streetCostMultiplier;
+                    UIManager.Instance.SetStreetCost(m_currendCost);
                     if (!CheckForValidForm() || CheckForCollision())
                     {
                         m_previewStreet.m_IsInvalid = false;
@@ -168,12 +175,16 @@ namespace Gameplay.Streets
                     }
                     if (pos3Set == false)
                     {
-                        pos3 = m_hitPos;
-                        CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
-                        Street newStreet = StreetComponentManager.CreateStreet(m_previewStreet); //Create a valid Street from the preview Street
-                        //Reset
-                        ResetTool();
-                        return;
+                        if (m_currendCost <= Inventory.Instance.m_MoneyAmount)
+                        {
+                            Inventory.Instance.m_MoneyAmount += m_currendCost; //currend Cost is negative
+                            UIManager.Instance.UpdateMoneyUI(); //dont wait for next tick to update UI
+                            pos3 = m_hitPos;
+                            CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
+                            Street newStreet = StreetComponentManager.CreateStreet(m_previewStreet); //Create a valid Street from the preview Street
+                            ResetTool(); //Reset
+                            return;
+                        }
                     }
                 }
             }
@@ -205,6 +216,8 @@ namespace Gameplay.Streets
             Destroy(m_previewStreet?.gameObject); //Destroy PreviewStreet
             Destroy(m_previewStreet?.GetCollisionStreet()?.gameObject); //Destroy CollStreet
             m_previewStreet = null;
+            UIManager.Instance.SetStreetCostActive(false);
+            m_currendCost = 0f;
         }
 
         /// <summary>

@@ -70,6 +70,12 @@ namespace Grid
             Pos = _pos;
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
+            //Check World Border
+            if (m_WorldPosCenter.z < 0 || m_WorldPosCenter.z > 500 || m_WorldPosCenter.x < 0 || m_WorldPosCenter.x > 500)
+            {
+                IsValid = false;
+                return false;
+            }
             CalculateOrientation();
             CalculateRadius();
             IsValid = !CheckForCollision() && CheckValidSize();
