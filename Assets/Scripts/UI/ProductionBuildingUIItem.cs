@@ -106,5 +106,10 @@ namespace UI
             m_Btn.interactable = true;
             m_BtnBG.color = Color.green;
         }
+
+        public void UpdateConditionText(Condition _condition)
+        {
+            m_ConditionText.text = _condition.ToString();
+        }
     }
 }

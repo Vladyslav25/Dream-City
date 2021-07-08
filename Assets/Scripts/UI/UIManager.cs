@@ -437,7 +437,10 @@ namespace UI
 
         public void MoveScrollRectContentToTop()
         {
-            ProductionListScrollRect.normalizedPosition = new Vector2(0, 1);
+            //need to set active to move the rect
+            ProductionListScrollRect.transform.gameObject.SetActive(true);
+            ProductionListScrollRect.verticalNormalizedPosition = 1;
+            ProductionListScrollRect.transform.gameObject.SetActive(false);
         }
 
         public void AddProductionBuildingItem(ProductionBuilding _pb)
@@ -465,6 +468,11 @@ namespace UI
         public void UnlockProduction(Production _production)
         {
             m_ProductionBuildingItems[_production].UnlockProduction();
+        }
+
+        public void UpdateConditionText(Production _production)
+        {
+            m_ProductionBuildingItems[_production].UpdateConditionText(_production.m_Condition);
         }
 
         public void SetStreetCost(float _value)

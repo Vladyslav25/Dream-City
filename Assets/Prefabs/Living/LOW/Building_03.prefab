@@ -128,7 +128,7 @@ MonoBehaviour:
   depth: 3
   m_Assigment: 1
   InverseRotation: 1
-  m_MeshRenderer: {fileID: 5090795657675814109}
+  m_ModelMeshRenderer: {fileID: 5090795657675814109}
   inflow: 3
   impactOnLiving: 0
   impactOnBusiness: 1

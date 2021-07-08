@@ -176,11 +176,19 @@ namespace Gameplay.Productions
                             product = Inventory.Instance.GetProductByEnum(EProduct.CAR);
                             break;
                     }
-                    if (product != null && Inventory.Instance.m_ProductionBalance.ContainsKey(product))
+                    if (product != null)
                     {
-                        sValueCompare = " " + product.m_UI_Name + " Förderung";
-                        value = Inventory.Instance.m_ProductionBalance[product];
-                        break;
+                        if (Inventory.Instance.m_ProductionBalance.ContainsKey(product))
+                        {
+                            sValueCompare = " " + product.m_UI_Name + " Förderung";
+                            value = Inventory.Instance.m_ProductionBalance[product];
+                            break;
+                        }
+                        else
+                        {
+                            sValueCompare = " ??? Förderung";
+                            return false;
+                        }
                     }
                     else return false;
 
@@ -249,11 +257,19 @@ namespace Gameplay.Productions
                             product = Inventory.Instance.GetProductByEnum(EProduct.CAR);
                             break;
                     }
-                    sValueCompare = " " + product.m_UI_Name + " im Besitz";
-                    if (product != null && Inventory.Instance.m_Inventory.ContainsKey(product))
+                    if (product != null)
                     {
-                        value = Inventory.Instance.m_Inventory[product];
-                        break;
+                        if (Inventory.Instance.m_Inventory.ContainsKey(product))
+                        {
+                            sValueCompare = " " + product.m_UI_Name + " im Besitz";
+                            value = Inventory.Instance.m_Inventory[product];
+                            break;
+                        }
+                        else
+                        {
+                            sValueCompare = " ??? im Besitz";
+                            return false;
+                        }
                     }
                     else return false;
 
@@ -322,11 +338,19 @@ namespace Gameplay.Productions
                             production = Inventory.Instance.GetProductionByEnmun(EProduction.CAR_MANUFACTURE);
                             break;
                     }
-                    sValueCompare = BuildingManager.Instance.productionBuilding_Dic[production].m_UIName + " erbaut";
-                    if (production != null && Inventory.Instance.m_ProductionBuildingAmount.ContainsKey(production))
+                    if (production != null)
                     {
-                        value = Inventory.Instance.m_ProductionBuildingAmount[production];
-                        break;
+                        if (Inventory.Instance.m_ProductionBuildingAmount.ContainsKey(production))
+                        {
+                            sValueCompare = BuildingManager.Instance.productionBuilding_Dic[production].m_UIName + " erbaut";
+                            value = Inventory.Instance.m_ProductionBuildingAmount[production];
+                            break;
+                        }
+                        else
+                        {
+                            sValueCompare = " ??? erbaut";
+                            return false;
+                        }
                     }
                     else return false;
             }

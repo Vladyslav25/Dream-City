@@ -111,6 +111,8 @@ namespace Gameplay.Productions
                 UIManager.Instance.UpdateMoneyUI();
 
                 //Condition
+                UIManager.Instance.UpdateConditionText(m_AllProductions[m_currIndex]);
+
                 if (m_currCondition != null && m_currCondition.CheckCondition())
                 {
                     UIManager.Instance.UnlockProduction(m_AllProductions[m_currIndex]);
@@ -120,6 +122,8 @@ namespace Gameplay.Productions
                     else //if all Productions are Unlocked
                         m_currCondition = null;
                 }
+
+
 
                 yield return new WaitForSeconds(1f);
             }
