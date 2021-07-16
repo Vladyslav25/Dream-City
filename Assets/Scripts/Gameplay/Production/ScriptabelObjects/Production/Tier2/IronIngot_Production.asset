@@ -15,21 +15,15 @@ MonoBehaviour:
   m_EProduction: 5
   m_UIName: Eisen Hochofen
   m_Input:
-  - m_Amount: 2
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: ee772e9f97fc2c341b9fda13ad4a0b6b, type: 2}
-  - m_Amount: 1
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: 3ce33d02bd34aa542a255dea9b98dc5f, type: 2}
-  m_Condition:
-    m_EValueType: 1
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 2500
+  m_Conditions:
+  - {fileID: 11400000, guid: abcad0c4c99b5884284d67b4f2195fb0, type: 2}
+  - {fileID: 11400000, guid: 18ddb48af2697bb40bd2e4d590ae6a52, type: 2}
+  - {fileID: 11400000, guid: 32e523a1e2d5b8d45bf307834bb7f1c8, type: 2}
   m_Ratio: 1

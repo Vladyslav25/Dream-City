@@ -16,16 +16,9 @@ MonoBehaviour:
   m_UIName: Gold Mine
   m_Input: []
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: 46a214b929eae1b4292beb91f263f26c, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 2069131129c975e47a9b7ebfef635eef, type: 2}
+  - {fileID: 11400000, guid: fc6bf248797ad4b44adf1b7105a3e204, type: 2}
   m_Ratio: 1

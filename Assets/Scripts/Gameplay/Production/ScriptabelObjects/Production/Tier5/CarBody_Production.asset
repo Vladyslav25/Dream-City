@@ -13,21 +13,15 @@ MonoBehaviour:
   m_Name: CarBody_Production
   m_EditorClassIdentifier: 
   m_EProduction: 18
-  m_UIName: 
+  m_UIName: Korosserie Presse
   m_Input:
-  - m_Amount: 5
+  - m_Amount: 28
     m_Product: {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 3
     m_Product: {fileID: 11400000, guid: 9362ce91a6e0c1c459b7b2c311b60d57, type: 2}
-  m_Condition:
-    m_EValueType: 1
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: b165807612b07db45b727ae8fd8e0952, type: 2}
+  - {fileID: 11400000, guid: 47c70aa2d5321c140bd118b36c14924b, type: 2}
+  - {fileID: 11400000, guid: 2437b06cc7d4ab545858a3c89176f4c9, type: 2}
   m_Ratio: 1

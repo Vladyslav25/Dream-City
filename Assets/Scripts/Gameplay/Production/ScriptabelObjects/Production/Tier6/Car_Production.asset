@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Car_Production
   m_EditorClassIdentifier: 
   m_EProduction: 19
+  m_UIName: Auto Manufaktur
   m_Input:
   - m_Amount: 1
     m_Product: {fileID: 11400000, guid: 9362ce91a6e0c1c459b7b2c311b60d57, type: 2}
@@ -22,19 +23,16 @@ MonoBehaviour:
     m_Product: {fileID: 11400000, guid: 09aabda2c685bdc47b9be2ac4973a677, type: 2}
   - m_Amount: 3
     m_Product: {fileID: 11400000, guid: b221faa228aa3b94eb1b7596375cc8a0, type: 2}
-  - m_Amount: 5
+  - m_Amount: 8
     m_Product: {fileID: 11400000, guid: c5ec254ee398d2a489599530d8cbddb0, type: 2}
   m_Output:
   - m_Amount: 1
     m_Product: {fileID: 11400000, guid: 597c904c218527f4ea436146efe08518, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 10
+  m_Conditions:
+  - {fileID: 11400000, guid: dda078e4c7dedf54d975ebb23daa8986, type: 2}
+  - {fileID: 11400000, guid: 4f72e8a1189136d4f9222c2112b5081f, type: 2}
+  - {fileID: 11400000, guid: 47d0085f32c031e44a8171dfc149b6f1, type: 2}
+  - {fileID: 11400000, guid: df3dcd536cc5f144a9e97213f7cce524, type: 2}
+  - {fileID: 11400000, guid: afcda2a014b5d874b8201f63994bd0ba, type: 2}
+  - {fileID: 11400000, guid: 90ef5e7aa9019184389f2585ca784bd5, type: 2}
   m_Ratio: 1

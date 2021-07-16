@@ -11,7 +11,9 @@ namespace Gameplay.Buildings
     {
         [Header("For Testing")]
         [SerializeField]
-        bool CheckDensity = true;
+        bool CheckDensity = false;
+        [SerializeField]
+        bool SpeedWaitTime = false;
 
         [Header("Prefabs")]
         [SerializeField]
@@ -28,12 +30,12 @@ namespace Gameplay.Buildings
         private Dictionary<Vector2Int, List<GameObject>> industryPrefabs_Dic = new Dictionary<Vector2Int, List<GameObject>>();
         private Dictionary<Production, GameObject> productionPrefabs_Dic = new Dictionary<Production, GameObject>();
 
-        [HideInInspector]
         public Dictionary<Production, ProductionBuilding> productionBuilding_Dic = new Dictionary<Production, ProductionBuilding>();
 
-        public static List<Area> m_AllAreas = new List<Area>();
-        [MyReadOnly]
+        [HideInInspector]
         public List<Production> m_ProductionBuildWaitingList = new List<Production>();
+
+        public static List<Area> m_AllAreas = new List<Area>();
 
         // between 0 - 1
         // 0 no Demand
@@ -42,6 +44,78 @@ namespace Gameplay.Buildings
         private float living_NeedAmount;
         private float business_NeedAmount;
         private float industry_NeedAmount;
+
+        public float LivingWaitTime
+        {
+            get
+            {
+                if (SpeedWaitTime) return 1f;
+                switch (m_LivingDemand)
+                {
+                    case EDemand.NONE:
+                        break;
+                    case EDemand.LOW:
+                        return 5.5f;
+                    case EDemand.LOWMID:
+                        return 4f;
+                    case EDemand.HIGHMID:
+                        return 3f;
+                    case EDemand.HIGH:
+                        return 1.5f;
+                    default:
+                        break;
+                }
+                return 0.1f;
+            }
+        }
+
+        public float BusinessWaitTime
+        {
+            get
+            {
+                if (SpeedWaitTime) return 1f;
+                switch (m_BusinessDemand)
+                {
+                    case EDemand.NONE:
+                        break;
+                    case EDemand.LOW:
+                        return 5.5f;
+                    case EDemand.LOWMID:
+                        return 4f;
+                    case EDemand.HIGHMID:
+                        return 3f;
+                    case EDemand.HIGH:
+                        return 1.5f;
+                    default:
+                        break;
+                }
+                return 0.1f;
+            }
+        }
+
+        public float IndustryWaitTime
+        {
+            get
+            {
+                if (SpeedWaitTime) return 1f;
+                switch (m_IndustryDemand)
+                {
+                    case EDemand.NONE:
+                        break;
+                    case EDemand.LOW:
+                        return 5.5f;
+                    case EDemand.LOWMID:
+                        return 4f;
+                    case EDemand.HIGHMID:
+                        return 3f;
+                    case EDemand.HIGH:
+                        return 1.5f;
+                    default:
+                        break;
+                }
+                return 0.1f;
+            }
+        }
 
         public float Living_NeedAmount
         {
@@ -232,7 +306,12 @@ namespace Gameplay.Buildings
             Business_NeedAmount += impacts[1];
             Industry_NeedAmount += impacts[2];
 
-            GameObject obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation, _a.m_Street.transform);
+            GameObject obj;
+            bool spawnInverse = _prefab.GetComponent<ProductionBuilding>().InverseRotation;
+            if (spawnInverse)
+                obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
+            else
+                obj = Instantiate(_prefab, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 0, 0), _a.m_Street.transform);
             _a.Init(obj.GetComponent<ProductionBuilding>());
             m_AllAreas.Add(_a);
             RemoveProductionBuilingInList();
@@ -271,13 +350,9 @@ namespace Gameplay.Buildings
             Building obj;
             Building b = _prefab.GetComponent<Building>();
             if (b.InverseRotation)
-            {
                 obj = Instantiate(b, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 180, 0), _a.m_Street.transform);
-            }
             else
-            {
                 obj = Instantiate(b, _a.m_OP.Position, _a.m_OP.Rotation * Quaternion.Euler(0, 0, 0), _a.m_Street.transform);
-            }
 
             _a.Init(obj);
             m_AllAreas.Add(_a);

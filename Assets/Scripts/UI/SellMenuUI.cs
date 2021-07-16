@@ -22,6 +22,8 @@ namespace UI
         [SerializeField]
         private Button m_SellWorld_Btn;
 
+        private ColorBlock m_colorBlockWorldBtn;
+
         private void Start()
         {
             m_InputField.onValidateInput += delegate (string _input, int _charIndex, char _addedChar)
@@ -45,6 +47,9 @@ namespace UI
             SetCurrProduction(Inventory.Instance.m_ProductionBalance[_product]);
             m_Title.text = _product.m_UI_Name;
 
+            if (m_colorBlockWorldBtn.normalColor.a != 0)
+                m_SellWorld_Btn.colors = m_colorBlockWorldBtn;
+
             if (_product.IsSellingWorld)
             {
                 UIManager.Instance.HighlightButton(m_SellWorld_Btn, true);
@@ -58,29 +63,47 @@ namespace UI
                 m_SellWorld_Btn.interactable = true;
             }
 
+            if (!Inventory.Instance.CanSellInWorldMarket && !m_currProduct.IsSellingWorld)
+            {
+                m_SellWorld_Btn.interactable = false;
+                if (m_colorBlockWorldBtn.normalColor.a == 0)
+                    m_colorBlockWorldBtn = m_SellWorld_Btn.colors;
+
+                ColorBlock cb = m_SellWorld_Btn.colors;
+                cb.disabledColor = Color.red;
+                m_SellWorld_Btn.colors = cb;
+            }
+
             m_InputField.text = Inventory.Instance.m_SellingAmount[_product].ToString();
         }
 
         public void SetSellingWorld()
         {
-            if (m_currProduct == null) return;
+            if (m_currProduct == null || !Inventory.Instance.CanSellInWorldMarket) return;
             m_currProduct.IsSellingWorld = true;
             UIManager.Instance.HighlightButton(m_SellWorld_Btn, true);
             m_SellWorld_Btn.interactable = false;
             m_SellLocal_Btn.interactable = true;
             SetSellAmount();
             SetCurrPrice(m_currProduct.m_PriceWorld);
+            Inventory.Instance.AddSellInWorldMarket();
+            UIManager.Instance.ChangeInventoryUIItemBGColor(m_currProduct, new Color32(0xC4, 0xFF, 0xE6, 0xFF));
         }
 
         public void SetSellingLocal()
         {
             if (m_currProduct == null) return;
-            m_currProduct.IsSellingWorld = false;
+            if (m_currProduct.IsSellingWorld)
+            {
+                Inventory.Instance.RemoveSellInWorldMarket();
+                m_currProduct.IsSellingWorld = false;
+            }
             UIManager.Instance.HighlightButton(m_SellLocal_Btn, true);
             m_SellWorld_Btn.interactable = true;
             m_SellLocal_Btn.interactable = false;
             SetSellAmount();
             SetCurrPrice(m_currProduct.m_PriceLocal);
+            UIManager.Instance.ChangeInventoryUIItemBGColor(m_currProduct, new Color32(0xFF, 0xEE, 0x99, 0xFF));
         }
 
         public char ValidateInput(char _addedChar)

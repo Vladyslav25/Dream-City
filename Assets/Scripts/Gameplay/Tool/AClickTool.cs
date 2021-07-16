@@ -8,6 +8,7 @@ namespace Gameplay.Tools
     public abstract class AClickTool : ATool
     {
         protected MeshRenderer lastRenderer;
+        protected Color[] lastMaterialColors;
 
         /// <summary>
         /// Check if the HitPos is over an Building/Area
@@ -57,9 +58,9 @@ namespace Gameplay.Tools
             {
                 //Reset lastRenderer
                 mats = lastRenderer.materials;
-                foreach (Material mat in mats)
+                for (int i = 0; i < mats.Length; i++)
                 {
-                    mat.color = Color.white;
+                    mats[i].color = lastMaterialColors[i];
                 }
                 lastRenderer.materials = mats;
             }
@@ -70,9 +71,12 @@ namespace Gameplay.Tools
 
             mats = lastRenderer.materials;
             if (mats == null) return;
-            foreach (Material mat in mats)
+
+            lastMaterialColors = new Color[mats.Length];
+            for (int i = 0; i < mats.Length; i++)
             {
-                mat.color = _c;
+                lastMaterialColors[i] = mats[i].color;
+                mats[i].color = _c;
             }
             lastRenderer.materials = mats;
         }

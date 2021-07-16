@@ -514,6 +514,7 @@ MonoBehaviour:
   m_InventoryAmount: {fileID: 8549372911233685467}
   m_Balance: {fileID: 5919018222209918343}
   m_Income: {fileID: 8193601935916519005}
+  m_BG: {fileID: 6332914155799854248}
   m_Product: {fileID: 0}
 --- !u!114 &5119614496423964346
 MonoBehaviour:

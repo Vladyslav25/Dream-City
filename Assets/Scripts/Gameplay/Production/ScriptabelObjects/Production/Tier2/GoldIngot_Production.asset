@@ -15,21 +15,13 @@ MonoBehaviour:
   m_EProduction: 7
   m_UIName: Gold Hochofen
   m_Input:
-  - m_Amount: 2
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 46a214b929eae1b4292beb91f263f26c, type: 2}
-  - m_Amount: 1
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
   m_Output:
-  - m_Amount: 3
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: 0d49f899eebd47047a62d2cce286aa56, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: c967231c3429a5d408b7cf16c3e13117, type: 2}
   m_Ratio: 1

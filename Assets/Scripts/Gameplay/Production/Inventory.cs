@@ -9,6 +9,10 @@ namespace Gameplay.Productions
 {
     public class Inventory : MonoBehaviour
     {
+        [Header("For Testing")]
+        [SerializeField]
+        private bool unlockAll = false;
+
         public Dictionary<Product, float> m_Inventory = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_CurrendProduction = new Dictionary<Product, float>();
         public Dictionary<Product, float> m_NeededProduction = new Dictionary<Product, float>();
@@ -27,6 +31,19 @@ namespace Gameplay.Productions
         public float m_OperatingCostSum = 0f;
         [HideInInspector]
         public float m_TaxIncome = 0f;
+
+        private int m_sellingWorldAmount = 0;
+        [SerializeField]
+        private int m_maxSellingWorldAmount;
+
+        public bool CanSellInWorldMarket
+        {
+            get
+            {
+                if (m_sellingWorldAmount >= m_maxSellingWorldAmount) return false;
+                return true;
+            }
+        }
 
         public List<Product> m_AllProducts = new List<Product>();
 
@@ -112,9 +129,7 @@ namespace Gameplay.Productions
                 UIManager.Instance.UpdateMoneyUI();
 
                 //Condition
-                UIManager.Instance.UpdateConditionText(m_AllProductions[m_currProductionIndex]);
-
-                if (m_currProductionToCheck != null && m_currProductionToCheck.CheckConditions())
+                if (m_currProductionToCheck != null && (m_currProductionToCheck.CheckConditions() || unlockAll))
                 {
                     UIManager.Instance.UnlockProduction(m_currProductionToCheck);
                     m_currProductionIndex++;
@@ -127,6 +142,10 @@ namespace Gameplay.Productions
                 yield return new WaitForSeconds(1f);
             }
         }
+
+        public void AddSellInWorldMarket() => m_sellingWorldAmount++;
+
+        public void RemoveSellInWorldMarket() => m_sellingWorldAmount--;
 
         public Product GetProductByEnum(EProduct _eProduct)
         {
@@ -193,12 +212,13 @@ namespace Gameplay.Productions
         public void SetSellingAmount(Product _p, float _amount)
         {
             m_SellingAmount[_p] = _amount;
-            UI.UIManager.Instance.UpdateInventoryItem(_p);
-            UI.UIManager.Instance.UpdateInventorySellUI(_p);
+            UIManager.Instance.UpdateInventoryItem(_p);
+            UIManager.Instance.UpdateInventorySellUI(_p);
         }
 
         private float GetRatio(Production _p)
         {
+
             float max = 0f;
             float min = 0f;
             float sum = 0f;
@@ -208,6 +228,8 @@ namespace Gameplay.Productions
             else
                 foreach (ProductionStat ps in _p.m_Input)
                 {
+                    if (!m_CurrendProduction.ContainsKey(ps.m_Product))
+                        return 0;
                     float balance = m_CurrendProduction[ps.m_Product] - m_NeededProduction[ps.m_Product];
                     //if an input item is missing in the inventory AND
                     //if one balance is 0 or less, no production possible
