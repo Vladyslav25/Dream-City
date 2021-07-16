@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 934fdee2e3c4ab744945cbe5610585f9, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 5310
+  m_OperatingCost: 637.2
   m_UIName: Computer Hersteller
 --- !u!1 &7677615291785965212
 GameObject:

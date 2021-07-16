@@ -211,6 +211,6 @@ MonoBehaviour:
   inflow: 3
   impactOnLiving: 0
   impactOnBusiness: 1
-  impactOnIndustry: 2
+  impactOnIndustry: 1
   m_Density: 1
-  Tax: 0.2
+  Tax: 3

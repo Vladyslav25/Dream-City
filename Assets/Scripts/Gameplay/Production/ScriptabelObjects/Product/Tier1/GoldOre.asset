@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 3
   m_UI_Name: Gold Erz
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 160
+  m_PriceWorld: 150
   m_PriceLocal: 30
-  m_ImpactOnLiving: 6
+  m_ImpactOnLiving: 30
   IsSellingWorld: 0

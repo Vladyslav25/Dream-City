@@ -75,7 +75,7 @@ namespace Gameplay.Productions
             m_currProductionIndex = 0;
             m_currProductionToCheck = m_AllProductions[m_currProductionIndex];
             StartCoroutine(CalculateInventory());
-            m_MoneyAmount = 1_000_000f;
+            m_MoneyAmount = 7500f;
         }
 
         private IEnumerator CalculateInventory()

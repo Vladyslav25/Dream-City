@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: d169cf49e9c177548967c065bc8ed1a6, type: 2}
-  m_Cost: 250
-  m_OperatingCost: -10
+  m_Cost: 630
+  m_OperatingCost: 75.6
   m_UIName: "\xD6l Pumpen"
 --- !u!1 &7677615291785965212
 GameObject:

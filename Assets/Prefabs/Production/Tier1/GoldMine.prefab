@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: fcb0596e6b18e5947942c34f115f818e, type: 2}
-  m_Cost: 300
-  m_OperatingCost: -12
+  m_Cost: 675
+  m_OperatingCost: 81
   m_UIName: Gold Erz Mine
 --- !u!1 &7677615291785965212
 GameObject:

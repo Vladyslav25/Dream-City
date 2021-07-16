@@ -7995,11 +7995,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9032dc37b4e1f1b459fbc3941c325c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unlockAll: 0
   m_AllProductions: []
   m_MoneyAmount: 0
   m_MoneyBalance: 0
   m_OperatingCostSum: 0
   m_TaxIncome: 0
+  m_maxSellingWorldAmount: 3
   m_AllProducts:
   - {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
   - {fileID: 11400000, guid: 931a49fead54e0344aa4070c6b3c1f0a, type: 2}
@@ -8065,7 +8067,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CheckDensity: 1
-  SpeedWaitTime: 1
+  SpeedWaitTime: 0
   m_LivingPrefabs:
   - {fileID: 5292364575324725515, guid: 346abc3049ac1b747acb9fcfc6d90a92, type: 3}
   - {fileID: 3804195967815641103, guid: 388740a28c7cffb40b771d0c6fa1bd56, type: 3}
@@ -10253,7 +10255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Type: 1
-  streetCostMultiplier: 2
+  streetCostMultiplier: 7
   previewStreetMaterial: {fileID: 2100000, guid: 1ab8d390690c06d469abd3677c9754f6,
     type: 2}
   m_renderTexture: {fileID: 8400000, guid: b4dff8d4d1a1a1749a0231fe9911d061, type: 2}

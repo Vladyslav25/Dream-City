@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 7972004e370348e4ca43305c018252e3, type: 2}
-  m_Cost: 300
-  m_OperatingCost: -12
+  m_Cost: 90
+  m_OperatingCost: -10.8
   m_UIName: Eisen Erz Mine
 --- !u!1 &7677615291785965212
 GameObject:

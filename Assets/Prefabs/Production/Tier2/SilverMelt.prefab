@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 5ebc5e8a83a508746bb5ed60721324a1, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 360
+  m_OperatingCost: 43.2
   m_UIName: Silberschmelze
 --- !u!1 &7677615291785965212
 GameObject:

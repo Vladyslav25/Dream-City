@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 15
   m_UI_Name: Kabel
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 10
+  m_PriceLocal: 2
+  m_ImpactOnLiving: 2
   IsSellingWorld: 0

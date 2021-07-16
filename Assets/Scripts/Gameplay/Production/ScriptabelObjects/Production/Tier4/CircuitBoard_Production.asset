@@ -19,10 +19,10 @@ MonoBehaviour:
     m_Product: {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}
   - m_Amount: 8
     m_Product: {fileID: 11400000, guid: 2935c734365b41248a9d3ae5565fc651, type: 2}
-  - m_Amount: 10
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: 0d49f899eebd47047a62d2cce286aa56, type: 2}
   m_Output:
-  - m_Amount: 7
+  - m_Amount: 4
     m_Product: {fileID: 11400000, guid: aa382187ceb251a4e96a0845d9978d38, type: 2}
   m_Conditions:
   - {fileID: 11400000, guid: 7f7d75957135b334a946510e7ff68aae, type: 2}

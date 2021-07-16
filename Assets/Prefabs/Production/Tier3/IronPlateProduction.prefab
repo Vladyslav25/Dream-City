@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: e3bc694ec3f4fe44ea32a84a7c7b5f7e, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 270
+  m_OperatingCost: 32.4
   m_UIName: Eisenpresse
 --- !u!1 &7677615291785965212
 GameObject:

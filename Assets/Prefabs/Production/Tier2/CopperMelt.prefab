@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 7da3b82f76800ee429a18b29a9beb3ba, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 126
+  m_OperatingCost: 15.12
   m_UIName: Kupferschmelze
 --- !u!1 &7677615291785965212
 GameObject:

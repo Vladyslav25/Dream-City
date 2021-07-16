@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduction: 11
   m_UIName: Computer Hersteller
   m_Input:
-  - m_Amount: 8
+  - m_Amount: 2
     m_Product: {fileID: 11400000, guid: aa382187ceb251a4e96a0845d9978d38, type: 2}
   - m_Amount: 17
     m_Product: {fileID: 11400000, guid: 158f6064885d54b43a0f8be4a8bb9e6b, type: 2}

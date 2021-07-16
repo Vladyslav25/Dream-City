@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 2a836b7a48cbc63428b5e045cf2a7c99, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 4320
+  m_OperatingCost: 518.4
   m_UIName: Motor Fabrik
 --- !u!1 &7677615291785965212
 GameObject:

@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 19
   m_UI_Name: Auto
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 23740
+  m_PriceLocal: 4748
+  m_ImpactOnLiving: 4748
   IsSellingWorld: 0

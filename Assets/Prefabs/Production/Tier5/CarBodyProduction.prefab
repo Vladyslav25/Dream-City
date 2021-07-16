@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 9cc085f11eba26741934b1d4352d54e0, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 2700
+  m_OperatingCost: 324
   m_UIName: Karosserie Fabrik
 --- !u!1 &7677615291785965212
 GameObject:
