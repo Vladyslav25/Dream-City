@@ -7995,7 +7995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9032dc37b4e1f1b459fbc3941c325c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockAll: 0
+  unlockAll: 1
   m_AllProductions: []
   m_MoneyAmount: 0
   m_MoneyBalance: 0
@@ -8067,7 +8067,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CheckDensity: 1
-  SpeedWaitTime: 0
+  SpeedWaitTime: 1
   m_LivingPrefabs:
   - {fileID: 5292364575324725515, guid: 346abc3049ac1b747acb9fcfc6d90a92, type: 3}
   - {fileID: 3804195967815641103, guid: 388740a28c7cffb40b771d0c6fa1bd56, type: 3}

@@ -10,7 +10,7 @@ namespace Gameplay.Buildings
 
         public override void Destroy()
         {
-            Gameplay.Productions.Inventory.Instance.m_TaxIncome -= Tax;
+            Productions.Inventory.Instance.m_TaxIncome -= Tax;
             base.Destroy();
         }
     }

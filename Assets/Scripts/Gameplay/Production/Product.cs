@@ -20,5 +20,17 @@ namespace Gameplay.Productions
 
         [MyReadOnly]
         public bool IsSellingWorld = false;
+
+        [HideInInspector]
+        public bool GateOpen = true;
+
+        public void OnInventoryEmpty()
+        {
+            if (GateOpen)
+            {
+                Buildings.BuildingManager.Instance.Living_NeedAmount -= m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[this];
+                GateOpen = false;
+            }
+        }
     }
 }
