@@ -395,7 +395,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Freischalten
+  m_text: Gesperrt
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -582,7 +582,8 @@ MonoBehaviour:
   m_Cost: {fileID: 8043514866746684376}
   m_Balance: {fileID: 7742421065308187547}
   m_Btn: {fileID: 3578251334929333036}
-  m_BtnBG: {fileID: 2106117727001798472}
+  m_UnlockBG: {fileID: 2106117727001798472}
+  m_UnlockText: {fileID: 3184811925082531626}
 --- !u!114 &8579592167914029002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,7 +857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5039216, g: 1, b: 0.4481132, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
