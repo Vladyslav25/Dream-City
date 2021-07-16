@@ -97,16 +97,23 @@ namespace Gameplay.Productions
                             float balance = m_CurrendProduction[p] - m_NeededProduction[p] - m_SellingAmount[p];
                             float add = balance * (1f / 60f);
 
-                            if (p.IsSellingWorld && m_Inventory[p] > 0)
-                                m_MoneyBalance += p.m_PriceWorld * m_SellingAmount[p];
-                            else
-                                m_MoneyBalance += p.m_PriceLocal * m_SellingAmount[p];
+                            if (m_Inventory[p] > 0)
+                            {
+                                if (p.IsSellingWorld)
+                                    m_MoneyBalance += p.m_PriceWorld * m_SellingAmount[p];
+                                else
+                                    m_MoneyBalance += p.m_PriceLocal * m_SellingAmount[p];
+                            }
 
                             m_Inventory[p] += add;
                             if (m_Inventory[p] <= 0f)
                             {
                                 m_Inventory[p] = 0f;
+                                p.OnInventoryEmpty();
                             }
+                            else
+                                p.GateOpen = true;
+
                             m_ProductionBalance[p] = balance;
                             UIManager.Instance.UpdateInventoryItem(p);
                             UIManager.Instance.UpdateCurrendProductSellUI(p);

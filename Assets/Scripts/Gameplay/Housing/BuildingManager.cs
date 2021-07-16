@@ -581,10 +581,12 @@ namespace Gameplay.Buildings
                     foreach (ProductionStat p in pb.m_Production.m_Input)
                     {
                         p.m_Product.IsSellingWorld = false;
+                        p.m_Product.GateOpen = true;
                     }
                     foreach (ProductionStat p in pb.m_Production.m_Output)
                     {
                         p.m_Product.IsSellingWorld = false;
+                        p.m_Product.GateOpen = true;
                     }
                     if (!Inventory.Instance.m_AllProductions.Contains(pb.m_Production))
                         Inventory.Instance.m_AllProductions.Add(pb.m_Production);
