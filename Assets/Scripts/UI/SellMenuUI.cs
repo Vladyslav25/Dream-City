@@ -56,7 +56,7 @@ namespace UI
                 m_SellWorld_Btn.interactable = false;
                 m_SellLocal_Btn.interactable = true;
             }
-            else if(Inventory.Instance.CanSellInWorldMarket)
+            else if (Inventory.Instance.CanSellInWorldMarket)
             {
                 UIManager.Instance.HighlightButton(m_SellLocal_Btn, true);
                 m_SellLocal_Btn.interactable = false;
@@ -84,6 +84,10 @@ namespace UI
             UIManager.Instance.HighlightButton(m_SellWorld_Btn, true);
             m_SellWorld_Btn.interactable = false;
             m_SellLocal_Btn.interactable = true;
+
+            if (Inventory.Instance.m_Inventory[m_currProduct] > 0)
+                Gameplay.Buildings.BuildingManager.Instance.Living_NeedAmount -= m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
+
             SetSellAmount();
             SetCurrPrice(m_currProduct.m_PriceWorld);
             Inventory.Instance.AddSellInWorldMarket();
@@ -102,6 +106,9 @@ namespace UI
             m_SellWorld_Btn.interactable = true;
             m_SellLocal_Btn.interactable = false;
             SetSellAmount();
+            if (Inventory.Instance.m_Inventory[m_currProduct] > 0)
+                Gameplay.Buildings.BuildingManager.Instance.Living_NeedAmount += m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
+
             SetCurrPrice(m_currProduct.m_PriceLocal);
             UIManager.Instance.ChangeInventoryUIItemBGColor(m_currProduct, new Color32(0xFF, 0xEE, 0x99, 0xFF));
         }
@@ -117,8 +124,8 @@ namespace UI
 
         private void SetSellAmount()
         {
-            //remove Living Impact if selling on world
-            if (m_currProduct.IsSellingWorld)
+            //remove Living Impact
+            if (!m_currProduct.IsSellingWorld && Inventory.Instance.m_Inventory[m_currProduct] > 0)
                 Gameplay.Buildings.BuildingManager.Instance.Living_NeedAmount -= m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
 
             //after remove set new Amount
@@ -126,7 +133,7 @@ namespace UI
             UIManager.Instance.UpdateInventoryItem(m_currProduct);
 
             //add living impact if selling on local
-            if (!m_currProduct.IsSellingWorld)
+            if (!m_currProduct.IsSellingWorld && Inventory.Instance.m_Inventory[m_currProduct] > 0)
                 Gameplay.Buildings.BuildingManager.Instance.Living_NeedAmount += m_currProduct.m_ImpactOnLiving * Inventory.Instance.m_SellingAmount[m_currProduct];
         }
 
