@@ -18,14 +18,7 @@ MonoBehaviour:
   m_Output:
   - m_Amount: 3
     m_Product: {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
-  m_Condition:
-    m_EValueType: 1
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 1
-    m_EValue_IBalance: 1
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 2
+  m_Conditions:
+  - {fileID: 11400000, guid: fdd6e756225364d429a0e2bb5694d778, type: 2}
+  - {fileID: 11400000, guid: 664699c9fb3d53b45854cdf7db18afcf, type: 2}
   m_Ratio: 1

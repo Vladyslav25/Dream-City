@@ -472,7 +472,7 @@ namespace UI
 
         public void UpdateConditionText(Production _production)
         {
-            m_ProductionBuildingItems[_production].UpdateConditionText(_production.m_Condition);
+            m_ProductionBuildingItems[_production].UpdateConditionsText(_production.m_Conditions);
         }
 
         public void SetStreetCost(float _value)
