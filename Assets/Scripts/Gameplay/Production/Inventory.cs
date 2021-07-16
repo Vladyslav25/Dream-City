@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UI;
+using Gameplay.Productions.Conditions;
 
 namespace Gameplay.Productions
 {
@@ -29,8 +30,8 @@ namespace Gameplay.Productions
 
         public List<Product> m_AllProducts = new List<Product>();
 
-        private int m_currIndex;
-        private Condition m_currCondition;
+        private int m_currProductionIndex;
+        private Production m_currProductionToCheck;
 
         #region -SingeltonPattern-
         private static Inventory _instance;
@@ -54,8 +55,8 @@ namespace Gameplay.Productions
 
         private void Start()
         {
-            m_currIndex = 0;
-            m_currCondition = m_AllProductions[m_currIndex].m_Condition;
+            m_currProductionIndex = 0;
+            m_currProductionToCheck = m_AllProductions[m_currProductionIndex];
             StartCoroutine(CalculateInventory());
             m_MoneyAmount = 1_000_000f;
         }
@@ -111,14 +112,16 @@ namespace Gameplay.Productions
                 UIManager.Instance.UpdateMoneyUI();
 
                 //Condition
-                if (m_currCondition != null && m_currCondition.CheckCondition())
+                UIManager.Instance.UpdateConditionText(m_AllProductions[m_currProductionIndex]);
+
+                if (m_currProductionToCheck != null && m_currProductionToCheck.CheckConditions())
                 {
-                    UIManager.Instance.UnlockProduction(m_AllProductions[m_currIndex]);
-                    m_currIndex++;
-                    if (m_currIndex < m_AllProductions.Count)
-                        m_currCondition = m_AllProductions[m_currIndex].m_Condition;
+                    UIManager.Instance.UnlockProduction(m_currProductionToCheck);
+                    m_currProductionIndex++;
+                    if (m_currProductionIndex < m_AllProductions.Count)
+                        m_currProductionToCheck = m_AllProductions[m_currProductionIndex];
                     else //if all Productions are Unlocked
-                        m_currCondition = null;
+                        m_currProductionToCheck = null;
                 }
 
                 yield return new WaitForSeconds(1f);

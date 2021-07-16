@@ -1,8 +1,11 @@
 ﻿using Gameplay.Buildings;
+using Gameplay.Productions.Conditions;
 using Gameplay.Productions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System;
 
 namespace UI
 {
@@ -27,8 +30,8 @@ namespace UI
         private Button m_Btn;
         [SerializeField]
         private Image m_BtnBG;
-        [SerializeField]
-        private TextMeshProUGUI m_ConditionText;
+
+        private string m_conditionText;
 
         public void OnClick()
         {
@@ -44,7 +47,6 @@ namespace UI
             m_Balance.color = c;
             m_Btn.interactable = false;
             m_BtnBG.color = Color.red;
-            m_ConditionText.text = _pb.m_Production.m_Condition.ToString();
 
             foreach (ProductionStat ps in m_PB.m_Production.m_Output)
             {
@@ -105,6 +107,26 @@ namespace UI
         {
             m_Btn.interactable = true;
             m_BtnBG.color = Color.green;
+        }
+
+        public void UpdateConditionsText(List<ACondition> _conditions)
+        {
+            m_conditionText = "";
+
+            foreach (ACondition condition in _conditions)
+            {
+                m_conditionText += condition.GetString() + "\n";
+            }
+        }
+
+        public void OnHowerEnter()
+        {
+            ToolTip.ShowToolTip(m_conditionText);
+        }
+
+        public void OnHowerEnd()
+        {
+            ToolTip.HideToolTip();
         }
     }
 }

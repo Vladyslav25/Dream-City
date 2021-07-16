@@ -49,7 +49,7 @@ MonoBehaviour:
   depth: 3
   m_Assigment: 1
   InverseRotation: 1
-  m_MeshRenderer: {fileID: 7371507047209908555}
+  m_ModelMeshRenderer: {fileID: 7371507047209908555}
   inflow: 3
   impactOnLiving: 0
   impactOnBusiness: 1
@@ -152,7 +152,7 @@ MonoBehaviour:
   depth: 3
   m_Assigment: 1
   InverseRotation: 1
-  m_MeshRenderer: {fileID: 0}
+  m_ModelMeshRenderer: {fileID: 0}
   inflow: 3
   impactOnLiving: 0
   impactOnBusiness: 1

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using Gameplay.Productions.Conditions;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,9 +16,20 @@ namespace Gameplay.Productions
         [Header("Output")]
         public List<ProductionStat> m_Output;
 
-        public Condition m_Condition;
+        [Header("Conditions")]
+        public List<ACondition> m_Conditions;
 
         [HideInInspector]
         public float m_Ratio = 1f;
+
+        public bool CheckConditions()
+        {
+            foreach (ACondition condition in m_Conditions)
+            {
+                if (!condition.CheckCondition())
+                    return false;
+            }
+            return true;
+        }
     }
 }

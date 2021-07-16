@@ -66,7 +66,7 @@ namespace Gameplay.Tools
 
             //Set new Renderer
             if (_b == null) return;
-            lastRenderer = _b.m_MeshRenderer;
+            lastRenderer = _b.m_ModelMeshRenderer;
 
             mats = lastRenderer.materials;
             if (mats == null) return;

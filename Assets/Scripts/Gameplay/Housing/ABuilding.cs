@@ -17,7 +17,7 @@ namespace Gameplay.Buildings
         public bool InverseRotation;
 
         [Space]
-        public MeshRenderer m_MeshRenderer;
+        public MeshRenderer m_ModelMeshRenderer;
 
         public int Inflow { get { return inflow; } }
 
@@ -107,7 +107,7 @@ namespace Gameplay.Buildings
             BuildingManager.Instance.Business_NeedAmount -= Impacts[1];
             BuildingManager.Instance.Industry_NeedAmount -= Impacts[2];
 
-            foreach (Material mat in m_MeshRenderer.materials)
+            foreach (Material mat in m_ModelMeshRenderer.materials)
             {
                 Destroy(mat);
             }
