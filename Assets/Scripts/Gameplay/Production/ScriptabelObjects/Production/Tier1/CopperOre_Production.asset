@@ -16,16 +16,10 @@ MonoBehaviour:
   m_UIName: Kupfer Mine
   m_Input: []
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 931a49fead54e0344aa4070c6b3c1f0a, type: 2}
-  m_Condition:
-    m_EValueType: 1
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: e1601e2ce6b3c0148b58425285141b7b, type: 2}
+  - {fileID: 11400000, guid: b005d1549b0076c45b53328c92ca9c57, type: 2}
+  - {fileID: 11400000, guid: 46ba53cf7a7d01440be1495570474a6b, type: 2}
   m_Ratio: 1

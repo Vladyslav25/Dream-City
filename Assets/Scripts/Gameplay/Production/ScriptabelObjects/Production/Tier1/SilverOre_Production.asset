@@ -16,16 +16,10 @@ MonoBehaviour:
   m_UIName: Silber Mine
   m_Input: []
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 043741d5505c60749bba1a4c83f5f31e, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: ccc6a8ecfedcf66449a38f4a3b26c09e, type: 2}
+  - {fileID: 11400000, guid: ab0675f62593e9349954cd8ba4757d30, type: 2}
+  - {fileID: 11400000, guid: 6987fb2f2b6ff71448be7fe68ab5c4aa, type: 2}
   m_Ratio: 1

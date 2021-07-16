@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 16
   m_UI_Name: Reifen
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 60
+  m_PriceLocal: 12
+  m_ImpactOnLiving: 12
   IsSellingWorld: 0

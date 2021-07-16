@@ -10,11 +10,14 @@ public class ToolTipObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        pbi.UpdateConditionsText();
         pbi.OnHowerEnter();
+        UIManager.Instance.m_currHoveringUIItem = pbi;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        UIManager.Instance.m_currHoveringUIItem = null;
         pbi.OnHowerEnd();
     }
 }

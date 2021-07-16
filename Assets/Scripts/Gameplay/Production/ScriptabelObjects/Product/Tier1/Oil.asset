@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 12
   m_UI_Name: "\xD6l"
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 150
-  m_PriceLocal: 34
-  m_ImpactOnLiving: 4
+  m_PriceWorld: 35
+  m_PriceLocal: 7
+  m_ImpactOnLiving: 7
   IsSellingWorld: 0

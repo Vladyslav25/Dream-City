@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Condition_Inflow
   m_EditorClassIdentifier: 
   m_CompareSign: 0
-  m_GoalValue: 10
+  m_GoalValue: 2150
   m_InflowType: 0

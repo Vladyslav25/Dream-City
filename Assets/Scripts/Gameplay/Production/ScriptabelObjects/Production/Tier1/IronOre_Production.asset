@@ -16,16 +16,10 @@ MonoBehaviour:
   m_UIName: Eisen Mine
   m_Input: []
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: ee772e9f97fc2c341b9fda13ad4a0b6b, type: 2}
-  m_Condition:
-    m_EValueType: 4
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 2
+  m_Conditions:
+  - {fileID: 11400000, guid: 64a1ed992bb6fc04aa64f64c26f9a870, type: 2}
+  - {fileID: 11400000, guid: 223b78c28593c0e4b9b31ab384d0c9dc, type: 2}
+  - {fileID: 11400000, guid: cd0c07a6b4979fb4b9a7492ae584ad87, type: 2}
   m_Ratio: 1

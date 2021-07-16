@@ -134,7 +134,7 @@ MonoBehaviour:
   impactOnBusiness: 0
   impactOnIndustry: 2
   m_Density: 1
-  Tax: 0.2
+  Tax: 1
 --- !u!1 &6003257491575678396
 GameObject:
   m_ObjectHideFlags: 0

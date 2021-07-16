@@ -15,19 +15,13 @@ MonoBehaviour:
   m_EProduction: 13
   m_UIName: Plastik Herstellung
   m_Input:
-  - m_Amount: 8
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 67524c1d237b7c544913d9573f35dc15, type: 2}
   m_Output:
-  - m_Amount: 4
+  - m_Amount: 6
     m_Product: {fileID: 11400000, guid: c5ec254ee398d2a489599530d8cbddb0, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 2c7cb725ee47fe74eba484cb22effe85, type: 2}
+  - {fileID: 11400000, guid: 74128adf3e1f32744adef83c0be587d6, type: 2}
+  - {fileID: 11400000, guid: 6ade97d498372e245873f0c28842bb8e, type: 2}
   m_Ratio: 1

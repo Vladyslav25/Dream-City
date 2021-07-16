@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 2970b4f2c2f7c9d46ae229d9b79f9bbd, type: 2}
-  m_Cost: 300
-  m_OperatingCost: -12
+  m_Cost: 270
+  m_OperatingCost: 32.4
   m_UIName: Silber Erz Mine
 --- !u!1 &7677615291785965212
 GameObject:
@@ -162,7 +162,7 @@ PrefabInstance:
     - target: {fileID: 6433080083606197089, guid: 672a34829a3ba084d8d88196a6ef72e8,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6433080083606197089, guid: 672a34829a3ba084d8d88196a6ef72e8,
         type: 3}

@@ -16,16 +16,10 @@ MonoBehaviour:
   m_UIName: "\xD6l Pumpe"
   m_Input: []
   m_Output:
-  - m_Amount: 4
+  - m_Amount: 20
     m_Product: {fileID: 11400000, guid: 67524c1d237b7c544913d9573f35dc15, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 2bbc28b42c2b52c4984ab5b9815dd33e, type: 2}
+  - {fileID: 11400000, guid: d7160833a8879284b992bd1f0844d601, type: 2}
+  - {fileID: 11400000, guid: 53660ad4ccf34d6469c6f5ceb748b8cb, type: 2}
   m_Ratio: 1

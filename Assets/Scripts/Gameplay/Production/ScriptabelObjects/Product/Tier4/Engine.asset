@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 17
   m_UI_Name: Motor
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 1200
+  m_PriceLocal: 240
+  m_ImpactOnLiving: 240
   IsSellingWorld: 0

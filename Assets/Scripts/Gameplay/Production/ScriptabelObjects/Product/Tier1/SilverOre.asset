@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b1bdba2f1b12bb4cac7eb9a25271f1a, type: 3}
   m_Name: SilverOre
   m_EditorClassIdentifier: 
-  m_EProduct: 8
+  m_EProduct: 4
   m_UI_Name: Silber Erz
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 100
-  m_PriceLocal: 27.5
-  m_ImpactOnLiving: 5
+  m_PriceWorld: 30
+  m_PriceLocal: 6
+  m_ImpactOnLiving: 6
   IsSellingWorld: 0

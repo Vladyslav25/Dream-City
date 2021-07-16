@@ -76,7 +76,9 @@ namespace UI
         [SerializeField]
         private SellMenuUI m_smi;
 
-        private Dictionary<Production,ProductionBuildingUIItem> m_ProductionBuildingItems = new Dictionary<Production, ProductionBuildingUIItem> ();
+        private Dictionary<Production, ProductionBuildingUIItem> m_ProductionBuildingItems = new Dictionary<Production, ProductionBuildingUIItem>();
+        [HideInInspector]
+        public ProductionBuildingUIItem m_currHoveringUIItem;
 
         #region -SingeltonPattern-
         private static UIManager _instance;
@@ -105,6 +107,13 @@ namespace UI
             SetActivToolChoose();
             UpdateMoneyUI();
             StreetCostObj.SetActive(false);
+        }
+
+        private void Update()
+        {
+            //Update ToolTip Text
+            if (Instance.m_currHoveringUIItem != null)
+                Instance.m_currHoveringUIItem.UpdateConditionsText();
         }
 
         public void SetBuildingInfoActiv(bool _active)
@@ -472,7 +481,7 @@ namespace UI
 
         public void UpdateConditionText(Production _production)
         {
-            m_ProductionBuildingItems[_production].UpdateConditionsText(_production.m_Conditions);
+            m_ProductionBuildingItems[_production].UpdateConditionsText();
         }
 
         public void SetStreetCost(float _value)
@@ -485,6 +494,12 @@ namespace UI
         public void SetStreetCostActive(bool _active)
         {
             StreetCostObj.SetActive(_active);
+        }
+
+        public void ChangeInventoryUIItemBGColor(Product _p, Color _color)
+        {
+            if (m_iu.m_ItemProduct_Dic.ContainsKey(_p))
+                m_iu.m_ItemProduct_Dic[_p].ChangeBGColor(_color);
         }
 
         #region -Static-

@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 14
   m_UI_Name: Gummi
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 20
-  m_PriceLocal: 8.5
-  m_ImpactOnLiving: 1
+  m_PriceWorld: 13
+  m_PriceLocal: 2.6
+  m_ImpactOnLiving: 3
   IsSellingWorld: 0

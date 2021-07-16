@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2644162330397969916}
   - component: {fileID: 8289656613147924690}
   m_Layer: 0
-  m_Name: CoalMine (1)
+  m_Name: CoalMine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,12 +51,10 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -65,7 +63,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: edc41434ec62465408c44ce1bf86afe0, type: 2}
   - {fileID: 2100000, guid: eec1b39c8a3e85c44824a614e6b0aa11, type: 2}
   - {fileID: 2100000, guid: f92f2d3de3313fc4090dda9bb598aba7, type: 2}
-  - {fileID: 2100000, guid: 5f56678f7c43f0244bb8f938c339bd0e, type: 2}
+  - {fileID: 2100000, guid: 97f77487f7be09749b4796974c4b5aee, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -86,4 +84,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}

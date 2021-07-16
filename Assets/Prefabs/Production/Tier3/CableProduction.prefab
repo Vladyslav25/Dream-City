@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: ed6c715a29c84b440a7570ef13a903dd, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 360
+  m_OperatingCost: 43.2
   m_UIName: Kabel Fabrik
 --- !u!1 &7677615291785965212
 GameObject:
@@ -157,7 +157,7 @@ PrefabInstance:
     - target: {fileID: 6270292366115496904, guid: 22789282616b44444a183797568c1133,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6270292366115496904, guid: 22789282616b44444a183797568c1133,
         type: 3}

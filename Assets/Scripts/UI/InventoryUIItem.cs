@@ -1,4 +1,5 @@
 ﻿using Gameplay.Productions;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,8 @@ namespace UI
         private Text m_Balance;
         [SerializeField]
         private Text m_Income;
+        [SerializeField]
+        private Image m_BG;
         [HideInInspector]
         public Product m_Product;
 
@@ -21,6 +24,7 @@ namespace UI
         {
             m_Product = _p;
             m_Image.sprite = _p.m_UI_Sprit;
+            ChangeBGColor(new Color32(0xFF, 0xEE, 0x99, 0xFF));
 
             GetComponent<Button>()?.onClick.AddListener(
                 delegate
@@ -54,6 +58,11 @@ namespace UI
             else
                 price = m_Product.m_PriceLocal;
             m_Income.text = UIManager.ConvertFloatToStringPrice(Inventory.Instance.m_SellingAmount[m_Product] * price);
+        }
+
+        public void ChangeBGColor(Color _color)
+        {
+            m_BG.color = _color;
         }
     }
 }

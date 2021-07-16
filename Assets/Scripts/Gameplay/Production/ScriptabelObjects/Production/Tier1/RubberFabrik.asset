@@ -16,16 +16,10 @@ MonoBehaviour:
   m_UIName: 'Gummi Herstellung '
   m_Input: []
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: b02b77d47b546ac40b916306b3227708, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 635e97b9f7d319a46b94fef8b856b516, type: 2}
+  - {fileID: 11400000, guid: 6a4ee88881c9a4f49bee4873bb583c0b, type: 2}
+  - {fileID: 11400000, guid: efb02cfef881c9a4f9a24cbef60b2626, type: 2}
   m_Ratio: 1

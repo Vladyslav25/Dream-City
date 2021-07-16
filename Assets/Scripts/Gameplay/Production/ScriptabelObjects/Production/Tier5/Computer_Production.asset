@@ -13,24 +13,19 @@ MonoBehaviour:
   m_Name: Computer_Production
   m_EditorClassIdentifier: 
   m_EProduction: 11
+  m_UIName: Computer Hersteller
   m_Input:
-  - m_Amount: 5
+  - m_Amount: 2
     m_Product: {fileID: 11400000, guid: aa382187ceb251a4e96a0845d9978d38, type: 2}
-  - m_Amount: 3
+  - m_Amount: 17
     m_Product: {fileID: 11400000, guid: 158f6064885d54b43a0f8be4a8bb9e6b, type: 2}
-  - m_Amount: 1
+  - m_Amount: 2
     m_Product: {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 1
     m_Product: {fileID: 11400000, guid: b221faa228aa3b94eb1b7596375cc8a0, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 37f6b950bcd033548a1afc5f4b82e2a4, type: 2}
+  - {fileID: 11400000, guid: 0896e5dd16c062140add5cea8813a183, type: 2}
+  - {fileID: 11400000, guid: b7432da0ed76554438382916827734a7, type: 2}
   m_Ratio: 1

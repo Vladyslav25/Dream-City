@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 11
   m_UI_Name: Computer
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 5900
+  m_PriceLocal: 1180
+  m_ImpactOnLiving: 1180
   IsSellingWorld: 0

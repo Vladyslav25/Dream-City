@@ -15,19 +15,13 @@ MonoBehaviour:
   m_EProduction: 16
   m_UIName: Reifen Herstellung
   m_Input:
-  - m_Amount: 5
+  - m_Amount: 15
     m_Product: {fileID: 11400000, guid: b02b77d47b546ac40b916306b3227708, type: 2}
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: 09aabda2c685bdc47b9be2ac4973a677, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 836031ea7ec4a4e40971b046bc27b9b4, type: 2}
+  - {fileID: 11400000, guid: 37864d6f844152d4892c4f389ae359ce, type: 2}
+  - {fileID: 11400000, guid: 8060a693c70c1de4ea1b8b77b697fcee, type: 2}
   m_Ratio: 1

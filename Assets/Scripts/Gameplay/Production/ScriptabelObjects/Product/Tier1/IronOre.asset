@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 1
   m_UI_Name: Eisen Erz
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 18
-  m_PriceLocal: 3.78
-  m_ImpactOnLiving: 3
+  m_PriceWorld: 10
+  m_PriceLocal: 2
+  m_ImpactOnLiving: 2
   IsSellingWorld: 0
