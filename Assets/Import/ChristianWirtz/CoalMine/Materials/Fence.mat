@@ -125,7 +125,7 @@ Material:
     - _UseBaseColorAlpha: 1
     - _UseEmissionFromMainProperties: 1
     - _VisualizeMask: 0
-    - _ZTest: 0
+    - _ZTest: 2
     - _ZWrite: 1
     - __dirty: 1
     m_Colors:

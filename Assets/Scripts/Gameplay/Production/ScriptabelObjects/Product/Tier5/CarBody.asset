@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 18
   m_UI_Name: Karosserie
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 1000
+  m_PriceLocal: 200
+  m_ImpactOnLiving: 200
   IsSellingWorld: 0

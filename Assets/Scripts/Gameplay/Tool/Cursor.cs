@@ -11,6 +11,11 @@ public class Cursor : MonoBehaviour
         m_cursorRenderer = m_Cursor.GetComponent<MeshRenderer>();
     }
 
+    public static Vector3 GetPosition()
+    {
+        return m_Cursor.transform.position;
+    }
+
     public static void SetPosition(Vector3 _pos)
     {
         m_Cursor.transform.position = _pos;

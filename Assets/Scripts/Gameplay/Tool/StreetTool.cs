@@ -161,6 +161,7 @@ namespace Gameplay.Streets
                         pos1Set = true;
                         m_previewStreet = StreetComponentManager.InitStreetForPreview(pos1); //Init a Preview Street (with invalid ID)
                         CheckForCombine(m_hitPos, true); //Check if the Start in the Preview Street can be combined
+                        pos1 = Cursor.GetPosition(); //Reset the Position for correct Easy Shift Placement
                         return;
                     }
 

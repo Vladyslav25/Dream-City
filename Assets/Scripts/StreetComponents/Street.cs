@@ -169,7 +169,7 @@ namespace Gameplay.StreetComponents
                         lastLeft = true;
                         if (obj != null)
                         {
-                            yield return new WaitForSeconds(1f);
+                            yield return new WaitForSeconds(BuildingManager.Instance.IndustryWaitTime);
                             continue;
                         }
                     }
@@ -181,7 +181,7 @@ namespace Gameplay.StreetComponents
                         lastLeft = false;
                         if (obj != null)
                         {
-                            yield return new WaitForSeconds(1f);
+                            yield return new WaitForSeconds(BuildingManager.Instance.LivingWaitTime);
                             continue;
                         }
                     }
@@ -197,7 +197,7 @@ namespace Gameplay.StreetComponents
                         if (obj != null)
                         {
                             lastLeft = true;
-                            yield return new WaitForSeconds(1f);
+                            yield return new WaitForSeconds(BuildingManager.Instance.BusinessWaitTime);
                             continue;
                         }
                     }
@@ -208,7 +208,7 @@ namespace Gameplay.StreetComponents
                         if (obj != null)
                         {
                             lastLeft = false;
-                            yield return new WaitForSeconds(1f);
+                            yield return new WaitForSeconds(BuildingManager.Instance.IndustryWaitTime);
                             continue;
                         }
                     }

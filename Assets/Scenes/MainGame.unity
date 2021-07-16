@@ -1532,7 +1532,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: -685.24005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &148954081
 MonoBehaviour:
@@ -2796,7 +2796,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2804,7 +2804,7 @@ MonoBehaviour:
   m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 85d740da81dcc004db2f6cc54fcbf182, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2844,7 +2844,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -3545,7 +3545,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 421831592}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 250, y: 0.01, z: 250}
+  m_LocalPosition: {x: 250, y: 0, z: 250}
   m_LocalScale: {x: 1100, y: 1, z: 800}
   m_Children:
   - {fileID: 845391451}
@@ -3662,7 +3662,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &635146752
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7995,11 +7995,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9032dc37b4e1f1b459fbc3941c325c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unlockAll: 0
   m_AllProductions: []
   m_MoneyAmount: 0
   m_MoneyBalance: 0
   m_OperatingCostSum: 0
   m_TaxIncome: 0
+  m_maxSellingWorldAmount: 3
   m_AllProducts:
   - {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
   - {fileID: 11400000, guid: 931a49fead54e0344aa4070c6b3c1f0a, type: 2}
@@ -8032,7 +8034,7 @@ GameObject:
   - component: {fileID: 1289521882}
   - component: {fileID: 1289521883}
   m_Layer: 0
-  m_Name: HousingManager
+  m_Name: BuildingManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8065,6 +8067,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CheckDensity: 1
+  SpeedWaitTime: 0
   m_LivingPrefabs:
   - {fileID: 5292364575324725515, guid: 346abc3049ac1b747acb9fcfc6d90a92, type: 3}
   - {fileID: 3804195967815641103, guid: 388740a28c7cffb40b771d0c6fa1bd56, type: 3}
@@ -8133,23 +8136,23 @@ MonoBehaviour:
   - {fileID: 809702392215473960, guid: f62459ceccfea1b4da98aefe1b788c46, type: 3}
   - {fileID: 8045101996520508090, guid: 5bc09bf2355bd18408729ee7d4f15b54, type: 3}
   m_ProductionPrefabs:
-  - {fileID: 5568758332235640911, guid: 581adb337a207cd4ebedae307e56629e, type: 3}
   - {fileID: 5568758332235640911, guid: e7aa6d0e28e8b1c4e8dd1304ad9c70a0, type: 3}
   - {fileID: 5568758332235640911, guid: 40d72097bdc234f42b2c8687fd2f4bf6, type: 3}
-  - {fileID: 5568758332235640911, guid: 8746be63107f85e4da5f272389b8ad62, type: 3}
   - {fileID: 5568758332235640911, guid: ace41a1525193324f86dd15cdb40f189, type: 3}
-  - {fileID: 5568758332235640911, guid: 63578fe382819fa42afa74d80dc539a9, type: 3}
-  - {fileID: 5568758332235640911, guid: fb82ebeb17d3f3c418cd5dacf90166a0, type: 3}
+  - {fileID: 5568758332235640911, guid: 581adb337a207cd4ebedae307e56629e, type: 3}
   - {fileID: 5568758332235640911, guid: 1c61f8fb21fb7e845b4a31bdd035d132, type: 3}
   - {fileID: 5568758332235640911, guid: 15cec34586d14cc43b562531b9520b71, type: 3}
-  - {fileID: 5568758332235640911, guid: b84bcefca95013149a8a72bd29b44771, type: 3}
+  - {fileID: 5568758332235640911, guid: fb82ebeb17d3f3c418cd5dacf90166a0, type: 3}
   - {fileID: 5568758332235640911, guid: 7538d73d6993cb441b36943da36d70a9, type: 3}
-  - {fileID: 5568758332235640911, guid: c0aa7cf2bcd192144971b6a830fb9341, type: 3}
-  - {fileID: 5568758332235640911, guid: 740c22dede6c39a4780fa74110e29620, type: 3}
   - {fileID: 5568758332235640911, guid: 24bbaed8ccca986429a763a6d8b5eef2, type: 3}
   - {fileID: 5568758332235640911, guid: 6b2f7a197d60765438919eba806af127, type: 3}
-  - {fileID: 5568758332235640911, guid: 16f0ec45c085479419ef5908253db8b2, type: 3}
+  - {fileID: 5568758332235640911, guid: 8746be63107f85e4da5f272389b8ad62, type: 3}
+  - {fileID: 5568758332235640911, guid: b84bcefca95013149a8a72bd29b44771, type: 3}
+  - {fileID: 5568758332235640911, guid: 740c22dede6c39a4780fa74110e29620, type: 3}
+  - {fileID: 5568758332235640911, guid: 63578fe382819fa42afa74d80dc539a9, type: 3}
   - {fileID: 5568758332235640911, guid: 7bc6a54c49f2d6340891fa726cc3875b, type: 3}
+  - {fileID: 5568758332235640911, guid: 16f0ec45c085479419ef5908253db8b2, type: 3}
+  - {fileID: 5568758332235640911, guid: c0aa7cf2bcd192144971b6a830fb9341, type: 3}
   - {fileID: 5568758332235640911, guid: 4622af88793118a40bd07cd28b3323fa, type: 3}
   - {fileID: 5568758332235640911, guid: 9a0fe886660a9e743abd224f78621e95, type: 3}
   - {fileID: 5568758332235640911, guid: 6d47ce7e468c5e04986d8f8c844414a9, type: 3}
@@ -9965,6 +9968,7 @@ MonoBehaviour:
   m_pii: {fileID: 24422157}
   m_iu: {fileID: 1896359580}
   m_smi: {fileID: 774860383}
+  m_currHoveringUIItem: {fileID: 0}
 --- !u!114 &1727534803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10251,7 +10255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Type: 1
-  streetCostMultiplier: 2
+  streetCostMultiplier: 7
   previewStreetMaterial: {fileID: 2100000, guid: 1ab8d390690c06d469abd3677c9754f6,
     type: 2}
   m_renderTexture: {fileID: 8400000, guid: b4dff8d4d1a1a1749a0231fe9911d061, type: 2}

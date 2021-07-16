@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 9
   m_UI_Name: Eisen Plate
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 20
+  m_PriceLocal: 4
+  m_ImpactOnLiving: 4
   IsSellingWorld: 0

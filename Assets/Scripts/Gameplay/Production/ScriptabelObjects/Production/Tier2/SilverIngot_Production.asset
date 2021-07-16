@@ -15,21 +15,15 @@ MonoBehaviour:
   m_EProduction: 8
   m_UIName: Silber Hochofen
   m_Input:
-  - m_Amount: 2
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 043741d5505c60749bba1a4c83f5f31e, type: 2}
-  - m_Amount: 1
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
   m_Output:
-  - m_Amount: 0
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: 2935c734365b41248a9d3ae5565fc651, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 6baca4b52d3a49f4ba6381a4d9cf9717, type: 2}
+  - {fileID: 11400000, guid: 06ba9a9378bc33b459f3d4d346befd5f, type: 2}
+  - {fileID: 11400000, guid: 43e58987650c32c4894db694edbc55b8, type: 2}
   m_Ratio: 1

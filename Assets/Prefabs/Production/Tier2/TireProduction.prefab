@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 5b60b45ee77ac504287d84ebdba3972f, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 270
+  m_OperatingCost: 32.4
   m_UIName: Reifen Fabrik
 --- !u!1 &7677615291785965212
 GameObject:
@@ -162,7 +162,7 @@ PrefabInstance:
     - target: {fileID: 6743897946962839363, guid: c6372e076c71ddf4f952c0f6ad3e3ce3,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6743897946962839363, guid: c6372e076c71ddf4f952c0f6ad3e3ce3,
         type: 3}

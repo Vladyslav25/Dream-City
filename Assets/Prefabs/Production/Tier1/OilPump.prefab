@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: d169cf49e9c177548967c065bc8ed1a6, type: 2}
-  m_Cost: 250
-  m_OperatingCost: -10
+  m_Cost: 630
+  m_OperatingCost: 75.6
   m_UIName: "\xD6l Pumpen"
 --- !u!1 &7677615291785965212
 GameObject:
@@ -162,7 +162,7 @@ PrefabInstance:
     - target: {fileID: 6556752493752335657, guid: ad57113c9c375534b9c05c403dc38a0a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6556752493752335657, guid: ad57113c9c375534b9c05c403dc38a0a,
         type: 3}

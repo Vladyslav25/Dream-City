@@ -36,6 +36,8 @@ namespace UI
         private string m_conditionText;
         private bool m_mouseOnButton;
 
+        private List<ACondition> m_Conditions;
+
         public void OnClick()
         {
             BuildingManager.Instance.AddProductionBuildingToList(m_PB);
@@ -50,6 +52,7 @@ namespace UI
             m_Balance.color = c;
             m_Btn.interactable = false;
             m_UnlockBG.color = Color.red;
+            m_Conditions = _pb.m_Production.m_Conditions;
 
             foreach (ProductionStat ps in m_PB.m_Production.m_Output)
             {
@@ -113,12 +116,17 @@ namespace UI
             m_UnlockBG.color = Color.green;
         }
 
-        public void UpdateConditionsText(List<ACondition> _conditions)
+        public void UpdateConditionsText()
         {
             m_conditionText = "";
 
-            foreach (ACondition condition in _conditions)
+            foreach (ACondition condition in m_Conditions)
             {
+                if(condition == null)
+                {
+                    Debug.LogError("Condition is null");
+                    return;
+                }
                 m_conditionText += condition.GetString() + "\n";
             }
 

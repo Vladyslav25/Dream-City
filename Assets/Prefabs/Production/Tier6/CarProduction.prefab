@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 4
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 957aa7a225f05804dbadcd098ecd3618, type: 2}
-  m_Cost: 785
-  m_OperatingCost: -30
+  m_Cost: 21366
+  m_OperatingCost: 2563.92
   m_UIName: Auto Hersteller
 --- !u!1 &7677615291785965212
 GameObject:
@@ -177,7 +177,7 @@ PrefabInstance:
     - target: {fileID: 9060497159520431794, guid: efae0f91fa7d37545a561a6cee61e512,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 9060497159520431794, guid: efae0f91fa7d37545a561a6cee61e512,
         type: 3}

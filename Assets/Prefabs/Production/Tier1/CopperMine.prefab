@@ -55,8 +55,8 @@ MonoBehaviour:
   impactOnBusiness: 5
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: dea9bd878a574b3458b29350aa667a18, type: 2}
-  m_Cost: 360
-  m_OperatingCost: -18
+  m_Cost: 99
+  m_OperatingCost: -11.88
   m_UIName: Kuper Erz Mine
 --- !u!1 &7514854313909714860
 GameObject:
@@ -162,7 +162,7 @@ PrefabInstance:
     - target: {fileID: 5480924495263897526, guid: a500ea9ceb9d1af4f874e03520e6c5bb,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 5480924495263897526, guid: a500ea9ceb9d1af4f874e03520e6c5bb,
         type: 3}

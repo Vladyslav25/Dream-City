@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 2
   m_UI_Name: Kupfer Erz
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 40
-  m_PriceLocal: 16
+  m_PriceWorld: 11
+  m_PriceLocal: 2.2
   m_ImpactOnLiving: 2
   IsSellingWorld: 0

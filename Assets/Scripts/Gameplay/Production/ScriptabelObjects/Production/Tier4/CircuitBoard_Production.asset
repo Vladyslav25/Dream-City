@@ -15,23 +15,18 @@ MonoBehaviour:
   m_EProduction: 10
   m_UIName: Microchip Herstellung
   m_Input:
-  - m_Amount: 2
+  - m_Amount: 6
     m_Product: {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}
-  - m_Amount: 1
+  - m_Amount: 8
     m_Product: {fileID: 11400000, guid: 2935c734365b41248a9d3ae5565fc651, type: 2}
-  - m_Amount: 1
+  - m_Amount: 5
     m_Product: {fileID: 11400000, guid: 0d49f899eebd47047a62d2cce286aa56, type: 2}
   m_Output:
-  - m_Amount: 1
+  - m_Amount: 4
     m_Product: {fileID: 11400000, guid: aa382187ceb251a4e96a0845d9978d38, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: 7f7d75957135b334a946510e7ff68aae, type: 2}
+  - {fileID: 11400000, guid: 3f7e88d887bf8ef40b0480ac988b6813, type: 2}
+  - {fileID: 11400000, guid: 5bc6e17a203c41d4abfe1a2a48f724ee, type: 2}
+  - {fileID: 11400000, guid: ffccb67c675c3b64681a092ae0495aec, type: 2}
   m_Ratio: 1

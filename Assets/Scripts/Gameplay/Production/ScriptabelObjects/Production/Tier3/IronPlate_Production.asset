@@ -15,19 +15,12 @@ MonoBehaviour:
   m_EProduction: 9
   m_UIName: Eisen Presse
   m_Input:
-  - m_Amount: 1
+  - m_Amount: 10
     m_Product: {fileID: 11400000, guid: 3ce33d02bd34aa542a255dea9b98dc5f, type: 2}
   m_Output:
-  - m_Amount: 2
+  - m_Amount: 15
     m_Product: {fileID: 11400000, guid: 01b16a62ef73619409ffa2dc33da1422, type: 2}
-  m_Condition:
-    m_EValueType: 0
-    m_EValue_Inflow: 0
-    m_EValue_Cell: 0
-    m_EValue_Money: 0
-    m_EValue_IBalance: 0
-    m_EValue_IAmount: 0
-    m_EValue_PAmount: 0
-    m_Compare: 0
-    m_Value: 0
+  m_Conditions:
+  - {fileID: 11400000, guid: ac2af4e5824bb184e8d8f2ab45e801c1, type: 2}
+  - {fileID: 11400000, guid: b9fe56cb15dbc0c4a821659d64dfe42b, type: 2}
   m_Ratio: 1

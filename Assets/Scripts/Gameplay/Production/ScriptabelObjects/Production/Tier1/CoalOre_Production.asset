@@ -16,9 +16,10 @@ MonoBehaviour:
   m_UIName: Kohle Mine
   m_Input: []
   m_Output:
-  - m_Amount: 3
+  - m_Amount: 20
     m_Product: {fileID: 11400000, guid: 430adc85ba3902649a2b3867868f4e00, type: 2}
   m_Conditions:
   - {fileID: 11400000, guid: fdd6e756225364d429a0e2bb5694d778, type: 2}
-  - {fileID: 11400000, guid: 664699c9fb3d53b45854cdf7db18afcf, type: 2}
+  - {fileID: 11400000, guid: 5d076e8aee6e41d4c9c078f3de56138f, type: 2}
+  - {fileID: 11400000, guid: 44d18ec185edc7749996c48889e769bf, type: 2}
   m_Ratio: 1

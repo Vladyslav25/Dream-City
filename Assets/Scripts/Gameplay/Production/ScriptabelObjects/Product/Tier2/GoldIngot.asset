@@ -15,7 +15,7 @@ MonoBehaviour:
   m_EProduct: 7
   m_UI_Name: Gold Baren
   m_UI_Sprit: {fileID: 0}
-  m_PriceWorld: 0
-  m_PriceLocal: 0
-  m_ImpactOnLiving: 0
+  m_PriceWorld: 400
+  m_PriceLocal: 80
+  m_ImpactOnLiving: 80
   IsSellingWorld: 0
