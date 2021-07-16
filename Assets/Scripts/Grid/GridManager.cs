@@ -1,12 +1,9 @@
 ﻿using Gameplay.StreetComponents;
 using MeshGeneration;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace Grid
@@ -35,79 +32,98 @@ namespace Grid
 
         public float CellSize { get; } = 1f;
 
-        public int MaxGeneration { get; } = 4;
+        public int MaxGeneration { get; } = 18;
         public float GridMaxSquareArea { get; } = 5f;
         public float GridMinSquareArea { get; } = 0.7f;
 
         static List<Task<Cell>> listTask = new List<Task<Cell>>();
         static List<Cell> output = new List<Cell>();
         public static List<Cell> m_AllCells = new List<Cell>();
-        public Material White;
+        public static List<Cell> m_FirstGenCells = new List<Cell>();
+        public Material CellDefault;
+
+        public static List<Cell> m_AllLivingCells = new List<Cell>();
+        public static List<Cell> m_AllBusinessCells = new List<Cell>();
+        public static List<Cell> m_AllIndustryCells = new List<Cell>();
 
         public static IEnumerator CheckForFinish(Street _street)
         {
+            List<Cell> cellsToDelete = new List<Cell>();
             while (listTask.Count > 0)
             {
                 for (int i = listTask.Count - 1; i >= 0; i--)
                 {
                     if (listTask[i].IsCompleted)
                     {
-                        if (listTask[i].Result.isValid)
+                        if (listTask[i].Result.IsValid)
                             output.Add(listTask[i].Result);
+                        else
+                            cellsToDelete.Add(listTask[i].Result);
                         listTask.RemoveAt(i);
                     }
                 }
                 yield return null;
             }
+
+            //Create Normal Grid
             GameObject obj = new GameObject("Grid");
             MeshFilter mf = obj.AddComponent<MeshFilter>();
             MeshRenderer mr = obj.AddComponent<MeshRenderer>();
-            obj.transform.position = Vector3.zero;
+            obj.transform.position = new Vector3(0, 0.1f, 0);
             obj.transform.parent = _street.transform;
 
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
             mr.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
             mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-            mr.material = Instance.White;
+            mr.material = Instance.CellDefault;
 
             foreach (Cell c in output)
             {
-                _street.m_StreetCells.Add(c.pos, c);
+                _street.m_StreetCells.Add(c.Pos, c);
+                if (c.Pos.x == 1 || c.Pos.x == -1)
+                    m_FirstGenCells.Add(c);
+            }
+
+            foreach (Cell c in cellsToDelete)
+            {
+                c.Delete();
             }
 
             //Remove Cells if Generation before is missing
             for (int i = 0; i < output.Count; i++)
             {
                 Cell c = output[i];
-                if (_street.m_StreetCells.ContainsKey(c.pos))
+                if (_street.m_StreetCells.ContainsKey(c.Pos))
                 {
-                    if (c.m_isLeft && c.pos.x - 1 > 0 && !_street.m_StreetCells.ContainsKey(new Vector2(c.pos.x - 1, c.pos.y)))
+                    if (c.m_isLeft && c.Pos.x - 1 > 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.Pos.x - 1, c.Pos.y)))
                     {
-                        Vector2 nextPose = c.pos;
+                        Vector2Int nextPose = c.Pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
-                            output.Remove(_street.m_StreetCells[nextPose]);
-                            _street.m_StreetCells.Remove(nextPose);
-                            nextPose = new Vector2(nextPose.x + 1, nextPose.y);
+                            output.Remove(c);
+                            c.Delete();
+                            nextPose.x++;
                         }
                     }
-                    if (!c.m_isLeft && c.pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2(c.pos.x + 1, c.pos.y)))
+                    if (!c.m_isLeft && c.Pos.x + 1 < 0 && !_street.m_StreetCells.ContainsKey(new Vector2Int(c.Pos.x + 1, c.Pos.y)))
                     {
-                        Vector2 nextPose = c.pos;
+                        Vector2Int nextPose = c.Pos;
                         while (_street.m_StreetCells.ContainsKey(nextPose))
                         {
-                            output.Remove(_street.m_StreetCells[nextPose]);
-                            _street.m_StreetCells.Remove(nextPose);
-                            nextPose = new Vector2(nextPose.x - 1, nextPose.y);
+                            c.Delete();
+                            output.Remove(c);
+                            nextPose.x--;
                         }
                     }
                 }
             }
 
-            MeshGenerator.CreateGridMesh(_street.m_StreetCells.Values.ToList(), mf);
+            _street.m_RowAmount = _street.m_StreetCells.Keys.Max(v => v.y) + 1;
+            MeshGenerator.CreateGridMesh(_street, mf, mr);
             m_AllCells.AddRange(output);
             _street.m_GridObj = obj;
+            _street.m_GridRenderer = mr;
         }
 
         public static List<Cell> CreateGrid(Street _street)

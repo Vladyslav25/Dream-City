@@ -1,27 +1,22 @@
 ﻿using Gameplay.StreetComponents;
-using MeshGeneration;
 using MyCustomCollsion;
 using Splines;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Unity.Collections;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 
 namespace Grid
 {
-    public enum CellAssignment
+    public enum EAssignment
     {
         NONE,
         LIVING,
         BUSINESS,
-        INDUSTRY
+        INDUSTRY,
+        PRODUCTION
     }
 
-    public struct Cell
+    public class Cell
     {
         public Vector3 m_WorldPosCenter { get; private set; }
 
@@ -31,7 +26,7 @@ namespace Grid
 
         public bool m_isLeft { get; private set; }
 
-        public CellAssignment m_CellAssignment { get; private set; }
+        public EAssignment m_CellAssignment { get; private set; }
 
         public Street m_Street { get; private set; }
 
@@ -54,11 +49,13 @@ namespace Grid
         private int m_generation;
         private float m_TStart;
         private float m_TEnd;
-        private float m_Radius;
-        public bool isValid;
-        public Vector2 pos;
+        public float m_Radius;
+        public bool IsValid;
+        public Vector2Int Pos;
+        public bool IsBlocked; //if Builing is build on it -> true
+        public bool IsInArea; //is this Cell assigned to a Area?
 
-        public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide, Vector2 _pos)
+        public bool Init(Street _street, float _tStart, float _tEnd, int _generation, bool _isLeftSide, Vector2Int _pos)
         {
             m_CellAssignment = 0;
             m_Street = _street;
@@ -70,22 +67,28 @@ namespace Grid
             ID = m_Street.ID;
             if (!_isLeftSide)
                 _pos.x = -_pos.x;
-            pos = _pos;
+            Pos = _pos;
             CalculateCornerPos(_isLeftSide);
             CalculateCellCenter();
+            //Check World Border
+            if (m_WorldPosCenter.z < 0 || m_WorldPosCenter.z > 500 || m_WorldPosCenter.x < 0 || m_WorldPosCenter.x > 500)
+            {
+                IsValid = false;
+                return false;
+            }
             CalculateOrientation();
-            CalculateSquarRadius();
-            isValid = !CheckForCollision() && CheckValidSize();
-            return isValid;
+            CalculateRadius();
+            IsValid = !CheckForCollision() && CheckValidSize();
+            return IsValid;
         }
 
-        private void CalculateSquarRadius()
+        private void CalculateRadius()
         {
             float rSquar = 0;
 
             for (int i = 0; i < 4; i++)
             {
-                float tmp = Vector2.Distance(m_WorldCorner[i], m_WorldPosCenter);
+                float tmp = Vector3.Distance(m_WorldCorner[i], m_WorldPosCenter);
                 if (tmp > rSquar)
                     rSquar = tmp;
             }
@@ -95,7 +98,10 @@ namespace Grid
 
         private void CalculateOrientation()
         {
-            m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
+            if (m_isLeft)
+                m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f)) * Quaternion.Euler(0, 180, 0);
+            else
+                m_Orientation = Quaternion.LookRotation(m_Spline.GetNormalAt((m_TStart + m_TEnd) * 0.5f), m_Spline.GetNormalUpAt((m_TStart + m_TEnd) * 0.5f));
         }
 
         /// <summary>
@@ -114,9 +120,12 @@ namespace Grid
                 if (c.ID != this.ID && MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_PosCenter, c.m_Radius))
                     cellToCheck.Add(c);
 
+            List<StreetComponent> allComponetns = StreetComponentManager.GetAllStreetComponents();
             //Cell Segment
-            foreach (StreetComponent comp in StreetComponentManager.GetAllStreets())
+            for (int i = 0; i < allComponetns.Count; i++)
             {
+                StreetComponent comp = allComponetns[i];
+
                 if (comp.ID == this.ID) continue;
                 if (comp is Street)
                 {
@@ -128,8 +137,8 @@ namespace Grid
                 else if (comp is Cross)
                 {
                     Cross c = (Cross)comp;
-                    if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_center, 1.7f)) ;
-                    crossToCheck.Add(c);
+                    if (MyCollision.SphereSphere(this.m_PosCenter, this.m_Radius, c.m_center, 1.7f))
+                        crossToCheck.Add(c);
                 }
             }
 
@@ -163,7 +172,7 @@ namespace Grid
 
             float dot = Vector3.Dot(AB, crossAD_BC);
 
-            if (Mathf.Approximately(dot, 0f) && !Mathf.Approximately(crossAD_BC.sqrMagnitude, 0f))
+            if ((Mathf.Approximately(dot, 0f) || dot < 0.01f) && !Mathf.Approximately(crossAD_BC.sqrMagnitude, 0f))
             {
                 float tmp = Vector3.Dot(crossAB_BC, crossAD_BC) / crossAD_BC.sqrMagnitude;
                 m_WorldPosCenter = m_WorldCorner[0] + (AD * tmp);
@@ -225,16 +234,46 @@ namespace Grid
             }
         }
 
-        public void SetAssignment(CellAssignment _newAssigment)
+        public void SetAssignment(EAssignment _newAssigment)
         {
+            switch (m_CellAssignment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    GridManager.m_AllLivingCells.Remove(this);
+                    break;
+                case EAssignment.BUSINESS:
+                    GridManager.m_AllBusinessCells.Remove(this);
+                    break;
+                case EAssignment.INDUSTRY:
+                    GridManager.m_AllIndustryCells.Remove(this);
+                    break;
+            } //Remove from old assignment
+
             m_CellAssignment = _newAssigment;
+
+            switch (_newAssigment)
+            {
+                case EAssignment.NONE:
+                    break;
+                case EAssignment.LIVING:
+                    GridManager.m_AllLivingCells.Add(this);
+                    break;
+                case EAssignment.BUSINESS:
+                    GridManager.m_AllBusinessCells.Add(this);
+                    break;
+                case EAssignment.INDUSTRY:
+                    GridManager.m_AllIndustryCells.Add(this);
+                    break;
+            } //Add to new assignment
         }
 
         public void Delete()
         {
-            if (m_Street.m_StreetCells.ContainsKey(pos))
+            if (m_Street.m_StreetCells.ContainsKey(Pos))
             {
-                Vector2 nextPos = pos;
+                Vector2Int nextPos = Pos;
                 while (m_Street.m_StreetCells.ContainsKey(nextPos))
                 {
                     GridManager.m_AllCells.Remove(m_Street.m_StreetCells[nextPos]);
@@ -242,17 +281,15 @@ namespace Grid
 
                     if (m_isLeft)
                     {
-                        nextPos = new Vector2(nextPos.x + 1, nextPos.y);
+                        nextPos.x++;
                     }
                     else
                     {
-                        nextPos = new Vector2(nextPos.x - 1, nextPos.y);
+                        nextPos.x--;
                     }
                 }
-
             }
         }
-
     }
 }
 

@@ -1,11 +1,6 @@
 ﻿using Gameplay.StreetComponents;
 using Grid;
-using MeshGeneration;
-using Splines;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
 
 public struct CreateCellJob
@@ -22,9 +17,9 @@ public struct CreateCellJob
     {
         Cell c = new Cell();
         if (y + 1 >= s.m_Spline.GridOPs.Length)
-            c.Init(s, s.m_Spline.GridOPs[y].t, s.m_Spline.GetLastOrientedPoint().t, x, isLeft, new Vector2(x, y));
+            c.Init(s, s.m_Spline.GridOPs[y].t, s.m_Spline.GetLastOrientedPoint().t, x, isLeft, new Vector2Int(x, y));
         else
-            c.Init(s, s.m_Spline.GridOPs[y].t, s.m_Spline.GridOPs[y + 1].t, x, isLeft, new Vector2(x, y));
+            c.Init(s, s.m_Spline.GridOPs[y].t, s.m_Spline.GridOPs[y + 1].t, x, isLeft, new Vector2Int(x, y));
 
         return c;
     }

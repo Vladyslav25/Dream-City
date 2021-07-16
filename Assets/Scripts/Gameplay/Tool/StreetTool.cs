@@ -1,17 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Splines;
-using UnityEditor;
-using System;
 using Gameplay.Tools;
 using Gameplay.StreetComponents;
-using UnityEditor.IMGUI.Controls;
+using UI;
+using Gameplay.Productions;
 
 namespace Gameplay.Streets
 {
-    public class StreetTool : Tools.Tool
+    public class StreetTool : ATool
     {
+        [SerializeField]
+        float streetCostMultiplier;
         [SerializeField]
         Material previewStreetMaterial;
 
@@ -31,6 +30,8 @@ namespace Gameplay.Streets
         Street m_previewStreet;
         Connection m_previewLastConnected;
 
+        float m_currendCost;
+
         #region -ComputeShader Member-
         [SerializeField]
         RenderTexture m_renderTexture;
@@ -44,9 +45,8 @@ namespace Gameplay.Streets
         int m_widthIndex;
         #endregion
 
-        private new void Awake()
+        private void Awake()
         {
-            base.Awake();
             m_computeBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Structured);
             m_pixelCount = new int[1];
             m_kernelIndex = m_computeShader.FindKernel("CSMain");
@@ -56,22 +56,30 @@ namespace Gameplay.Streets
             m_Type = TOOLTYPE.STREET;
         }
 
+        public override void ToolStart()
+        {
+            Cursor.SetActiv(true);
+            Cursor.SetColor(Color.blue);
+            isCurrendToolLine = false;
+            UIManager.Instance.SetActivStreetType();
+            UIManager.Instance.HighlightButton(UIManager.Instance.CurveButton);
+        }
+
         public override void ToolUpdate()
         {
             if (Input.GetKeyUp(KeyCode.C)) //Change to Curve Tool
             {
-                SetSphereColor(Color.blue);
-                isCurrendToolLine = false;
+                SetCurveLineTool(false);
+                UIManager.Instance.HighlightButton(UIManager.Instance.CurveButton);
             }
-            if (Input.GetKeyUp(KeyCode.L)) //Change to Line Tool
+            else if (Input.GetKeyUp(KeyCode.L)) //Change to Line Tool
             {
-                SetSphereColor(Color.red);
-                isCurrendToolLine = true;
+                SetCurveLineTool(true);
+                UIManager.Instance.HighlightButton(UIManager.Instance.LineButton);
             }
 
-            if (m_validHit) //TODO: Change tto RaycastAll to ignore later Houses and other Collider Stuff
+            if (m_validHit)
             {
-
                 if (pos1Set == false && pos2Set == false && pos3Set == false)
                 {
                     FindClosestConnection(m_hitPos); //if no Point is set, look for not far away Street possible combinations
@@ -81,6 +89,17 @@ namespace Gameplay.Streets
                 {
                     if (pos1Set == true && pos3Set == false && m_previewStreet != null) //Line: First Point Set -> Missing Sec Point
                     {
+
+                        if (Input.GetKey(KeyCode.LeftShift)) //Easy Placement
+                        {
+                            Vector3 StartEnd = pos1 - m_hitPos;
+                            if (Mathf.Abs(StartEnd.x) > Mathf.Abs(StartEnd.z))
+                                m_hitPos.z = pos1.z;
+                            else
+                                m_hitPos.x = pos1.x;
+                        }
+                        Cursor.SetPosition(m_hitPos);
+
                         Vector3 pos2Tmp = m_previewStreet.m_Spline.GetCentredOrientedPoint().Position; //Get the Midpoint on the Spline
                         Vector3 tangent1 = (pos1 + pos2Tmp) * 0.5f; // 1.Tanget must be between MidPoint and Start
                         Vector3 tangent2 = (pos2Tmp + m_hitPos) * 0.5f; // 2. Tanget must be between MidPoint and End (MousePos)
@@ -108,7 +127,7 @@ namespace Gameplay.Streets
                     }
                 }
 
-                if (Input.GetKeyUp(KeyCode.Escape))
+                if (Input.GetMouseButtonDown(1))
                 {
                     if (m_previewStreet != null)
                     {
@@ -121,6 +140,8 @@ namespace Gameplay.Streets
 
                 if (m_previewStreet != null)
                 {
+                    m_currendCost = -m_previewStreet.m_Spline.GetLength() * streetCostMultiplier;
+                    UIManager.Instance.SetStreetCost(m_currendCost);
                     if (!CheckForValidForm() || CheckForCollision())
                     {
                         m_previewStreet.m_IsInvalid = false;
@@ -154,13 +175,16 @@ namespace Gameplay.Streets
                     }
                     if (pos3Set == false)
                     {
-                        pos3 = m_hitPos;
-                        CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
-                        Street newStreet = StreetComponentManager.CreateStreet(m_previewStreet); //Create a valid Street from the preview Street
-
-                        //Reset
-                        ResetTool();
-                        return;
+                        if (m_currendCost <= Inventory.Instance.m_MoneyAmount)
+                        {
+                            Inventory.Instance.m_MoneyAmount += m_currendCost; //currend Cost is negative
+                            UIManager.Instance.UpdateMoneyUI(); //dont wait for next tick to update UI
+                            pos3 = m_hitPos;
+                            CheckForCombine(m_hitPos, false); //Check if the End in the Preview Street can be combined
+                            Street newStreet = StreetComponentManager.CreateStreet(m_previewStreet); //Create a valid Street from the preview Street
+                            ResetTool(); //Reset
+                            return;
+                        }
                     }
                 }
             }
@@ -168,19 +192,19 @@ namespace Gameplay.Streets
 
         public override void ToolEnd()
         {
+            if (m_previewStreet != null)
+            {
+                DecombinePreview(true);
+                DecombinePreview(false);
+            }
             ResetTool();
-            SetSphereActiv(false);
-        }
-
-        public override void ToolStart()
-        {
-            base.ToolStart();
-            SetSphereActiv(true);
+            Cursor.SetActiv(false);
         }
 
         private void ResetTool()
         {
             //Reset
+
             pos1 = Vector3.zero;
             pos2 = Vector3.zero;
             pos3 = Vector3.zero;
@@ -190,8 +214,28 @@ namespace Gameplay.Streets
             isTangent1Locked = false;
             isTangent2Locked = false;
             Destroy(m_previewStreet?.gameObject); //Destroy PreviewStreet
-            Destroy(m_previewStreet?.GetCollisionStreet().gameObject); //Destroy CollStreet
+            Destroy(m_previewStreet?.GetCollisionStreet()?.gameObject); //Destroy CollStreet
             m_previewStreet = null;
+            UIManager.Instance.SetStreetCostActive(false);
+            m_currendCost = 0f;
+        }
+
+        /// <summary>
+        /// Change the Tool setting between Line and Curve
+        /// </summary>
+        /// <param name="_setLine">Set to Line Setting?</param>
+        public void SetCurveLineTool(bool _setLine)
+        {
+            if (_setLine)
+            {
+                Cursor.SetColor(Color.red);
+                isCurrendToolLine = true;
+            }
+            else
+            {
+                Cursor.SetColor(Color.blue);
+                isCurrendToolLine = false;
+            }
         }
 
         /// <summary>
@@ -208,7 +252,7 @@ namespace Gameplay.Streets
             m_computeShader.Dispatch(m_kernelIndex, m_renderTexture.width / 32, m_renderTexture.height / 32, 1);
 
             m_computeBuffer.GetData(m_pixelCount);
-            if (m_pixelCount[0] > 3)
+            if (m_pixelCount[0] > 6)
             {
                 return true;
             }
@@ -231,7 +275,7 @@ namespace Gameplay.Streets
         }
 
         /// <summary>
-        /// Look for the closest Street End or Start GameObject
+        /// Look for the closest Street End or Start Collider
         /// </summary>
         /// <param name="_hitPoint">The Pos from where to look</param>
         /// <returns>The GameObject closest from the Pos (null if its too far away)</returns>
@@ -265,7 +309,7 @@ namespace Gameplay.Streets
             if (validCollider.Count == 0) return null; //return null if no valid Collider was found in the Range
 
             SphereCollider closestCollider = GetClosesetCollider(validCollider, _hitPoint); //Look for the closest GameObject of all valid GameObjects
-            SetSpherePos(closestCollider.transform.position + closestCollider.transform.rotation * closestCollider.center); //Set the Sphere to the Pos of the closest valid Street GameObject
+            Cursor.SetPosition(closestCollider.transform.position + closestCollider.transform.rotation * closestCollider.center); //Set the Sphere to the Pos of the closest valid Street GameObject
             tmpStreet = closestCollider.GetComponentInParent<Street>();
             tmpCross = closestCollider.GetComponentInParent<Cross>();
             Connection conn = null;
@@ -397,7 +441,6 @@ namespace Gameplay.Streets
                         if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
                         {
                             StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
-                            Debug.Log("Remove DeadEnd");
                         }
                         CombinePreview(otherStreet, true, true);
 
@@ -418,10 +461,8 @@ namespace Gameplay.Streets
 
                         //Combine(_others Start, preview Start) + Remove others DeadEnd at Start
                         if (otherStreet.GetStartConnection().m_OtherComponent is DeadEnd)
-                        {
                             StreetComponentManager.DestroyDeadEnd((DeadEnd)otherStreet.GetStartConnection().m_OtherComponent);
-                            Debug.Log("Remove DeadEnd");
-                        }
+
                         CombinePreview(otherStreet, true, false);
 
                         return;

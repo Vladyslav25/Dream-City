@@ -1,6 +1,6 @@
-﻿using Gameplay.Tools;
-using System.Collections;
+﻿using Gameplay.Streets;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 
 namespace Gameplay.Tools
@@ -31,20 +31,21 @@ namespace Gameplay.Tools
         #endregion
 
         [MyReadOnly]
-        public Tool m_CurrendTool;
+        public ATool m_CurrendTool;
 
         public GameObject m_spherePrefab;
 
-        private Dictionary<TOOLTYPE, Tool> m_dic_TypeTool = new Dictionary<TOOLTYPE, Tool>();
+        private Dictionary<TOOLTYPE, ATool> m_dic_TypeTool = new Dictionary<TOOLTYPE, ATool>();
 
         public void Awake()
         {
-            Tool[] tools = GetComponents<Tool>();
-            foreach (Tool t in tools)
+            ATool[] tools = GetComponents<ATool>();
+            foreach (ATool t in tools)
             {
                 t.enabled = false;
                 m_dic_TypeTool.Add(t.m_Type, t);
             }
+            ChangeTool(TOOLTYPE.BUILDINGCLICK);
         }
 
         public void Update()
@@ -57,21 +58,58 @@ namespace Gameplay.Tools
             {
                 ChangeTool(TOOLTYPE.CROSS);
             }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                ChangeTool(TOOLTYPE.ASSIGNMENT);
+            }
+            if(Input.GetKeyDown(KeyCode.T))
+            {
+                ChangeTool(TOOLTYPE.TEARDOWN);
+            }
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                ChangeTool(TOOLTYPE.BUILDINGCLICK);
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UIManager.Instance.ResetHighlightButton();
+                UIManager.Instance.SetActivToolChoose();
+                ChangeTool(TOOLTYPE.BUILDINGCLICK);
+            }
+        }
+
+        public StreetTool GetStreetTool()
+        {
+            return m_dic_TypeTool[TOOLTYPE.STREET] as StreetTool;
+        }
+
+        public CellAssignmentTool GetCellAssignmentTool()
+        {
+            return m_dic_TypeTool[TOOLTYPE.ASSIGNMENT] as CellAssignmentTool;
+        }
+
+        public static Vector3 GetHitPos()
+        {
+            return Instance.m_CurrendTool.GetHitPos();
         }
 
         public void ChangeTool(TOOLTYPE _tool)
         {
-            if (m_dic_TypeTool.ContainsKey(_tool))
+            if (m_CurrendTool != null)
             {
-                if (m_CurrendTool != null)
-                {
-                    m_CurrendTool.ToolEnd();
-                    m_CurrendTool.enabled = false;
-                }
-                m_CurrendTool = m_dic_TypeTool[_tool];
-                m_CurrendTool.enabled = true;
-                m_CurrendTool.ToolStart();
+                m_CurrendTool.ToolEnd();
+                m_CurrendTool.enabled = false;
             }
+            if (m_dic_TypeTool.ContainsKey(_tool))
+                m_CurrendTool = m_dic_TypeTool[_tool];
+            else
+            {
+                m_CurrendTool = null;
+                return;
+            }
+            m_CurrendTool.enabled = true;
+            m_CurrendTool.ToolStart();
+
         }
     }
 }
