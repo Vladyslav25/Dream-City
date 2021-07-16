@@ -25,10 +25,13 @@ public class ToolTip : MonoBehaviour
     }
     #endregion
 
+    [Header("Ref")]
     [SerializeField]
     private TextMeshProUGUI m_text;
     [SerializeField]
     private RectTransform m_backgroundTransform;
+
+    [Header("Setting")]
     [SerializeField]
     Vector2 m_padSize;
 
@@ -43,6 +46,15 @@ public class ToolTip : MonoBehaviour
     {
         Vector2 localPoint;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(m_ParentRectTransform, Input.mousePosition, null, out localPoint);
+
+        //right
+        if (localPoint.x + m_backgroundTransform.rect.width > Screen.width * 0.5f)
+            localPoint.x = Screen.width * 0.5f - m_backgroundTransform.rect.width;
+
+        //top
+        if (localPoint.y + m_backgroundTransform.rect.height > Screen.width * 0.5f)
+            localPoint.y = Screen.width * 0.5f - m_backgroundTransform.rect.height;
+
         transform.localPosition = localPoint;
     }
 
@@ -51,8 +63,10 @@ public class ToolTip : MonoBehaviour
         if (string.IsNullOrEmpty(_tooltipText)) return;
 
         gameObject.SetActive(true);
-        m_text.text = _tooltipText;
-        m_backgroundTransform.sizeDelta = new Vector2(m_text.preferredWidth + m_padSize.x * 2f, m_text.preferredHeight + m_padSize.y * 2f);
+        m_text.SetText(_tooltipText);
+        m_text.ForceMeshUpdate();
+
+        m_backgroundTransform.sizeDelta = m_text.GetRenderedValues() + m_padSize * 2;
     }
 
     private void HideToolTip_private()

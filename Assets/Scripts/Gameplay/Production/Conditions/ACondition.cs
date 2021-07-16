@@ -45,7 +45,7 @@ namespace Gameplay.Productions.Conditions
                         break;
                 }
 
-            return (m_signString + m_GoalValue.ToString() + m_valueCompareString).Trim();
+            return (m_signString + m_GoalValue.ToString() + m_valueCompareString + $" (aktuell: {m_value})").Trim();
         }
 
         public abstract bool UpdateValue();

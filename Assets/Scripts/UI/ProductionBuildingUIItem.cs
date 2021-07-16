@@ -29,9 +29,12 @@ namespace UI
         [SerializeField]
         private Button m_Btn;
         [SerializeField]
-        private Image m_BtnBG;
+        private Image m_UnlockBG;
+        [SerializeField]
+        private TextMeshProUGUI m_UnlockText;
 
         private string m_conditionText;
+        private bool m_mouseOnButton;
 
         public void OnClick()
         {
@@ -46,7 +49,7 @@ namespace UI
             m_Balance.text = UIManager.ConvertFloatToStringPriceWithSign(_pb.m_OperatingCost, out Color c);
             m_Balance.color = c;
             m_Btn.interactable = false;
-            m_BtnBG.color = Color.red;
+            m_UnlockBG.color = Color.red;
 
             foreach (ProductionStat ps in m_PB.m_Production.m_Output)
             {
@@ -106,7 +109,8 @@ namespace UI
         public void UnlockProduction()
         {
             m_Btn.interactable = true;
-            m_BtnBG.color = Color.green;
+            m_UnlockText.text = "Freigeschaltet";
+            m_UnlockBG.color = Color.green;
         }
 
         public void UpdateConditionsText(List<ACondition> _conditions)
@@ -117,16 +121,22 @@ namespace UI
             {
                 m_conditionText += condition.GetString() + "\n";
             }
+
+            if (m_mouseOnButton && !m_Btn.interactable) //Update Text in ToolTip
+                ToolTip.ShowToolTip(m_conditionText);
         }
 
         public void OnHowerEnter()
         {
+            if (m_Btn.interactable) return; //No ToolTip if Production is Unlocked
             ToolTip.ShowToolTip(m_conditionText);
+            m_mouseOnButton = true;
         }
 
         public void OnHowerEnd()
         {
             ToolTip.HideToolTip();
+            m_mouseOnButton = false;
         }
     }
 }
