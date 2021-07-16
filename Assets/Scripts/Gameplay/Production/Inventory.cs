@@ -75,7 +75,7 @@ namespace Gameplay.Productions
             m_currProductionIndex = 0;
             m_currProductionToCheck = m_AllProductions[m_currProductionIndex];
             StartCoroutine(CalculateInventory());
-            m_MoneyAmount = 7500f;
+            m_MoneyAmount = 2500f;
         }
 
         private IEnumerator CalculateInventory()
@@ -97,7 +97,7 @@ namespace Gameplay.Productions
                             float balance = m_CurrendProduction[p] - m_NeededProduction[p] - m_SellingAmount[p];
                             float add = balance * (1f / 60f);
 
-                            if (p.IsSellingWorld)
+                            if (p.IsSellingWorld && m_Inventory[p] > 0)
                                 m_MoneyBalance += p.m_PriceWorld * m_SellingAmount[p];
                             else
                                 m_MoneyBalance += p.m_PriceLocal * m_SellingAmount[p];
