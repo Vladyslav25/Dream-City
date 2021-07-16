@@ -47,7 +47,7 @@ namespace UI
             SetCurrProduction(Inventory.Instance.m_ProductionBalance[_product]);
             m_Title.text = _product.m_UI_Name;
 
-            if (m_colorBlockWorldBtn.normalColor.a != 0)
+            if (m_colorBlockWorldBtn.normalColor.a != 0 && Inventory.Instance.CanSellInWorldMarket)
                 m_SellWorld_Btn.colors = m_colorBlockWorldBtn;
 
             if (_product.IsSellingWorld)
@@ -56,7 +56,7 @@ namespace UI
                 m_SellWorld_Btn.interactable = false;
                 m_SellLocal_Btn.interactable = true;
             }
-            else
+            else if(Inventory.Instance.CanSellInWorldMarket)
             {
                 UIManager.Instance.HighlightButton(m_SellLocal_Btn, true);
                 m_SellLocal_Btn.interactable = false;
