@@ -1059,9 +1059,9 @@ RectTransform:
   m_Father: {fileID: 1486015026}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 192, y: -248.12}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &65446119
@@ -2041,9 +2041,9 @@ RectTransform:
   m_Father: {fileID: 17407217}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 91, y: -19.520004}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &275356638
@@ -3046,9 +3046,9 @@ RectTransform:
   m_Father: {fileID: 17407217}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 293, y: -19.520004}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &344636745
@@ -4820,7 +4820,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &774860382
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5415,9 +5415,9 @@ RectTransform:
   m_Father: {fileID: 1486015026}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 192, y: -69.84}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 284, y: 26.559998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &866093419
@@ -6861,9 +6861,9 @@ RectTransform:
   m_Father: {fileID: 1486015026}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 192, y: -13.279999}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 284, y: 26.559998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1045948997
@@ -6898,7 +6898,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "akktueller Preis (pro St\xFCck)"
+  m_Text: "aktueller Preis (pro St\xFCck)"
 --- !u!222 &1045948998
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7995,7 +7995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9032dc37b4e1f1b459fbc3941c325c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockAll: 1
+  unlockAll: 0
   m_AllProductions: []
   m_MoneyAmount: 0
   m_MoneyBalance: 0
@@ -8067,7 +8067,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CheckDensity: 1
-  SpeedWaitTime: 1
+  SpeedWaitTime: 0
   m_LivingPrefabs:
   - {fileID: 5292364575324725515, guid: 346abc3049ac1b747acb9fcfc6d90a92, type: 3}
   - {fileID: 3804195967815641103, guid: 388740a28c7cffb40b771d0c6fa1bd56, type: 3}
@@ -10464,9 +10464,9 @@ RectTransform:
   m_Father: {fileID: 1486015026}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 192, y: -128.12}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1876988863
@@ -10657,9 +10657,9 @@ RectTransform:
   m_Father: {fileID: 1486015026}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 192, y: -188.12}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1897370097

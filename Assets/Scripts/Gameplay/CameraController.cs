@@ -24,13 +24,6 @@ namespace Gameplay.Camera
 
         private int pointerID = -1;
 
-        private void Awake()
-        {
-#if !UNITY_EDITOR
-            pointerID = 0;  // needs to be in a standalone version 0 to check if the mouse is hovering over UI
-#endif
-        }
-
         // Update is called once per frame
         void Update()
         {
