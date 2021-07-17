@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: IronIngot
   m_EditorClassIdentifier: 
   m_EProduct: 5
-  m_UI_Name: Eisen Baren
+  m_UI_Name: Eisenbarren
   m_UI_Sprit: {fileID: 0}
   m_PriceWorld: 25
   m_PriceLocal: 5
   m_ImpactOnLiving: 5
   IsSellingWorld: 0
+  GateOpen: 1

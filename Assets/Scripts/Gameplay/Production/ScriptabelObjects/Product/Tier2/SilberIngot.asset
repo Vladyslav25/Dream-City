@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: SilberIngot
   m_EditorClassIdentifier: 
   m_EProduct: 8
-  m_UI_Name: Silber Baren
+  m_UI_Name: Silberbarren
   m_UI_Sprit: {fileID: 0}
   m_PriceWorld: 80
   m_PriceLocal: 16
   m_ImpactOnLiving: 16
   IsSellingWorld: 0
+  GateOpen: 1
