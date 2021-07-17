@@ -50,9 +50,9 @@ MonoBehaviour:
   m_Assigment: 4
   InverseRotation: 1
   m_ModelMeshRenderer: {fileID: 4844749775907859924}
-  inflow: 10
-  impactOnLiving: 6
-  impactOnBusiness: 4
+  inflow: 30
+  impactOnLiving: 70
+  impactOnBusiness: 10
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 1bcd524f99ed21d4599dcff77ef9a832, type: 2}
   m_Cost: 90

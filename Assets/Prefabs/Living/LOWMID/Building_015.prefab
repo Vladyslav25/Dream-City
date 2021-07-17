@@ -213,4 +213,4 @@ MonoBehaviour:
   impactOnBusiness: 2
   impactOnIndustry: 1
   m_Density: 2
-  Tax: 4.5
+  Tax: 0.045
