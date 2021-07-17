@@ -56,7 +56,7 @@ MonoBehaviour:
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 5b60b45ee77ac504287d84ebdba3972f, type: 2}
   m_Cost: 270
-  m_OperatingCost: 32.4
+  m_OperatingCost: -32.4
   m_UIName: Reifen Fabrik
 --- !u!1 &7677615291785965212
 GameObject:

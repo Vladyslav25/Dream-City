@@ -56,7 +56,7 @@ MonoBehaviour:
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 2970b4f2c2f7c9d46ae229d9b79f9bbd, type: 2}
   m_Cost: 270
-  m_OperatingCost: 32.4
+  m_OperatingCost: -32.4
   m_UIName: Silber Erz Mine
 --- !u!1 &7677615291785965212
 GameObject:

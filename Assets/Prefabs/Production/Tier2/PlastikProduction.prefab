@@ -56,7 +56,7 @@ MonoBehaviour:
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 070b928137562cc4883fa74c7a0f9309, type: 2}
   m_Cost: 2430
-  m_OperatingCost: 291.6
+  m_OperatingCost: -291.6
   m_UIName: Plastik Fabrik
 --- !u!1 &7677615291785965212
 GameObject:

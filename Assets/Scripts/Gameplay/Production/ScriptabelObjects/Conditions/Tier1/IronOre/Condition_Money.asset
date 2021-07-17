@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Condition_Money
   m_EditorClassIdentifier: 
   m_CompareSign: 0
-  m_GoalValue: 35
+  m_GoalValue: 30
   m_MoneyType: 0

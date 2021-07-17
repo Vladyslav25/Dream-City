@@ -56,7 +56,7 @@ MonoBehaviour:
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: ca319a5ba7754ee418b9d938d56723c2, type: 2}
   m_Cost: 10080
-  m_OperatingCost: 1209.6
+  m_OperatingCost: -1209.6
   m_UIName: Platinen Hersteller
 --- !u!1 &7677615291785965212
 GameObject:

@@ -176,7 +176,7 @@ namespace Gameplay.Streets
                     }
                     if (pos3Set == false)
                     {
-                        if (m_currendCost <= Inventory.Instance.m_MoneyAmount)
+                        if (Mathf.Abs(m_currendCost) <= Inventory.Instance.m_MoneyAmount)
                         {
                             Inventory.Instance.m_MoneyAmount += m_currendCost; //currend Cost is negative
                             UIManager.Instance.UpdateMoneyUI(); //dont wait for next tick to update UI

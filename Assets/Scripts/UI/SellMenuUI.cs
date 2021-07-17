@@ -47,7 +47,8 @@ namespace UI
             SetCurrProduction(Inventory.Instance.m_ProductionBalance[_product]);
             m_Title.text = _product.m_UI_Name;
 
-            if (m_colorBlockWorldBtn.normalColor.a != 0 && Inventory.Instance.CanSellInWorldMarket)
+            //Reset Sell World Btn Color beakc to default
+            if (_product.IsSellingWorld && m_colorBlockWorldBtn.normalColor.a != 0) 
                 m_SellWorld_Btn.colors = m_colorBlockWorldBtn;
 
             if (_product.IsSellingWorld)

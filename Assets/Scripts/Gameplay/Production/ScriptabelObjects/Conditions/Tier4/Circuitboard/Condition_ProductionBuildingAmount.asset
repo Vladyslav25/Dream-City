@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 888ac3a4ac85b654cbe206030f543a2d, type: 3}
   m_Name: Condition_ProductionBuildingAmount
   m_EditorClassIdentifier: 
-  m_CompareSign: 0
+  m_CompareSign: 1
   m_GoalValue: 3
   m_ProductionType: 17

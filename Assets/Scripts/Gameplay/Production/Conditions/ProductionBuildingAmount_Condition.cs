@@ -17,7 +17,7 @@ namespace Gameplay.Productions.Conditions
         {
             if (UpdateValue())
             {
-                if (string.IsNullOrEmpty(m_valueCompareString) && m_production != null)
+                if (!string.IsNullOrEmpty(m_valueCompareString) && m_production != null)
                     m_valueCompareString = BuildingManager.Instance.productionBuilding_Dic[m_production].m_UIName + " erbaut";
             }
             else

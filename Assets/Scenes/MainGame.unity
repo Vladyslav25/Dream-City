@@ -3915,11 +3915,11 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 10
   m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
+  m_ChildControlHeight: 0
   m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleHeight: 0
 --- !u!1 &671082670
 GameObject:
   m_ObjectHideFlags: 0
@@ -5984,11 +5984,11 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 10
   m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
+  m_ChildControlHeight: 0
   m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleHeight: 0
 --- !u!1 &942047519
 GameObject:
   m_ObjectHideFlags: 0

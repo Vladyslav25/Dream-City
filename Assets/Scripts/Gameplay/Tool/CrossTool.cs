@@ -223,7 +223,7 @@ namespace Gameplay.Tools
             m_computeShader.Dispatch(m_kernelIndex, m_renderTexture.width / 32, m_renderTexture.height / 32, 1);
 
             m_computeBuffer.GetData(m_pixelCount);
-            if (m_pixelCount[0] > 3)
+            if (m_pixelCount[0] > 5)
             {
                 return true;
             }
