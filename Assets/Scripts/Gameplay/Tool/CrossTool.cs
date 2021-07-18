@@ -91,7 +91,7 @@ namespace Gameplay.Tools
             else
                 m_cross.m_IsInvalid = true;
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !StreetComponentManager.BlockStreetComponentPlacement)
             {
                 PlacePreview();
                 SpawnCross(); //Spawn new Preview Cross + Coll Cross
@@ -223,7 +223,7 @@ namespace Gameplay.Tools
             m_computeShader.Dispatch(m_kernelIndex, m_renderTexture.width / 32, m_renderTexture.height / 32, 1);
 
             m_computeBuffer.GetData(m_pixelCount);
-            if (m_pixelCount[0] > 3)
+            if (m_pixelCount[0] > 5)
             {
                 return true;
             }

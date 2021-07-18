@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Condition_CellAmount
   m_EditorClassIdentifier: 
   m_CompareSign: 0
-  m_GoalValue: 600
+  m_GoalValue: 1200
   m_CellType: 2

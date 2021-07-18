@@ -51,12 +51,12 @@ MonoBehaviour:
   InverseRotation: 0
   m_ModelMeshRenderer: {fileID: 4799837159854169906}
   inflow: 10
-  impactOnLiving: 6
-  impactOnBusiness: 4
+  impactOnLiving: 40
+  impactOnBusiness: 10
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: caf1e11a94d6c14409a86ea9f542213a, type: 2}
   m_Cost: 58.5
-  m_OperatingCost: 7.02
+  m_OperatingCost: -7.02
   m_UIName: Gummie Herstellung
 --- !u!1 &7677615291785965212
 GameObject:

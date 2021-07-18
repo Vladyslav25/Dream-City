@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EProduct: 2
   m_UI_Name: Kupfer Erz
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Sprit: {fileID: 21300000, guid: ba89fd47fd8788d418a58cc77d0efed0, type: 3}
   m_PriceWorld: 11
   m_PriceLocal: 2.2
   m_ImpactOnLiving: 2
   IsSellingWorld: 0
+  GateOpen: 1

@@ -50,13 +50,13 @@ MonoBehaviour:
   m_Assigment: 4
   InverseRotation: 0
   m_ModelMeshRenderer: {fileID: 5260014314653860376}
-  inflow: 30
-  impactOnLiving: 26
-  impactOnBusiness: 4
+  inflow: 150
+  impactOnLiving: 200
+  impactOnBusiness: 150
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 2a836b7a48cbc63428b5e045cf2a7c99, type: 2}
   m_Cost: 4320
-  m_OperatingCost: 518.4
+  m_OperatingCost: -518.4
   m_UIName: Motor Fabrik
 --- !u!1 &7677615291785965212
 GameObject:

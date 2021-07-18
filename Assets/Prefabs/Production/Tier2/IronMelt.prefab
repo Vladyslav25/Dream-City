@@ -50,13 +50,13 @@ MonoBehaviour:
   m_Assigment: 4
   InverseRotation: 1
   m_ModelMeshRenderer: {fileID: 3859346915886190784}
-  inflow: 30
-  impactOnLiving: 26
-  impactOnBusiness: 4
+  inflow: 70
+  impactOnLiving: 80
+  impactOnBusiness: 10
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 1b8e2f02298dde14899c3fc103b0b79d, type: 2}
   m_Cost: 112.5
-  m_OperatingCost: 13.5
+  m_OperatingCost: -13.5
   m_UIName: Eisenschmelze
 --- !u!1 &7677615291785965212
 GameObject:

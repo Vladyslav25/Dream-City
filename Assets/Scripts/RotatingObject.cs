@@ -12,7 +12,7 @@ public class RotatingObject : MonoBehaviour
     private Vector3 startPos;
     private float timer;
 
-    private void Start() { startPos = transform.position; }
+    private void Start() { startPos = transform.position; UnityEngine.Cursor.lockState = CursorLockMode.Confined; }
 
     private void Update()
     {

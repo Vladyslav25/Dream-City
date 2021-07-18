@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EProduct: 4
   m_UI_Name: Silber Erz
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Sprit: {fileID: 21300000, guid: 23f9273e8b7f2e947a16d08118d03381, type: 3}
   m_PriceWorld: 30
   m_PriceLocal: 6
   m_ImpactOnLiving: 6
   IsSellingWorld: 0
+  GateOpen: 1
