@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EProduct: 5
   m_UI_Name: Eisenbarren
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Sprit: {fileID: 21300000, guid: c164a89954a7bc74bbfdf0ad01ae28d9, type: 3}
   m_PriceWorld: 25
   m_PriceLocal: 5
   m_ImpactOnLiving: 5
