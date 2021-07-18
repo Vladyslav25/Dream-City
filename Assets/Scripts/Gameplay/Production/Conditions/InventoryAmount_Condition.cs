@@ -15,7 +15,7 @@ namespace Gameplay.Productions.Conditions
         {
             if (UpdateValue()) //if Product is found
             {
-                if (string.IsNullOrEmpty(m_valueCompareString) && m_product != null)
+                if (!string.IsNullOrEmpty(m_valueCompareString) && m_product != null)
                     m_valueCompareString = $" {m_product.m_UI_Name} im Besitz";
             }
             else

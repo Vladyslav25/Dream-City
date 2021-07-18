@@ -32,7 +32,7 @@ namespace Gameplay.Productions.Conditions
                         m_signString = "mehr als ";
                         break;
                     case EComparisonSign.GREATER_EQUAL:
-                        m_signString = "gleich oder mehr als  ";
+                        m_signString = "gleich oder mehr als ";
                         break;
                     case EComparisonSign.EQUAL:
                         m_signString = "gleich ";

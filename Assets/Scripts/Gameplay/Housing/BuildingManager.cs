@@ -53,7 +53,7 @@ namespace Gameplay.Buildings
                 switch (m_LivingDemand)
                 {
                     case EDemand.NONE:
-                        break;
+                        return 8f;
                     case EDemand.LOW:
                         return 5.5f;
                     case EDemand.LOWMID:
@@ -62,8 +62,6 @@ namespace Gameplay.Buildings
                         return 3f;
                     case EDemand.HIGH:
                         return 1.5f;
-                    default:
-                        break;
                 }
                 return 0.1f;
             }
@@ -77,7 +75,7 @@ namespace Gameplay.Buildings
                 switch (m_BusinessDemand)
                 {
                     case EDemand.NONE:
-                        break;
+                        return 8f;
                     case EDemand.LOW:
                         return 5.5f;
                     case EDemand.LOWMID:
@@ -101,7 +99,7 @@ namespace Gameplay.Buildings
                 switch (m_IndustryDemand)
                 {
                     case EDemand.NONE:
-                        break;
+                        return 8f;
                     case EDemand.LOW:
                         return 5.5f;
                     case EDemand.LOWMID:
@@ -110,8 +108,6 @@ namespace Gameplay.Buildings
                         return 3f;
                     case EDemand.HIGH:
                         return 1.5f;
-                    default:
-                        break;
                 }
                 return 0.1f;
             }
@@ -182,11 +178,11 @@ namespace Gameplay.Buildings
         private float industry_Ratio;
 
         [HideInInspector]
-        public EDemand m_LivingDemand = 0;
+        public EDemand m_LivingDemand = EDemand.LOW;
         [HideInInspector]
-        public EDemand m_BusinessDemand = 0;
+        public EDemand m_BusinessDemand = EDemand.LOW;
         [HideInInspector]
-        public EDemand m_IndustryDemand = 0;
+        public EDemand m_IndustryDemand = EDemand.LOW;
 
         #region -SingeltonPattern-
         private static BuildingManager _instance;
@@ -611,11 +607,11 @@ namespace Gameplay.Buildings
         {
             if (_ratio == 0)
                 return EDemand.NONE;
-            else if (_ratio < 0.3f)
+            else if (_ratio < 0.2f)
                 return EDemand.LOW;
-            else if (_ratio < 0.6f)
+            else if (_ratio < 0.5f)
                 return EDemand.LOWMID;
-            else if (_ratio < 0.81f)
+            else if (_ratio < 0.7f)
                 return EDemand.HIGHMID;
             else
                 return EDemand.HIGH;

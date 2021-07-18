@@ -47,6 +47,8 @@ namespace Gameplay.StreetComponents
 
         private static int setComponentId;
 
+        public static bool BlockStreetComponentPlacement = false;
+
         public static Street GetStreetByID(int _id)
         {
             return GetComponentByID(_id) as Street;
@@ -412,10 +414,12 @@ namespace Gameplay.StreetComponents
             s.Init(pos, _startConn, _endConn, 20);
             s.m_Spline.CreateGridOPs();
             s.CheckCollision();
-            GridManager.CreateGrid(s);
 
+            BlockStreetComponentPlacement = true;
+            GridManager.CreateGrid(s);
             StreetComponentID_Dic.Add(s.ID, s);
-            //allStreets.Add(s);
+            BlockStreetComponentPlacement = false;
+
             return s;
         }
     }

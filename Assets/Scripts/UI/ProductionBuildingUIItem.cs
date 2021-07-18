@@ -76,7 +76,7 @@ namespace UI
                 t.text = ps.m_Amount.ToString() + " " + ps.m_Product.m_UI_Name;
                 if (ps.m_Product.m_UI_Sprit != null)
                 {
-                    Image i = obj.GetComponent<Image>();
+                    Image i = obj.GetComponentInChildren<Image>();
                     i.sprite = ps.m_Product.m_UI_Sprit;
                 }
             }
@@ -103,7 +103,7 @@ namespace UI
                 t.text = ps.m_Amount.ToString() + " " + ps.m_Product.m_UI_Name;
                 if (ps.m_Product.m_UI_Sprit != null)
                 {
-                    Image i = obj.GetComponent<Image>();
+                    Image i = obj.GetComponentInChildren<Image>();
                     i.sprite = ps.m_Product.m_UI_Sprit;
                 }
             }

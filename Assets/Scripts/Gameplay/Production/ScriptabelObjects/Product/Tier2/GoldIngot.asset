@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: GoldIngot
   m_EditorClassIdentifier: 
   m_EProduct: 7
-  m_UI_Name: Gold Baren
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Name: Goldbarren
+  m_UI_Sprit: {fileID: 21300000, guid: f47a2e71575907346b94e38ece7a65bd, type: 3}
   m_PriceWorld: 400
   m_PriceLocal: 80
   m_ImpactOnLiving: 80
   IsSellingWorld: 0
+  GateOpen: 1

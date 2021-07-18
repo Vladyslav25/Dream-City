@@ -56,7 +56,7 @@ MonoBehaviour:
   impactOnBusiness: 12
   impactOnIndustry: 10
   m_Density: 4
-  Tax: 66
+  Tax: 1.98
 --- !u!33 &4628283600544044020
 MeshFilter:
   m_ObjectHideFlags: 0

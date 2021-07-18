@@ -50,13 +50,13 @@ MonoBehaviour:
   m_Assigment: 4
   InverseRotation: 0
   m_ModelMeshRenderer: {fileID: 2728882763080638901}
-  inflow: 30
-  impactOnLiving: 26
-  impactOnBusiness: 4
+  inflow: 150
+  impactOnLiving: 250
+  impactOnBusiness: 100
   impactOnIndustry: 0
   m_Production: {fileID: 11400000, guid: 9cc085f11eba26741934b1d4352d54e0, type: 2}
   m_Cost: 2700
-  m_OperatingCost: 324
+  m_OperatingCost: -324
   m_UIName: Karosserie Fabrik
 --- !u!1 &7677615291785965212
 GameObject:

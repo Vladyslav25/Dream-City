@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: CopperIngot
   m_EditorClassIdentifier: 
   m_EProduct: 6
-  m_UI_Name: Kupfer Baren
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Name: Kupferbarren
+  m_UI_Sprit: {fileID: 21300000, guid: 72ff9d4b486251746ac4afcbf80575c2, type: 3}
   m_PriceWorld: 28
   m_PriceLocal: 5.6
   m_ImpactOnLiving: 6
   IsSellingWorld: 0
+  GateOpen: 1

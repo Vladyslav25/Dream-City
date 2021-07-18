@@ -124,6 +124,7 @@ namespace Gameplay.Productions
                         }
                     }
                 }
+
                 foreach (Production p in ProductionsToUpdateRatio)
                 {
                     p.m_Ratio = GetRatio(p);
