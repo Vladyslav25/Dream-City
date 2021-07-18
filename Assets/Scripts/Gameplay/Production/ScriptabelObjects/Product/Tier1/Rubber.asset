@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EProduct: 14
   m_UI_Name: Gummi
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Sprit: {fileID: 21300000, guid: ab49cce2ee75f0f48bee320f5cdb96d0, type: 3}
   m_PriceWorld: 13
   m_PriceLocal: 2.6
   m_ImpactOnLiving: 3
   IsSellingWorld: 0
+  GateOpen: 1

@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EProduct: 13
   m_UI_Name: Plastik
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Sprit: {fileID: 21300000, guid: e65b7299962608f4fba853afaa3b14ab, type: 3}
   m_PriceWorld: 450
   m_PriceLocal: 90
   m_ImpactOnLiving: 90
   IsSellingWorld: 0
+  GateOpen: 1
