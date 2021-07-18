@@ -153,7 +153,7 @@ namespace Gameplay.Streets
                     }
                 }
 
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && !StreetComponentManager.BlockStreetComponentPlacement)
                 {
                     if (pos1Set == false)
                     {

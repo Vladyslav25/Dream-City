@@ -91,7 +91,7 @@ namespace Gameplay.Tools
             else
                 m_cross.m_IsInvalid = true;
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !StreetComponentManager.BlockStreetComponentPlacement)
             {
                 PlacePreview();
                 SpawnCross(); //Spawn new Preview Cross + Coll Cross

@@ -3383,8 +3383,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 373938693}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 250, y: 0, z: 250}
-  m_LocalScale: {x: 50, y: 1, z: 50}
+  m_LocalPosition: {x: 200, y: 0, z: 200}
+  m_LocalScale: {x: 40, y: 1, z: 40}
   m_Children:
   - {fileID: 306090485}
   - {fileID: 147365014}
@@ -6221,7 +6221,6 @@ GameObject:
   m_Component:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
-  - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
@@ -6230,14 +6229,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &963194226
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
 --- !u!20 &963194227
 Camera:
   m_ObjectHideFlags: 0
@@ -6312,7 +6303,7 @@ MonoBehaviour:
   maxPanSpeed: 70
   panBoardThickness: 10
   minClamp: {x: 0, y: 5, z: -10}
-  maxClamp: {x: 500, y: 250, z: 500}
+  maxClamp: {x: 400, y: 250, z: 400}
   scrollSpeed: 100
   rotationSpeed: 10
 --- !u!1 &970087279
