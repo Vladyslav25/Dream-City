@@ -8119,7 +8119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9032dc37b4e1f1b459fbc3941c325c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockAll: 1
+  unlockAll: 0
   m_AllProductions: []
   m_MoneyAmount: 0
   m_MoneyBalance: 0
