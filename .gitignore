@@ -27,7 +27,7 @@
 *.vs
 
 # .zip + ReadMe
-.zip
+*.zip
 ReadMe.txt
 
 # Gradle cache directory
