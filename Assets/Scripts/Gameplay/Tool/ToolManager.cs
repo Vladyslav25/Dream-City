@@ -70,6 +70,22 @@ namespace Gameplay.Tools
             {
                 ChangeTool(TOOLTYPE.BUILDINGCLICK);
             }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                if (Time.timeScale > 0)
+                {
+                    Cursor.SetActiv(false);
+                    Time.timeScale = 0f;
+                    UIManager.Instance.SetActivPauseText(true);
+                }
+                else
+                {
+                    Cursor.SetActiv(true);
+                    Time.timeScale = 1f;
+                    UIManager.Instance.SetActivPauseText(false);
+                }
+                
+            }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 UIManager.Instance.ResetHighlightButton();

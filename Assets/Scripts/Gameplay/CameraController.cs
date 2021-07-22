@@ -69,12 +69,12 @@ namespace Gameplay.Camera
             //Rotation
             float RotationInput = 0f;
             bool RotateInput = false;
-            if (Input.GetKey(KeyCode.X))
+            if (Input.GetKey(KeyCode.Y))
             {
                 RotationInput += rotationSpeed * Time.deltaTime;
                 RotateInput = true;
             }
-            if (Input.GetKey(KeyCode.Z))
+            if (Input.GetKey(KeyCode.X))
             {
                 RotationInput -= rotationSpeed * Time.deltaTime;
                 RotateInput = true;

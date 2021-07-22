@@ -1,4 +1,4 @@
-﻿using Gameplay.Buildings;
+using Gameplay.Buildings;
 using Grid;
 using MeshGeneration;
 using MyCustomCollsion;
@@ -44,7 +44,10 @@ namespace Gameplay.StreetComponents
         private float normalLenght = 1;
 
         [SerializeField]
+        private bool drawGridNormalsUp = false;
+        [SerializeField]
         private bool drawGridNormals = false;
+
 
         //Debug Settings
         private bool lastDrawMeshSetting;
@@ -759,7 +762,7 @@ namespace Gameplay.StreetComponents
                 Gizmos.DrawLine(a.m_OP.Position, a.m_OP.Rotation * (Vector3.forward * 3f) + a.m_OP.Position);
             }
 
-            if (drawGridNormals)
+            if (drawGridNormalsUp)
             {
                 for (int i = 0; i < m_Spline.GridOPs.Length; i++)
                 {
@@ -767,6 +770,19 @@ namespace Gameplay.StreetComponents
                     Gizmos.DrawLine(m_Spline.GridOPs[i].Position, m_Spline.GridOPs[i].Position + m_Spline.GetNormalUpAt(m_Spline.GridOPs[i].t) * normalLenghtUp);
                 }
             }
+
+            if (drawGridNormals)
+            {
+                for (int i = 0; i < m_Spline.GridOPs.Length; i++)
+                {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(m_Spline.GridOPs[i].Position, m_Spline.GridOPs[i].Position + m_Spline.GetNormalAt(m_Spline.GridOPs[i].t) * normalLenght);
+                    Gizmos.DrawLine(m_Spline.GridOPs[i].Position, m_Spline.GridOPs[i].Position - m_Spline.GetNormalAt(m_Spline.GridOPs[i].t) * normalLenght);
+                }
+                    Gizmos.DrawLine(m_Spline.GetLastOrientedPoint().Position, m_Spline.GetLastOrientedPoint().Position - m_Spline.GetNormalAt(m_Spline.GetLastOrientedPoint().t) * normalLenght);
+                    Gizmos.DrawLine(m_Spline.GetLastOrientedPoint().Position, m_Spline.GetLastOrientedPoint().Position + m_Spline.GetNormalAt(m_Spline.GetLastOrientedPoint().t) * normalLenght);
+            }
+
             for (int i = 0; i < m_Spline.OPs.Length; i++)
             {
                 float t = 1.0f / segments * i;

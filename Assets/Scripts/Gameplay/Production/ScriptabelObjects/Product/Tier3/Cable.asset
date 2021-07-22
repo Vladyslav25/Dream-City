@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EProduct: 15
   m_UI_Name: Kabel
-  m_UI_Sprit: {fileID: 0}
+  m_UI_Sprit: {fileID: 21300000, guid: d5c4549e2d24e4944880695ad1001394, type: 3}
   m_PriceWorld: 10
   m_PriceLocal: 2
   m_ImpactOnLiving: 2
   IsSellingWorld: 0
+  GateOpen: 1

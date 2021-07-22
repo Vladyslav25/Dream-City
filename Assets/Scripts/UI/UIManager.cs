@@ -44,12 +44,11 @@ namespace UI
         public TextMeshProUGUI InflowText;
         public TextMeshProUGUI Impact01Text;
         public TextMeshProUGUI Impact02Text;
-
+        [Header("MoneyText")]
         public TextMeshProUGUI MoneySum;
         public TextMeshProUGUI MoneyBalance;
-
+        [Space]
         public TextMeshProUGUI StreetCostText;
-
         public ScrollRect ProductionListScrollRect;
 
 
@@ -66,6 +65,8 @@ namespace UI
         private GameObject SellMenuObj;
         [SerializeField]
         private GameObject StreetCostObj;
+        [SerializeField]
+        private GameObject PauseText;
 
         [SerializeField]
         private ProductionQueueUI m_pqu;
@@ -114,6 +115,11 @@ namespace UI
             //Update ToolTip Text
             if (Instance.m_currHoveringUIItem != null)
                 Instance.m_currHoveringUIItem.UpdateConditionsText();
+        }
+
+        public void SetActivPauseText(bool _activ)
+        {
+            PauseText.SetActive(_activ);
         }
 
         public void SetBuildingInfoActiv(bool _active)
