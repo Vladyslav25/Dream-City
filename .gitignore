@@ -24,10 +24,11 @@
 /[Aa]ssets/Plugins/Editor/JetBrains*
 
 # Visual Studio cache directory
-.vs/
+*.vs
 
-# .zip
+# .zip + ReadMe
 .zip
+ReadMe.txt
 
 # Gradle cache directory
 .gradle/
