@@ -129,7 +129,6 @@ namespace UI
                 }
                 m_conditionText += condition.GetString() + "\n";
             }
-
             if (m_mouseOnButton && !m_Btn.interactable) //Update Text in ToolTip
                 ToolTip.ShowToolTip(m_conditionText);
         }

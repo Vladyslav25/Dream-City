@@ -56,6 +56,8 @@ public class ToolTip : MonoBehaviour
             localPoint.y = Screen.width * 0.5f - m_backgroundTransform.rect.height;
 
         transform.localPosition = localPoint;
+
+        if (Input.GetKeyDown(KeyCode.Escape)) HideToolTip();
     }
 
     private void ShowToolTip_private(string _tooltipText)
@@ -72,7 +74,6 @@ public class ToolTip : MonoBehaviour
     private void HideToolTip_private()
     {
         gameObject.SetActive(false);
-
     }
 
     public static void ShowToolTip(string _inputText)

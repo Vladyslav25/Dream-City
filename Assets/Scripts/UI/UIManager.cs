@@ -115,6 +115,7 @@ namespace UI
             //Update ToolTip Text
             if (Instance.m_currHoveringUIItem != null)
                 Instance.m_currHoveringUIItem.UpdateConditionsText();
+            if (Input.GetKeyDown(KeyCode.Escape)) Instance.m_currHoveringUIItem = null;
         }
 
         public void SetActivPauseText(bool _activ)

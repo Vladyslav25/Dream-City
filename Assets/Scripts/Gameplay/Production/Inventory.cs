@@ -147,6 +147,13 @@ namespace Gameplay.Productions
                         m_currProductionToCheck = null;
                 }
 
+                yield return new WaitForEndOfFrame();
+
+                //Change Queue Item Color
+                if (Buildings.BuildingManager.Instance.GetProductionBuildingInQueue()?.m_Cost <= m_MoneyAmount)
+                    UIManager.Instance.ChangeProductionItemColor(Color.white);
+
+
                 yield return new WaitForSeconds(1f);
             }
         }

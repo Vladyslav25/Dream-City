@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Production: {fileID: 11400000, guid: caf1e11a94d6c14409a86ea9f542213a, type: 2}
   m_Cost: 58.5
   m_OperatingCost: -7.02
-  m_UIName: Gummie Herstellung
+  m_UIName: Gummi Herstellung
 --- !u!1 &7677615291785965212
 GameObject:
   m_ObjectHideFlags: 0

@@ -237,6 +237,13 @@ namespace Gameplay.Buildings
             UIManager.Instance.SetDemandRatio(EAssignment.INDUSTRY, industry_Ratio);
         }
 
+        public ProductionBuilding GetProductionBuildingInQueue(int _index = 0)
+        {
+            if (Instance.productionBuilding_Dic.Count > 0 && Instance.m_ProductionBuildWaitingList.Count > 0 && Instance.productionBuilding_Dic.ContainsKey(Instance.m_ProductionBuildWaitingList[_index]))
+                return Instance.productionBuilding_Dic[Instance.m_ProductionBuildWaitingList[_index]];
+            return null;
+        }
+
         public void AddProductionBuildingToList(ProductionBuilding _pb)
         {
             UIManager.Instance.AddProductionBuildingItem(_pb);

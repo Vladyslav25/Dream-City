@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Production: {fileID: 11400000, guid: dea9bd878a574b3458b29350aa667a18, type: 2}
   m_Cost: 99
   m_OperatingCost: -11.88
-  m_UIName: Kuper Erz Mine
+  m_UIName: Kupfer Erz Mine
 --- !u!1 &7514854313909714860
 GameObject:
   m_ObjectHideFlags: 0
