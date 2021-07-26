@@ -562,6 +562,7 @@ namespace UI
 
         public static string ConvertFloatToStringPrice(float _input)
         {
+            _input *= 100f;
             string s = string.Format("{0:0.00}", _input);
 
             if (s.EndsWith("00"))
@@ -576,6 +577,7 @@ namespace UI
 
         public static string ConvertFloatToStringPriceWithSign(float _input)
         {
+            _input *= 100f;
             string s = string.Format("{0:0.00}", _input);
             string sign = "";
 
@@ -594,6 +596,7 @@ namespace UI
 
         public static string ConvertFloatToStringPriceWithSign(float _input, out Color c)
         {
+            _input *= 100f;
             string s = string.Format("{0:0.00}", _input);
             string sign = "";
             c = Color.green;

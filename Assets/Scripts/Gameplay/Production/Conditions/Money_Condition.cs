@@ -9,6 +9,8 @@ namespace Gameplay.Productions.Conditions
         [SerializeField]
         private EValue_Money m_MoneyType;
 
+        private bool multiValues = true;
+
         public override string GetString()
         {
             UpdateValue();
@@ -31,6 +33,12 @@ namespace Gameplay.Productions.Conditions
 
         public override bool UpdateValue()
         {
+            if (multiValues)
+            {
+                m_GoalValue *= 100f;
+                multiValues = false;
+            }
+
             switch (m_MoneyType)
             {
                 case EValue_Money.MONEY_BALANCE:
@@ -42,6 +50,7 @@ namespace Gameplay.Productions.Conditions
                 default:
                     break;
             }
+            m_value *= 100f;
             return true;
         }
     }

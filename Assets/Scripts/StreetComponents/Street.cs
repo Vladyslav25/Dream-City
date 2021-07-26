@@ -431,7 +431,12 @@ namespace Gameplay.StreetComponents
                 if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, true)) //if to the right all cells are valid + reset pStart if invalid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, true);
-                    if (cells == null) return false;
+                    if (cells == null)
+                    {
+                        pStart = new Vector2Int(1, p.y + 1); //set pStart to right generation and move it back down
+                        p = pStart;
+                        continue;
+                    }
                     a = new Area(_size, cells, this, GetOrientenPointFromCells(m_StreetCells[pStart], m_StreetCells[p]));
                     switch (_assignment)
                     {
@@ -501,7 +506,12 @@ namespace Gameplay.StreetComponents
                 if (MoveCellPointerRight(_size.y, ref pStart, ref p, _assignment, false)) //if to the right all cells are valid
                 {
                     List<Cell> cells = SetCellsInArea(pStart, _size, false);
-                    if (cells == null) return false;
+                    if (cells == null)
+                    {
+                        pStart = new Vector2Int(-1, p.y + 1); //set pStart to right generation and move it back down
+                        p = pStart;
+                        return false;
+                    }
                     a = new Area(_size, cells, this, GetOrientenPointFromCells(m_StreetCells[pStart], m_StreetCells[p]));
                     switch (_assignment)
                     {

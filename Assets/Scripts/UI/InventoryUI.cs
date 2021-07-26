@@ -24,7 +24,7 @@ namespace UI
             if (m_Row01.transform.childCount <= 9)
                 obj = Instantiate(m_InventoryItem_Prefab, m_Row01);
             else if (m_Row02.transform.childCount <= 9)
-                obj = Instantiate(m_InventoryItem_Prefab, m_Row01);
+                obj = Instantiate(m_InventoryItem_Prefab, m_Row02);
             else
                 Debug.LogError("To much Items");
 

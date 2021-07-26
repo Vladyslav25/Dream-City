@@ -62,6 +62,8 @@ namespace Gameplay.Tools
                             //Go y+
                             do
                             {
+                                if (!s.m_StreetCells.ContainsKey(pos)) return;
+
                                 Cell currCell = s.m_StreetCells[pos];
                                 int materialIndex = currCell.Pos.y;
                                 if (currCell.Pos.x < 0)
