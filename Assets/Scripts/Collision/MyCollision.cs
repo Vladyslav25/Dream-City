@@ -15,7 +15,8 @@ namespace MyCustomCollsion
             return false;
         }
 
-        //http://www.jeffreythompson.org/collision-detection/poly-poly.php
+        #region PolyPoly by Thompson
+        //vgl. Thompson, kein Datum
         public static bool PolyPoly(Vector2[] p1, Vector2[] p2)
         {
 
@@ -136,5 +137,6 @@ namespace MyCustomCollsion
             }
             return collision;
         }
+        #endregion
     }
 }

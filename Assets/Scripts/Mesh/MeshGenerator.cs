@@ -29,61 +29,6 @@ namespace MeshGeneration
         }
         #endregion
 
-        #region -Old-
-        ///// <summary>
-        ///// Create the Mesh for the Grid
-        ///// </summary>
-        ///// <param name="_cellList">List of all Cells</param>
-        ///// <param name="_mf">The MeshFilter of the GameObject where to put the Mesh in</param>
-        ///// <returns>Return the MeshFilter with the Mesh</returns>
-        //public static MeshFilter CreateGridMesh(List<Cell> _cellList, MeshFilter _mf)
-        //{
-        //    List<Mesh> allMeshes = new List<Mesh>();
-        //    List<Matrix4x4> allTransform = new List<Matrix4x4>();
-        //
-        //    for (int r = 0; r < _cellList.Count; r++)
-        //    {
-        //        Mesh newMesh = new Mesh();
-        //        Vector3[] verts = new Vector3[4];
-        //        Matrix4x4 rotationMatrix = Matrix4x4.Rotate(Quaternion.Inverse(_cellList[r].m_Orientation));
-        //        for (int i = 0; i < 4; i++)
-        //        {
-        //            verts[i] = _cellList[r].m_WorldCorner[i] - _cellList[r].m_WorldPosCenter;
-        //            verts[i] = rotationMatrix * verts[i];
-        //        }
-        //
-        //        newMesh.vertices = verts;
-        //        if (_cellList[r].m_isLeft)
-        //            newMesh.triangles = new int[] { 0, 3, 1, 0, 2, 3 };
-        //        else
-        //            newMesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
-        //
-        //        allMeshes.Add(newMesh);
-        //        Matrix4x4 mat = Matrix4x4.TRS(_cellList[r].m_WorldPosCenter, _cellList[r].m_Orientation, Vector3.one);
-        //        allTransform.Add(mat);
-        //    }
-        //
-        //    _mf.mesh = CombineMeshes(allMeshes, allTransform);
-        //    return _mf;
-        //}
-        //
-        //private static Mesh CombineMeshes(List<Mesh> _meshes, List<Matrix4x4> _transforms)
-        //{
-        //    CombineInstance[] combineArr = new CombineInstance[_meshes.Count];
-        //
-        //    for (int i = 0; i < _meshes.Count; i++)
-        //    {
-        //        combineArr[i].mesh = _meshes[i];
-        //        combineArr[i].transform = _transforms[i];
-        //        //combineArr[i].subMeshIndex = i; //TODO: Give Rows own SubMesh to change color / Material
-        //    }
-        //
-        //    Mesh mesh = new Mesh();
-        //    mesh.CombineMeshes(combineArr, true, true);
-        //    return mesh;
-        //}
-        #endregion
-
         public static MeshFilter CreateGridMesh(Street _s, MeshFilter _mf, MeshRenderer _mr)
         {
             List<Cell> cells = _s.m_StreetCells.Values.ToList();
@@ -163,6 +108,8 @@ namespace MeshGeneration
             return _mf;
         }
 
+        //Die Extrude Funktion wurde nach Freya Holmér gemacht. Aber vom Author an seine Situation angepasst
+        //vgl. Holmér 2019 4:41:35 - 6:07:30
         public static void Extrude(SplineStreetComonents _comp)
         {
             ExtrudeShapeBase Shape = _comp.m_Shape;
